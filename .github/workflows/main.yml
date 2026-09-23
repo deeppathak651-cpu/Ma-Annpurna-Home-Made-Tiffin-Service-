@@ -18,7 +18,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -71,12 +70,35 @@ jobs:
             npx cap add android
           fi
 
+      - name: Fix Kotlin dependency conflict
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/build.gradle")
+          text = p.read_text()
+
+          fix = r'''
+
+          allprojects {
+              configurations.configureEach {
+                  resolutionStrategy.eachDependency { details ->
+                      if (details.requested.group == "org.jetbrains.kotlin") {
+                          details.useVersion("1.8.22")
+                      }
+                  }
+              }
+          }
+          '''
+
+          if "resolutionStrategy.eachDependency" not in text:
+              p.write_text(text + fix)
+          PY
+
       - name: Copy Firebase configuration
         run: |
           if [ -f google-services.json ]; then
             cp google-services.json android/app/google-services.json
-          else
-            echo "google-services.json not found"
           fi
 
       - name: Sync Capacitor
@@ -87,7 +109,7 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
