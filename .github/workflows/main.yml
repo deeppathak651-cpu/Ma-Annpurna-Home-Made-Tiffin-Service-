@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up Java
@@ -25,29 +25,21 @@ jobs:
 
       - name: Install Android SDK packages
         run: |
-          sdkmanager "platform-tools"
-          sdkmanager "platforms;android-35"
-          sdkmanager "build-tools;35.0.0"
+          sdkmanager --sdk_root="$ANDROID_SDK_ROOT" \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0"
 
       - name: Make Gradle executable
         run: |
-          if [ -f "./gradlew" ]; then
-            chmod +x ./gradlew
-          fi
+          chmod +x ./gradlew
 
       - name: Build Debug APK
         run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew assembleDebug
-          else
-            echo "Gradle project files are missing."
-            echo "Please make sure the Android project is present in the repository."
-            exit 1
-          fi
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Annapurna-APK
-          path: |
-            **/build/outputs/apk/debug/*.apk
+          name: Annapurna-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
