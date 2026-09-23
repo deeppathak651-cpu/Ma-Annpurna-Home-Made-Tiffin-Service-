@@ -6,49 +6,15 @@
 <meta name="theme-color" content="#e65100">
 <title>Maa Annapurna - Home Made Tiffin Service</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#fff8f0;color:#222}
-header{background:linear-gradient(135deg,#e65100,#ff9800);color:white;padding:16px;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px #999}
-.header-row{display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:22px;font-weight:bold}.small{font-size:12px}
-.container{max-width:650px;margin:auto;padding:12px}
-.banner,.card,.order{background:#fff;border-radius:15px;padding:14px;margin:12px 0;box-shadow:0 2px 8px #ddd}
-.banner h2{margin:0 0 8px;color:#e65100}
-.section-title{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.food-img{width:100%;height:120px;object-fit:cover;border-radius:12px;background:#eee}
-.food-name{font-weight:bold;margin-top:8px}
-.price{color:#e65100;font-weight:bold;font-size:18px;margin:5px 0}
-button{border:0;border-radius:10px;padding:10px 14px;background:#e65100;color:white;font-weight:bold;cursor:pointer}
-button.secondary{background:#555}
-button.green{background:#198754}
-button.red{background:#dc3545}
-button.full{width:100%;margin-top:8px}
-input,select,textarea{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;margin:5px 0 10px;font-size:15px}
-.nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:9px 3px;box-shadow:0 -2px 8px #aaa;z-index:20}
-.nav button{background:transparent;color:#555;padding:6px;font-size:12px}
-.page{display:none;padding-bottom:80px}
-.page.active{display:block}
-.badge{background:#e65100;color:white;border-radius:20px;padding:4px 8px;font-size:11px}
-.status{display:inline-block;padding:6px 9px;border-radius:20px;background:#fff0dd;color:#e65100;font-size:12px;font-weight:bold}
-.qty{display:flex;align-items:center;gap:7px}
-.qty button{padding:5px 9px}
-.total{font-size:21px;font-weight:bold;color:#e65100}
-.admin{background:#212529;color:white}
-.admin .card{color:#222}
-.stat{text-align:center;padding:15px}
-.stat b{display:block;font-size:24px;color:#e65100}
-hr{border:0;border-top:1px solid #ddd}
-.empty{text-align:center;padding:35px 10px;color:#777}
-.notice{background:#fff3cd;color:#664d03;padding:10px;border-radius:10px;margin:10px 0}
-.success{background:#d1e7dd;color:#0f5132;padding:10px;border-radius:10px;margin:10px 0}
-.error{background:#f8d7da;color:#842029;padding:10px;border-radius:10px;margin:10px 0}
-.auth-card{max-width:500px;margin:30px auto}
-.hidden{display:none!important}
-.small-btn{padding:7px 10px;font-size:12px}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#fff8f0;color:#222}
+header{background:linear-gradient(135deg,#e65100,#ff9800);color:#fff;padding:15px;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px #999}.header-row{display:flex;justify-content:space-between;align-items:center}.logo{font-size:21px;font-weight:bold}.small{font-size:12px}
+.container{max-width:700px;margin:auto;padding:12px}.banner,.card,.order{background:#fff;border-radius:15px;padding:14px;margin:12px 0;box-shadow:0 2px 8px #ddd}.banner h2{margin:0 0 8px;color:#e65100}.section-title{display:flex;justify-content:space-between;align-items:center;margin-top:18px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.food-img{width:100%;height:120px;object-fit:cover;border-radius:12px;background:#eee}.food-name{font-weight:bold;margin-top:8px}.price{color:#e65100;font-weight:bold;font-size:18px;margin:5px 0}
+button{border:0;border-radius:10px;padding:10px 14px;background:#e65100;color:#fff;font-weight:bold;cursor:pointer}button.secondary{background:#555}button.green{background:#198754}button.red{background:#dc3545}button.blue{background:#0d6efd}button.full{width:100%;margin-top:8px}button:disabled{opacity:.55;cursor:not-allowed}
+input,select,textarea{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;margin:5px 0 10px;font-size:15px}.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 3px;box-shadow:0 -2px 8px #aaa;z-index:60}.nav button{background:transparent;color:#555;padding:6px;font-size:12px}.nav button.active{color:#e65100}
+.page{display:none;padding-bottom:80px}.page.active{display:block}.badge{background:#e65100;color:#fff;border-radius:20px;padding:4px 8px;font-size:11px}.status{display:inline-block;padding:6px 9px;border-radius:20px;background:#fff0dd;color:#e65100;font-size:12px;font-weight:bold}.role-badge{background:#212529;color:#fff;border-radius:20px;padding:5px 9px;font-size:11px}.qty{display:flex;align-items:center;gap:7px}.qty button{padding:5px 9px}.total{font-size:21px;font-weight:bold;color:#e65100}.admin,.restaurant,.delivery{background:#212529;color:#fff}.admin .card,.restaurant .card,.delivery .card{color:#222}.stat{text-align:center;padding:15px}.stat b{display:block;font-size:24px;color:#e65100}hr{border:0;border-top:1px solid #ddd}.empty{text-align:center;padding:35px 10px;color:#777}.notice{background:#fff3cd;color:#664d03;padding:10px;border-radius:10px;margin:10px 0}.success{background:#d1e7dd;color:#0f5132;padding:10px;border-radius:10px;margin:10px 0}.error{background:#f8d7da;color:#842029;padding:10px;border-radius:10px;margin:10px 0}.auth-card{max-width:500px;margin:30px auto}.hidden{display:none!important}.small-btn{padding:7px 10px;font-size:12px}.top-actions{display:flex;gap:7px;flex-wrap:wrap}.top-actions button{flex:1;min-width:120px}.info-row{display:flex;justify-content:space-between;gap:10px;margin:6px 0}.muted{color:#777;font-size:13px}.toast{position:fixed;left:50%;bottom:82px;transform:translateX(-50%);background:#212529;color:#fff;padding:12px 16px;border-radius:12px;z-index:1000;box-shadow:0 4px 16px #777;font-size:14px;max-width:90%;text-align:center}.assignment{border:1px solid #ddd;border-radius:10px;padding:10px;margin-top:8px}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.logo{font-size:18px}}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -57,7 +23,10 @@ hr{border:0;border-top:1px solid #ddd}
 <div class="logo">🍱 Maa Annapurna</div>
 <div class="small">Home Made Tiffin Service</div>
 </div>
-<div><span id="shopStatus" class="badge">OPEN</span></div>
+<div>
+<span id="shopStatus" class="badge">OPEN</span>
+<span id="roleBadge" class="role-badge hidden"></span>
+</div>
 </div>
 </header>
 
@@ -70,14 +39,13 @@ hr{border:0;border-top:1px solid #ddd}
 <input id="authPassword" type="password" placeholder="Password">
 <input id="authName" placeholder="नाम (सिर्फ Register के लिए)">
 <button class="full" onclick="loginUser()">Login</button>
-<button class="secondary full" onclick="registerUser()">Create Account</button>
+<button class="secondary full" onclick="registerUser()">Create Customer Account</button>
 </div>
 </div>
 </div>
 
 <div id="home" class="page">
 <div class="container">
-
 <div class="banner">
 <h2>घर जैसा स्वाद ❤️</h2>
 <p>स्वच्छ, स्वादिष्ट और ताजा घर का बना खाना आपके घर तक।</p>
@@ -108,7 +76,6 @@ Cart खोलें <span id="homeCartCount"></span>
 <h3>⭐ हमारे बारे में</h3>
 <p>माँ अन्नपूर्णा Home Made Tiffin Service में आपको घर जैसा स्वाद और भरोसेमंद सेवा देने का प्रयास किया जाता है।</p>
 </div>
-
 </div>
 </div>
 
@@ -118,9 +85,7 @@ Cart खोलें <span id="homeCartCount"></span>
 <h2>🍛 Today's Menu</h2>
 <span id="menuCount"></span>
 </div>
-
 <div class="notice">ताजा घर का बना खाना • Daily Fresh</div>
-
 <div id="menuList" class="grid"></div>
 </div>
 </div>
@@ -142,19 +107,15 @@ Cart खोलें <span id="homeCartCount"></span>
 
 <div id="profile" class="page">
 <div class="container">
-
 <h2>👤 Customer Profile</h2>
 
 <div class="card">
 <label>नाम</label>
 <input id="customerName" placeholder="अपना नाम">
-
 <label>Mobile Number</label>
 <input id="customerPhone" placeholder="10 digit mobile number">
-
 <label>Delivery Address</label>
 <textarea id="customerAddress" rows="3" placeholder="पूरा पता"></textarea>
-
 <button class="full" onclick="saveProfile()">Save Profile</button>
 </div>
 
@@ -185,7 +146,6 @@ Cart खोलें <span id="homeCartCount"></span>
 <option value="2">⭐⭐</option>
 <option value="1">⭐</option>
 </select>
-
 <textarea id="reviewText" placeholder="अपना अनुभव लिखें"></textarea>
 <button class="full" onclick="submitReview()">Submit Review</button>
 </div>
@@ -195,20 +155,89 @@ Cart खोलें <span id="homeCartCount"></span>
 <button class="green full" onclick="openWhatsApp()">WhatsApp Chat</button>
 </div>
 
+<button class="red full" onclick="logoutUser()">Logout</button>
+</div>
+</div>
+
+<!-- RESTAURANT -->
+<div id="restaurant" class="page restaurant">
+<div class="container">
+<h2>🍳 Restaurant Dashboard</h2>
+
+<div id="restaurantDenied" class="error hidden">
+Restaurant access नहीं है।
+</div>
+
+<div id="restaurantContent">
+
+<div class="grid">
+<div class="card stat">
+<b id="restFood">0</b>Menu Items
+</div>
+<div class="card stat">
+<b id="restOrders">0</b>Orders
+</div>
+</div>
+
 <div class="card">
-<h3>⚙️ Admin</h3>
-<button class="secondary full" onclick="openAdmin()">Admin Panel</button>
+<h3>🍛 Menu Management</h3>
+<p class="muted">Restaurant अपने menu items add/remove कर सकता है।</p>
+<input id="restFoodName" placeholder="Food Name">
+<input id="restFoodPrice" type="number" placeholder="Price">
+<input id="restFoodImage" placeholder="Image URL">
+<textarea id="restFoodDescription" placeholder="Description"></textarea>
+<button class="full" onclick="restaurantAddFood()">Add Food</button>
+</div>
+
+<div class="card">
+<h3>📋 Current Menu</h3>
+<div id="restaurantMenu"></div>
+</div>
+
+<div class="card">
+<h3>📦 Incoming Orders</h3>
+<div id="restaurantOrders"></div>
 </div>
 
 <button class="red full" onclick="logoutUser()">Logout</button>
+</div>
+</div>
+</div>
 
+<!-- DELIVERY -->
+<div id="delivery" class="page delivery">
+<div class="container">
+<h2>🛵 Delivery Dashboard</h2>
+
+<div id="deliveryDenied" class="error hidden">
+Delivery access नहीं है।
+</div>
+
+<div id="deliveryContent">
+
+<div class="grid">
+<div class="card stat">
+<b id="deliveryAssigned">0</b>Assigned
+</div>
+<div class="card stat">
+<b id="deliveryDone">0</b>Delivered
 </div>
 </div>
 
+<div class="card">
+<h3>🛵 My Deliveries</h3>
+<p class="muted">Admin द्वारा assign किए गए orders यहाँ दिखाई देंगे।</p>
+<div id="deliveryOrders"></div>
+</div>
+
+<button class="red full" onclick="logoutUser()">Logout</button>
+</div>
+</div>
+</div>
+<!-- ADMIN -->
 <div id="admin" class="page admin">
 <div class="container">
-
-<h2>🔐 Admin Dashboard</h2>
+<h2>👑 Admin Dashboard</h2>
 
 <div id="adminDenied" class="error hidden">
 Admin access नहीं है।
@@ -220,7 +249,7 @@ Admin access नहीं है।
 <div class="card stat"><b id="statOrders">0</b>Orders</div>
 <div class="card stat"><b id="statSales">₹0</b>Sales</div>
 <div class="card stat"><b id="statFood">0</b>Food Items</div>
-<div class="card stat"><b id="statCustomers">0</b>Customers</div>
+<div class="card stat"><b id="statUsers">0</b>Users</div>
 </div>
 
 <div class="card">
@@ -247,7 +276,16 @@ Admin access नहीं है।
 </div>
 
 <div class="card">
-<h3>📦 Manage Orders</h3>
+<h3>👥 User & Role Management</h3>
+<p class="muted">
+Existing Firebase users की role यहाँ बदली जा सकती है।
+New login account Firebase Authentication से बनाएं।
+</p>
+<div id="adminUsers"></div>
+</div>
+
+<div class="card">
+<h3>📦 Manage Orders & Delivery Assignment</h3>
 <div id="adminOrders"></div>
 </div>
 
@@ -266,8 +304,7 @@ Admin access नहीं है।
 
 </div>
 
-<button class="red full" onclick="showPage('home')">Exit Admin</button>
-
+<button class="red full" onclick="logoutUser()">Logout</button>
 </div>
 </div>
 
@@ -279,39 +316,21 @@ Admin access नहीं है।
 <button onclick="showPage('profile')">👤<br>Profile</button>
 </div>
 
+<div id="appToast" class="toast hidden"></div>
+
 <script type="module">
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import {
+getAuth,onAuthStateChanged,createUserWithEmailAndPassword,
+signInWithEmailAndPassword,signOut,updateProfile
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
-getAuth,
-onAuthStateChanged,
-createUserWithEmailAndPassword,
-signInWithEmailAndPassword,
-signOut,
-updateProfile
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+getFirestore,collection,doc,getDoc,setDoc,addDoc,
+updateDoc,deleteDoc,onSnapshot,query,where,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-import {
-getFirestore,
-collection,
-doc,
-getDoc,
-setDoc,
-addDoc,
-updateDoc,
-deleteDoc,
-onSnapshot,
-query,
-where,
-serverTimestamp
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-
-const firebaseConfig = {
+const firebaseConfig={
 apiKey:"AIzaSyBAro8dYjdUo8B7YRCUPX9WpI7_btf0CAI",
 authDomain:"ma-annpurna-tiffin.firebaseapp.com",
 projectId:"ma-annpurna-tiffin",
@@ -325,1384 +344,987 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
-let currentUser=null;
-let currentRole="customer";
-
-let foods=[];
-let orders=[];
-
-let cart=JSON.parse(
-localStorage.getItem("annapurnaCart")||"[]"
-);
-
-let settings={
+let currentUser=null,
+currentRole="customer",
+foods=[],
+orders=[],
+allUsers=[],
+cart=JSON.parse(localStorage.getItem("annapurnaCart")||"[]"),
+settings={
 shop:"OPEN",
 delivery:0,
 minOrder:0,
 offer:"₹299 से ऊपर के ऑर्डर पर विशेष ऑफर।"
-};
+},
+coupon=localStorage.getItem("annapurnaCoupon")||"";
 
-let coupon=
-localStorage.getItem("annapurnaCoupon")||"";
-
-let unsubFoods;
-let unsubSettings;
-let unsubOrders;
-let unsubAdminOrders;
-let unsubUsers;
-
+let unsubFoods=null,
+unsubSettings=null,
+unsubCustomerOrders=null,
+unsubAllOrders=null,
+unsubUsers=null;
 
 const $=id=>document.getElementById(id);
 
-const esc=s=>
-String(s??"").replace(
+const esc=s=>String(s??"").replace(
 /[&<>"']/g,
 c=>({
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-'"':"&quot;",
-"'":"&#39;"
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#39;'
 }[c])
 );
 
-
 window.showPage=function(page){
-
-document.querySelectorAll(".page")
-.forEach(p=>p.classList.remove("active"));
-
-$(page).classList.add("active");
-
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+if($(page))$(page).classList.add('active');
 window.scrollTo(0,0);
+renderForPage(page);
+};
 
-if(page==="menu")renderMenu();
-
-if(page==="home"){
+function renderForPage(page){
+if(page==='home'){
 renderPopular();
 renderCart();
 updateCartBadge();
 }
-
-if(page==="cart")renderCart();
-
-if(page==="orders")renderOrders();
-
-if(page==="profile")loadProfile();
-
-if(page==="admin")renderAdmin();
-
-};
-
+if(page==='menu')renderMenu();
+if(page==='cart')renderCart();
+if(page==='orders')renderOrders();
+if(page==='profile')loadProfile();
+if(page==='restaurant')renderRestaurant();
+if(page==='delivery')renderDelivery();
+if(page==='admin')renderAdmin();
+}
 
 function setAuthMessage(msg,error=false){
-
-$("authMessage").innerHTML=
-`<div class="${error?"error":"notice"}">${esc(msg)}</div>`;
-
+$('authMessage').innerHTML=
+`<div class="${error?'error':'notice'}">${esc(msg)}</div>`;
 }
 
-
-window.loginUser=async function(){
-
-const email=$("authEmail").value.trim();
-const password=$("authPassword").value;
+window.loginUser=async()=>{
+const email=$('authEmail').value.trim();
+const password=$('authPassword').value;
 
 if(!email||!password){
-setAuthMessage("Email और password भरें।",true);
+setAuthMessage('Email और password भरें।',true);
 return;
 }
 
 try{
-
-await signInWithEmailAndPassword(
-auth,email,password
-);
-
+await signInWithEmailAndPassword(auth,email,password);
 }catch(e){
-
-setAuthMessage(
-e.message||"Login failed.",
-true
-);
-
+setAuthMessage(e.message||'Login failed.',true);
 }
-
 };
 
-
-window.registerUser=async function(){
-
-const email=$("authEmail").value.trim();
-const password=$("authPassword").value;
-const name=$("authName").value.trim();
+window.registerUser=async()=>{
+const email=$('authEmail').value.trim();
+const password=$('authPassword').value;
+const name=$('authName').value.trim();
 
 if(!email||password.length<6||!name){
-
 setAuthMessage(
-"नाम, email और कम से कम 6 character password भरें।",
+'नाम, email और कम से कम 6 character password भरें।',
 true
 );
-
 return;
 }
 
 try{
+const cred=await createUserWithEmailAndPassword(auth,email,password);
+await updateProfile(cred.user,{displayName:name});
 
-const cred=
-await createUserWithEmailAndPassword(
-auth,email,password
-);
-
-await updateProfile(
-cred.user,
-{displayName:name}
-);
-
-await setDoc(
-doc(db,"users",cred.user.uid),
-{
+await setDoc(doc(db,'users',cred.user.uid),{
 email,
 name,
-phone:"",
-address:"",
-role:"customer",
+phone:'',
+address:'',
+role:'customer',
 createdAt:serverTimestamp()
-}
-);
+});
 
 }catch(e){
-
-setAuthMessage(
-e.message||"Registration failed.",
-true
-);
-
+setAuthMessage(e.message||'Registration failed.',true);
 }
-
 };
 
-
-window.logoutUser=async function(){
-
+window.logoutUser=async()=>{
 await signOut(auth);
-
 };
 
-
-onAuthStateChanged(
-auth,
-async user=>{
-
+onAuthStateChanged(auth,async user=>{
 currentUser=user;
 
 if(!user){
-
-$("mainNav").classList.add("hidden");
-
-showPage("auth");
-
+stopSubscriptions();
+$('mainNav').classList.add('hidden');
+$('roleBadge').classList.add('hidden');
+showPage('auth');
 return;
 }
 
-$("mainNav").classList.remove("hidden");
-
 await loadUserRole();
-
-subscribeData();
-
-showPage("home");
-
-}
-);
-
+startSubscriptions();
+routeByRole();
+});
 
 async function loadUserRole(){
-
-currentRole="customer";
+currentRole='customer';
 
 try{
+const s=await getDoc(doc(db,'users',currentUser.uid));
 
-const snap=
-await getDoc(
-doc(db,"users",currentUser.uid)
-);
-
-if(snap.exists()){
-
-const d=snap.data();
-
-currentRole=d.role||"customer";
-
+if(s.exists()){
+currentRole=s.data().role||'customer';
 }
-
 }catch(e){
-
 console.error(e);
-
 }
 
+$('roleBadge').textContent=currentRole.toUpperCase();
+$('roleBadge').classList.remove('hidden');
 }
 
+function stopSubscriptions(){
+[
+unsubFoods,
+unsubSettings,
+unsubCustomerOrders,
+unsubAllOrders,
+unsubUsers
+].forEach(u=>{
+if(typeof u==='function')u();
+});
 
-function subscribeData(){
+unsubFoods=null;
+unsubSettings=null;
+unsubCustomerOrders=null;
+unsubAllOrders=null;
+unsubUsers=null;
+}
 
-if(unsubFoods)unsubFoods();
-if(unsubSettings)unsubSettings();
-if(unsubOrders)unsubOrders();
-if(unsubAdminOrders)unsubAdminOrders();
-if(unsubUsers)unsubUsers();
+function startSubscriptions(){
+stopSubscriptions();
 
-
-unsubFoods=
-onSnapshot(
-collection(db,"foods"),
-snap=>{
-
-foods=
-snap.docs.map(
-d=>({
-id:d.id,
-...d.data()
-})
-);
-
+unsubFoods=onSnapshot(
+collection(db,'foods'),
+s=>{
+foods=s.docs.map(d=>({id:d.id,...d.data()}));
 renderMenu();
 renderPopular();
 renderAdminMenu();
+renderRestaurantMenu();
 
-if($("statFood"))
-$("statFood").innerText=foods.length;
-
+if($('restFood'))$('restFood').textContent=foods.length;
+if($('statFood'))$('statFood').textContent=foods.length;
 },
-e=>console.error("Foods:",e)
+e=>console.error('foods',e)
 );
 
+unsubSettings=onSnapshot(
+doc(db,'settings','main'),
+s=>{
+if(s.exists())settings={...settings,...s.data()};
 
-unsubSettings=
-onSnapshot(
-doc(db,"settings","main"),
-snap=>{
+$('shopStatus').textContent=settings.shop||'OPEN';
+$('offerText').textContent=settings.offer||'';
 
-if(snap.exists())
-settings={
-...settings,
-...snap.data()
-};
+if($('adminShopStatus'))
+$('adminShopStatus').value=settings.shop||'OPEN';
 
-$("shopStatus").innerText=
-settings.shop||"OPEN";
+if($('adminOffer'))
+$('adminOffer').value=settings.offer||'';
 
-$("offerText").innerText=
-settings.offer||"";
+if($('deliveryCharge'))
+$('deliveryCharge').value=settings.delivery||0;
 
-if($("adminShopStatus"))
-$("adminShopStatus").value=
-settings.shop||"OPEN";
-
-if($("adminOffer"))
-$("adminOffer").value=
-settings.offer||"";
-
-if($("deliveryCharge"))
-$("deliveryCharge").value=
-settings.delivery||0;
-
-if($("minOrder"))
-$("minOrder").value=
-settings.minOrder||0;
-
-renderCart();
-
+if($('minOrder'))
+$('minOrder').value=settings.minOrder||0;
 },
-e=>console.error("Settings:",e)
+e=>console.error('settings',e)
 );
 
-
-const oq=
-query(
-collection(db,"orders"),
-where(
-"userId",
-"==",
-currentUser.uid
-)
-);
-
-
-unsubOrders=
-onSnapshot(
-oq,
-snap=>{
-
-const customerOrders=
-snap.docs.map(
-d=>({
-id:d.id,
-...d.data()
-})
-);
-
-customerOrders.sort(
-(a,b)=>
-(b.createdAt?.seconds||0)-
-(a.createdAt?.seconds||0)
-);
-
-if(currentRole!=="admin")
-orders=customerOrders;
-
+if(currentRole==='customer'){
+unsubCustomerOrders=onSnapshot(
+query(collection(db,'orders'),where('userId','==',currentUser.uid)),
+s=>{
+orders=s.docs.map(d=>({id:d.id,...d.data()}));
+orders.sort(sortNewest);
 renderOrders();
-
 },
-e=>console.error("Orders:",e)
+e=>console.error('customer orders',e)
 );
+}
 
-
-if(currentRole==="admin"){
-
-unsubAdminOrders=
-onSnapshot(
-collection(db,"orders"),
-snap=>{
-
-orders=
-snap.docs.map(
-d=>({
-id:d.id,
-...d.data()
-})
-);
-
-orders.sort(
-(a,b)=>
-(b.createdAt?.seconds||0)-
-(a.createdAt?.seconds||0)
-);
-
+if(['admin','restaurant'].includes(currentRole)){
+unsubAllOrders=onSnapshot(
+collection(db,'orders'),
+s=>{
+orders=s.docs.map(d=>({id:d.id,...d.data()}));
+orders.sort(sortNewest);
+renderRestaurantOrders();
 renderAdminOrders();
+renderRestaurant();
 renderAdmin();
-
 },
-e=>console.error("Admin orders:",e)
+e=>console.error('all orders',e)
 );
+}
 
-
-unsubUsers=
-onSnapshot(
-collection(db,"users"),
-snap=>{
-
-if($("statCustomers"))
-$("statCustomers").innerText=
-snap.size;
-
+if(currentRole==='delivery'){
+unsubAllOrders=onSnapshot(
+query(
+collection(db,'orders'),
+where('deliveryId','==',currentUser.uid)
+),
+s=>{
+orders=s.docs.map(d=>({id:d.id,...d.data()}));
+orders.sort(sortNewest);
+renderDelivery();
 },
-e=>console.error("Users:",e)
+e=>console.error('delivery orders',e)
 );
+}
 
+if(currentRole==='admin'){
+unsubUsers=onSnapshot(
+collection(db,'users'),
+s=>{
+allUsers=s.docs.map(d=>({id:d.id,...d.data()}));
+
+if($('statUsers'))
+$('statUsers').textContent=allUsers.length;
+
+renderAdminUsers();
+renderAdminOrders();
+},
+e=>console.error('users',e)
+);
 }
 
 updateCartBadge();
 renderCart();
-
 }
 
+function sortNewest(a,b){
+return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0);
+}
 
-function renderMenu(){
-
-const box=$("menuList");
-
+function routeByRole(){
+if(currentRole==='admin')showPage('admin');
+else if(currentRole==='restaurant')showPage('restaurant');
+else if(currentRole==='delivery')showPage('delivery');
+else{
+$('mainNav').classList.remove('hidden');
+showPage('home');
+}
+}
+  function renderMenu(){
+const box=$('menuList');
 if(!box)return;
-
-box.innerHTML="";
+box.innerHTML='';
 
 if(!foods.length){
-
-box.innerHTML=
-'<div class="empty">अभी menu में food नहीं है।</div>';
-
+box.innerHTML='<div class="empty">अभी menu में food नहीं है।</div>';
 return;
-
 }
 
-foods.forEach(food=>{
-
+foods.forEach(f=>{
 box.innerHTML+=`
-
 <div class="card">
-
-<img
-class="food-img"
-src="${esc(food.image||"")}"
-onerror="this.style.display='none'">
-
-<div class="food-name">
-${esc(food.name)}
-</div>
-
-<p>
-${esc(food.description||"")}
-</p>
-
-<div class="price">
-₹${Number(food.price||0)}
-</div>
-
-<button
-class="full"
-onclick="addToCart('${food.id}')">
+<img class="food-img" src="${esc(f.image||'')}" onerror="this.style.display='none'">
+<div class="food-name">${esc(f.name)}</div>
+<p>${esc(f.description||'')}</p>
+<div class="price">₹${Number(f.price||0)}</div>
+<button class="full" onclick="addToCart('${f.id}')">
 ➕ Add to Cart
 </button>
-
-</div>
-
-`;
-
+</div>`;
 });
 
-$("menuCount").innerText=
-foods.length+" Items";
-
+$('menuCount').textContent=foods.length+' Items';
 }
-
 
 function renderPopular(){
-
-const box=$("popular");
-
+const box=$('popular');
 if(!box)return;
 
-box.innerHTML="";
+box.innerHTML='';
 
 if(!foods.length){
-
-box.innerHTML=
-'<div class="empty">Menu अभी तैयार किया जा रहा है।</div>';
-
+box.innerHTML='<div class="empty">Menu अभी तैयार किया जा रहा है।</div>';
 return;
-
 }
 
-foods.slice(0,4).forEach(food=>{
-
+foods.slice(0,4).forEach(f=>{
 box.innerHTML+=`
-
 <div class="card">
-
-<img
-class="food-img"
-src="${esc(food.image||"")}"
-onerror="this.style.display='none'">
-
-<div class="food-name">
-${esc(food.name)}
-</div>
-
-<div class="price">
-₹${Number(food.price||0)}
-</div>
-
-<button
-class="full"
-onclick="addToCart('${food.id}')">
+<img class="food-img" src="${esc(f.image||'')}" onerror="this.style.display='none'">
+<div class="food-name">${esc(f.name)}</div>
+<div class="price">₹${Number(f.price||0)}</div>
+<button class="full" onclick="addToCart('${f.id}')">
 🛒 Add to Cart
 </button>
-
-</div>
-
-`;
-
+</div>`;
 });
-
 }
 
-
-window.addToCart=function(id){
-
-if(settings.shop==="CLOSED"){
-
-alert(
-"अभी दुकान बंद है। कृपया बाद में ऑर्डर करें।"
-);
-
+window.addToCart=id=>{
+if(settings.shop==='CLOSED'){
+alert('अभी दुकान बंद है।');
 return;
-
 }
 
-const food=
-foods.find(x=>x.id===id);
+const f=foods.find(x=>x.id===id);
 
-if(!food){
-
-alert("Food item नहीं मिला।");
-
+if(!f){
+alert('Food item नहीं मिला।');
 return;
-
 }
 
-const item=
-cart.find(x=>x.id===id);
+const item=cart.find(x=>x.id===id);
 
-if(item){
-
-item.qty+=1;
-
-}else{
-
-cart.push({
-id:food.id,
-name:food.name,
-price:Number(food.price||0),
+if(item)item.qty++;
+else cart.push({
+id:f.id,
+name:f.name,
+price:Number(f.price||0),
 qty:1
 });
 
-}
-
 localStorage.setItem(
-"annapurnaCart",
+'annapurnaCart',
 JSON.stringify(cart)
 );
 
 updateCartBadge();
-
 renderCart();
-
-showToast(
-food.name+" cart में add हो गया ✅"
-);
-
+toast(f.name+' cart में add हो गया ✅');
 };
 
+window.changeQty=(id,ch)=>{
+const x=cart.find(i=>i.id===id);
+if(!x)return;
 
-function showToast(message){
+x.qty+=ch;
 
-let t=$("appToast");
-
-if(!t){
-
-t=document.createElement("div");
-
-t.id="appToast";
-
-t.style.cssText=
-"position:fixed;left:50%;bottom:82px;transform:translateX(-50%);background:#212529;color:#fff;padding:12px 16px;border-radius:12px;z-index:1000;box-shadow:0 4px 16px #777;font-size:14px;max-width:90%;text-align:center";
-
-document.body.appendChild(t);
-
-}
-
-t.textContent=message;
-
-t.style.display="block";
-
-clearTimeout(window.__toastTimer);
-
-window.__toastTimer=
-setTimeout(
-()=>{
-t.style.display="none";
-},
-1800
-);
-
-}
-
-
-window.changeQty=function(id,change){
-
-const item=
-cart.find(x=>x.id===id);
-
-if(!item)return;
-
-item.qty+=change;
-
-if(item.qty<=0){
-
-cart=
-cart.filter(x=>x.id!==id);
-
-}
+if(x.qty<=0)
+cart=cart.filter(i=>i.id!==id);
 
 localStorage.setItem(
-"annapurnaCart",
+'annapurnaCart',
 JSON.stringify(cart)
 );
 
 renderCart();
-
 updateCartBadge();
-
 };
-
-
-function getSubtotal(){
-
-return cart.reduce(
-(s,i)=>
-s+(Number(i.price)*i.qty),
-0
-);
-
-}
-
 
 function updateCartBadge(){
-
-const n=
-cart.reduce(
-(s,i)=>s+Number(i.qty||0),
-0
+const n=cart.reduce(
+(s,i)=>s+Number(i.qty||0),0
 );
 
-if($("cartBadge"))
-$("cartBadge").innerText=
-n?n:"";
+if($('cartBadge'))
+$('cartBadge').textContent=n||'';
 
-if($("homeCartCount"))
-$("homeCartCount").innerText=
-n?"("+n+")":"";
-
+if($('homeCartCount'))
+$('homeCartCount').textContent=n?'('+n+')':'';
 }
 
+function getSubtotal(){
+return cart.reduce(
+(s,i)=>s+Number(i.price)*Number(i.qty),
+0
+);
+}
 
 function renderCart(){
-
-const box=$("cartItems");
-const summary=$("cartSummary");
+const box=$('cartItems');
+const summary=$('cartSummary');
 
 if(!box||!summary)return;
 
 if(!cart.length){
-
 box.innerHTML=
 '<div class="empty">🛒 Cart खाली है<br><br><button onclick="showPage(\'menu\')">Menu देखें</button></div>';
 
-summary.innerHTML="";
-
+summary.innerHTML='';
 return;
-
 }
 
-box.innerHTML="";
-
-cart.forEach(item=>{
-
-box.innerHTML+=`
-
+box.innerHTML=cart.map(i=>`
 <div class="order">
-
-<b>${esc(item.name)}</b>
-
-<div>
-₹${item.price} × ${item.qty}
-</div>
-
+<b>${esc(i.name)}</b>
+<div>₹${i.price} × ${i.qty}</div>
 <div class="qty">
-
-<button
-onclick="changeQty('${item.id}',-1)">
-−
-</button>
-
-<b>${item.qty}</b>
-
-<button
-onclick="changeQty('${item.id}',1)">
-+
-</button>
-
+<button onclick="changeQty('${i.id}',-1)">−</button>
+<b>${i.qty}</b>
+<button onclick="changeQty('${i.id}',1)">+</button>
 </div>
-
 </div>
+`).join('');
 
-`;
-
-});
-
-
-const subtotal=getSubtotal();
-
-const delivery=
-Number(settings.delivery||0);
-
-const discount=
-coupon==="ANNAPURNA10"
-?
-Math.round(subtotal*.10)
-:
-0;
-
-const total=
-subtotal+delivery-discount;
-
+const sub=getSubtotal();
+const delivery=Number(settings.delivery||0);
+const discount=coupon==='ANNAPURNA10'
+?Math.round(sub*.1):0;
+const total=sub+delivery-discount;
 
 summary.innerHTML=`
-
 <div class="card">
-
-<p>Subtotal: ₹${subtotal}</p>
-
+<p>Subtotal: ₹${sub}</p>
 <p>Delivery: ₹${delivery}</p>
-
 <p>Discount: -₹${discount}</p>
-
 <hr>
-
-<div class="total">
-Total: ₹${total}
-</div>
-
-<button
-class="green full"
-onclick="checkout()">
+<div class="total">Total: ₹${total}</div>
+<button class="green full" onclick="checkout()">
 Proceed to Checkout
 </button>
-
-</div>
-
-`;
-
+</div>`;
 }
-
 
 async function getProfile(){
-
-const snap=
-await getDoc(
-doc(db,"users",currentUser.uid)
+const s=await getDoc(
+doc(db,'users',currentUser.uid)
 );
 
-return snap.exists()
-?
-snap.data()
-:
-{
-name:currentUser.displayName||"",
-phone:"",
-address:""
-};
-
+return s.exists()
+?s.data()
+:{name:currentUser.displayName||'',phone:'',address:''};
 }
-
 
 async function loadProfile(){
-
 if(!currentUser)return;
 
 try{
+const p=await getProfile();
 
-const p=
-await getProfile();
+$('customerName').value=
+p.name||currentUser.displayName||'';
 
-$("customerName").value=
-p.name||
-currentUser.displayName||
-"";
-
-$("customerPhone").value=
-p.phone||"";
-
-$("customerAddress").value=
-p.address||"";
+$('customerPhone').value=p.phone||'';
+$('customerAddress').value=p.address||'';
 
 }catch(e){
-
 console.error(e);
-
+}
 }
 
-}
-
-
-window.saveProfile=async function(){
-
-if(!currentUser)return;
-
-const data={
-
-name:
-$("customerName").value.trim(),
-
-phone:
-$("customerPhone").value.trim(),
-
-address:
-$("customerAddress").value.trim(),
-
-email:
-currentUser.email||""
-
-};
-
+window.saveProfile=async()=>{
 try{
-
 await setDoc(
-doc(db,"users",currentUser.uid),
-data,
+doc(db,'users',currentUser.uid),
+{
+name:$('customerName').value.trim(),
+phone:$('customerPhone').value.trim(),
+address:$('customerAddress').value.trim(),
+email:currentUser.email||''
+},
 {merge:true}
 );
 
-alert(
-"Profile saved successfully."
-);
+alert('Profile saved successfully.');
 
 }catch(e){
-
-alert(
-"Profile save failed: "+
-e.message
-);
-
+alert(e.message);
 }
-
 };
 
+window.checkout=async()=>{
+if(!cart.length)
+return alert('Cart खाली है');
 
-window.checkout=async function(){
+const p=await getProfile();
 
-if(!cart.length){
-
-alert("Cart खाली है");
-
+if(!p.name||!p.phone||!p.address){
+alert('पहले Profile में नाम, mobile और address भरें।');
+showPage('profile');
 return;
-
 }
 
-const profile=
-await getProfile();
+const sub=getSubtotal();
 
 if(
-!profile.name||
-!profile.phone||
-!profile.address
-){
-
-alert(
-"पहले Profile में नाम, mobile और address भरें।"
+Number(settings.minOrder||0)>0 &&
+sub<Number(settings.minOrder)
+)
+return alert(
+'Minimum order ₹'+settings.minOrder+' है।'
 );
 
-showPage("profile");
-
-return;
-
-}
-
-const subtotal=
-getSubtotal();
-
-if(
-Number(settings.minOrder||0)>0&&
-subtotal<Number(settings.minOrder)
-){
-
-alert(
-"Minimum order ₹"+
-settings.minOrder+
-" है।"
+const payment=prompt(
+'Payment Method चुनें:\n1 = Cash on Delivery\n2 = UPI'
 );
 
-return;
+if(!['1','2'].includes(payment))return;
 
-}
-
-const payment=
-prompt(
-"Payment Method चुनें:\n1 = Cash on Delivery\n2 = UPI"
-);
-
-if(
-payment!=="1"&&
-payment!=="2"
-)return;
-
-const discount=
-coupon==="ANNAPURNA10"
-?
-Math.round(subtotal*.10)
-:
-0;
+const discount=coupon==='ANNAPURNA10'
+?Math.round(sub*.1):0;
 
 const total=
-subtotal+
-Number(settings.delivery||0)-
-discount;
+sub+Number(settings.delivery||0)-discount;
 
 try{
 
-const ref=
-await addDoc(
-collection(db,"orders"),
+const ref=await addDoc(
+collection(db,'orders'),
 {
-
-userId:
-currentUser.uid,
-
-customer:{
-...profile
-},
-
-items:
-[...cart],
-
-subtotal,
-
-delivery:
-Number(settings.delivery||0),
-
+userId:currentUser.uid,
+customer:{...p},
+items:[...cart],
+subtotal:sub,
+delivery:Number(settings.delivery||0),
 discount,
-
 total,
-
-payment:
-payment==="1"
-?
-"COD"
-:
-"UPI",
-
-status:
-"Order Received",
-
-createdAt:
-serverTimestamp()
-
+payment:payment==='1'?'COD':'UPI',
+status:'Order Received',
+deliveryId:'',
+restaurantStatus:'New',
+createdAt:serverTimestamp()
 }
 );
 
 cart=[];
-
-localStorage.removeItem(
-"annapurnaCart"
-);
-
-coupon="";
-
-localStorage.removeItem(
-"annapurnaCoupon"
-);
+localStorage.removeItem('annapurnaCart');
+coupon='';
+localStorage.removeItem('annapurnaCoupon');
 
 updateCartBadge();
 
 alert(
-"Order successfully placed!\n\n"+
-"Order ID: "+
+'Order successfully placed!\n\nOrder ID: '+
 ref.id+
-"\nTotal: ₹"+
-total
+'\nTotal: ₹'+total
 );
 
-showPage("orders");
+showPage('orders');
 
 }catch(e){
-
-alert(
-"Order save failed: "+
-e.message
-);
-
+alert('Order save failed: '+e.message);
 }
-
 };
 
-
 function renderOrders(){
-
-const box=
-$("ordersList");
+const box=$('ordersList');
 
 if(!box)return;
 
 if(!orders.length){
-
 box.innerHTML=
 '<div class="empty">📦 अभी कोई order नहीं है।</div>';
-
 return;
-
 }
 
-box.innerHTML="";
-
-orders.forEach(order=>{
-
-const items=
-(order.items||[])
-.map(
-x=>
-`${esc(x.name)} × ${x.qty}`
-)
-.join(", ");
-
-box.innerHTML+=`
-
+box.innerHTML=orders.map(o=>`
 <div class="order">
-
-<h3>
-Order #${esc(order.id)}
-</h3>
-
-<p>${items}</p>
-
-<p>
-Payment:
-${esc(order.payment)}
-</p>
-
-<p class="status">
-${esc(order.status)}
-</p>
-
-<h3>
-₹${Number(order.total||0)}
-</h3>
-
-<button
-onclick="reorder('${order.id}')">
-🔄 Reorder
-</button>
-
-<button
-class="green"
-onclick="trackOrder('${order.id}')">
+<h3>Order #${esc(o.id)}</h3>
+<p>${(o.items||[]).map(
+x=>esc(x.name)+' × '+x.qty
+).join(', ')}</p>
+<p>Payment: ${esc(o.payment)}</p>
+<p class="status">${esc(o.status)}</p>
+<h3>₹${Number(o.total||0)}</h3>
+<button onclick="reorder('${o.id}')">🔄 Reorder</button>
+<button class="green" onclick="trackOrder('${o.id}')">
 📍 Track
 </button>
-
 </div>
-
-`;
-
-});
-
+`).join('');
 }
 
+window.reorder=id=>{
+const o=orders.find(x=>x.id===id);
+if(!o)return;
 
-window.reorder=function(id){
+(o.items||[]).forEach(i=>{
+const e=cart.find(x=>x.id===i.id);
 
-const order=
-orders.find(x=>x.id===id);
-
-if(!order)return;
-
-(order.items||[]).forEach(item=>{
-
-const e=
-cart.find(x=>x.id===item.id);
-
-if(e)
-e.qty+=item.qty;
-
-else
-cart.push({...item});
-
+if(e)e.qty+=i.qty;
+else cart.push({...i});
 });
 
 localStorage.setItem(
-"annapurnaCart",
+'annapurnaCart',
 JSON.stringify(cart)
 );
 
 updateCartBadge();
-
-showPage("cart");
-
+showPage('cart');
 };
 
+window.trackOrder=id=>{
+const o=orders.find(x=>x.id===id);
 
-window.trackOrder=function(id){
-
-const o=
-orders.find(x=>x.id===id);
-
-if(o){
-
+if(o)
 alert(
-"Order Status\n\n"+
-"Order ID: "+
+'Order Status\n\nOrder ID: '+
 o.id+
-"\n\n"+
-o.status
+'\n\n'+o.status
 );
-
-}
-
 };
 
+window.saveSubscription=async()=>{
+const plan=$('subscriptionPlan').value;
 
-window.saveSubscription=
-async function(){
-
-const plan=
-$("subscriptionPlan").value;
-
-if(!plan){
-
-alert("Plan select करें।");
-
-return;
-
-}
+if(!plan)
+return alert('Plan select करें।');
 
 try{
-
 await addDoc(
-collection(db,"subscriptions"),
+collection(db,'subscriptions'),
 {
 userId:currentUser.uid,
 plan,
-status:"Requested",
+status:'Requested',
 createdAt:serverTimestamp()
 }
 );
 
 alert(
-"Subscription request saved: "+
-plan
+'Subscription request saved: '+plan
 );
 
 }catch(e){
-
-alert(
-"Subscription failed: "+
-e.message
-);
-
+alert(e.message);
 }
-
 };
 
+window.applyCoupon=()=>{
+const c=$('couponInput').value
+.trim().toUpperCase();
 
-window.applyCoupon=function(){
-
-const code=
-$("couponInput")
-.value
-.trim()
-.toUpperCase();
-
-if(code==="ANNAPURNA10"){
-
-coupon=code;
-
+if(c==='ANNAPURNA10'){
+coupon=c;
 localStorage.setItem(
-"annapurnaCoupon",
-code
+'annapurnaCoupon',
+c
 );
 
-$("couponMessage").innerHTML=
+$('couponMessage').innerHTML=
 '<div class="success">10% discount applied!</div>';
 
 renderCart();
 
 }else{
-
-$("couponMessage").innerHTML=
+$('couponMessage').innerHTML=
 '<div class="notice">Invalid coupon.</div>';
-
 }
-
 };
 
+window.submitReview=async()=>{
+const text=$('reviewText').value.trim();
 
-window.submitReview=
-async function(){
-
-const text=
-$("reviewText")
-.value
-.trim();
-
-if(!text){
-
-alert("Review लिखें।");
-
-return;
-
-}
+if(!text)
+return alert('Review लिखें।');
 
 try{
 
 await addDoc(
-collection(db,"reviews"),
+collection(db,'reviews'),
 {
 userId:currentUser.uid,
-rating:Number($("rating").value),
+rating:Number($('rating').value),
 text,
 createdAt:serverTimestamp()
 }
 );
 
-$("reviewText").value="";
+$('reviewText').value='';
 
-alert(
-"Thank you for your review ❤️"
-);
+alert('Thank you for your review ❤️');
 
 }catch(e){
-
-alert(
-"Review save failed: "+
-e.message
-);
-
+alert(e.message);
 }
-
 };
 
-
-window.openWhatsApp=function(){
-
+window.openWhatsApp=()=>{
 window.open(
-"https://wa.me/?text="+
+'https://wa.me/?text='+
 encodeURIComponent(
-"Namaste Maa Annapurna, mujhe tiffin service ke baare mein jankari chahiye."
+'Namaste Maa Annapurna, mujhe tiffin service ke baare mein jankari chahiye.'
 ),
-"_blank"
+'_blank'
 );
-
 };
 
-
-window.openAdmin=
-async function(){
-
-await loadUserRole();
-
-if(currentRole!=="admin"){
-
-alert(
-"Admin access नहीं है।"
-);
-
+// RESTAURANT
+function renderRestaurant(){
+if(currentRole!=='restaurant'){
+$('restaurantDenied').classList.remove('hidden');
+$('restaurantContent').classList.add('hidden');
 return;
-
 }
 
-showPage("admin");
+$('restaurantDenied').classList.add('hidden');
+$('restaurantContent').classList.remove('hidden');
 
-};
+$('restFood').textContent=foods.length;
+$('restOrders').textContent=orders.length;
 
-
-async function renderAdmin(){
-
-if(currentRole!=="admin"){
-
-$("adminDenied")
-.classList.remove("hidden");
-
-$("adminContent")
-.classList.add("hidden");
-
-return;
-
+renderRestaurantMenu();
+renderRestaurantOrders();
 }
 
-$("adminDenied")
-.classList.add("hidden");
-
-$("adminContent")
-.classList.remove("hidden");
-
-$("statOrders").innerText=
-orders.length;
-
-$("statSales").innerText=
-"₹"+
-orders.reduce(
-(s,o)=>
-s+Number(o.total||0),
-0
-);
-
-$("statFood").innerText=
-foods.length;
-
-$("adminShopStatus").value=
-settings.shop||"OPEN";
-
-$("adminOffer").value=
-settings.offer||"";
-
-$("deliveryCharge").value=
-settings.delivery||0;
-
-$("minOrder").value=
-settings.minOrder||0;
-
-renderAdminMenu();
-
-renderAdminOrders();
-
-}
-
-
-function renderAdminMenu(){
-
-const box=
-$("adminMenu");
+function renderRestaurantMenu(){
+const box=$('restaurantMenu');
 
 if(!box)return;
 
-box.innerHTML="";
-
-foods.forEach(food=>{
-
-box.innerHTML+=`
-
-<div class="order">
-
-<b>${esc(food.name)}</b>
-
-<p>
-₹${Number(food.price||0)}
-</p>
-
-<button
-class="red small-btn"
-onclick="deleteFood('${food.id}')">
+box.innerHTML=foods.length
+?foods.map(f=>`
+<div class="assignment">
+<b>${esc(f.name)}</b> — ₹${Number(f.price||0)}
+<br>
+<button class="red small-btn"
+onclick="restaurantDeleteFood('${f.id}')">
 Delete
 </button>
-
 </div>
-
-`;
-
-});
-
+`).join('')
+:'<div class="empty">Menu खाली है।</div>';
 }
 
+window.restaurantAddFood=async()=>{
+if(currentRole!=='restaurant')return;
 
-window.addFood=
-async function(){
+const name=$('restFoodName').value.trim();
+const price=Number($('restFoodPrice').value);
+const image=$('restFoodImage').value.trim()
+||'https://images.unsplash.com/photo-1547592180-85f173990554?w=600';
+const description=$('restFoodDescription').value.trim();
 
-const name=
-$("foodName").value.trim();
-
-const price=
-Number($("foodPrice").value);
-
-const image=
-$("foodImage").value.trim()||
-"https://images.unsplash.com/photo-1547592180-85f173990554?w=600";
-
-const description=
-$("foodDescription").value.trim();
-
-if(!name||!price){
-
-alert(
-"Food name aur price bharo."
-);
-
-return;
-
-}
+if(!name||!price)
+return alert('Food name aur price bharo.');
 
 try{
 
 await addDoc(
-collection(db,"foods"),
+collection(db,'foods'),
+{
+name,
+price,
+image,
+description,
+restaurantId:currentUser.uid,
+createdAt:serverTimestamp()
+}
+);
+
+$('restFoodName').value='';
+$('restFoodPrice').value='';
+$('restFoodImage').value='';
+$('restFoodDescription').value='';
+
+alert('Food add ho gaya.');
+
+}catch(e){
+alert(e.message);
+}
+};
+
+window.restaurantDeleteFood=async id=>{
+if(!confirm('Food delete karna hai?'))return;
+
+try{
+await deleteDoc(doc(db,'foods',id));
+}catch(e){
+alert(e.message);
+}
+};
+
+function renderRestaurantOrders(){
+const box=$('restaurantOrders');
+
+if(!box)return;
+
+if(!orders.length){
+box.innerHTML=
+'<div class="empty">Abhi koi order nahi hai.</div>';
+return;
+}
+
+box.innerHTML=orders.map(o=>`
+<div class="order">
+<b>Order #${esc(o.id)}</b>
+<p>Customer: ${esc(o.customer?.name||'')}</p>
+<p>Items: ${(o.items||[]).map(
+i=>esc(i.name)+' × '+i.qty
+).join(', ')}</p>
+<p>Total: ₹${Number(o.total||0)}</p>
+<p class="status">${esc(o.status)}</p>
+
+<select onchange="restaurantUpdateStatus('${o.id}',this.value)">
+<option ${o.status==='Order Received'?'selected':''}>
+Order Received
+</option>
+<option ${o.status==='Preparing'?'selected':''}>
+Preparing
+</option>
+<option ${o.status==='Ready for Pickup'?'selected':''}>
+Ready for Pickup
+</option>
+<option ${o.status==='Cancelled'?'selected':''}>
+Cancelled
+</option>
+</select>
+</div>
+`).join('');
+}
+
+window.restaurantUpdateStatus=async(id,status)=>{
+try{
+await updateDoc(
+doc(db,'orders',id),
+{
+status,
+restaurantStatus:status
+}
+);
+}catch(e){
+alert('Status update failed: '+e.message);
+}
+};
+
+// DELIVERY
+function renderDelivery(){
+
+if(currentRole!=='delivery'){
+$('deliveryDenied').classList.remove('hidden');
+$('deliveryContent').classList.add('hidden');
+return;
+}
+
+$('deliveryDenied').classList.add('hidden');
+$('deliveryContent').classList.remove('hidden');
+
+const assigned=orders.filter(
+o=>!['Delivered','Cancelled'].includes(o.status)
+);
+
+const done=orders.filter(
+o=>o.status==='Delivered'
+);
+
+$('deliveryAssigned').textContent=assigned.length;
+$('deliveryDone').textContent=done.length;
+
+const box=$('deliveryOrders');
+
+if(!box)return;
+
+if(!orders.length){
+box.innerHTML=
+'<div class="empty">अभी कोई delivery assigned नहीं है।</div>';
+return;
+}
+
+box.innerHTML=orders.map(o=>`
+<div class="order">
+<h3>Order #${esc(o.id)}</h3>
+<p><b>Customer:</b> ${esc(o.customer?.name||'')}</p>
+<p><b>Mobile:</b> ${esc(o.customer?.phone||'')}</p>
+<p><b>Address:</b> ${esc(o.customer?.address||'')}</p>
+<p><b>Items:</b> ${(o.items||[]).map(
+i=>esc(i.name)+' × '+i.qty
+).join(', ')}</p>
+<p><b>Total:</b> ₹${Number(o.total||0)}</p>
+<p class="status">${esc(o.status)}</p>
+
+<select onchange="deliveryUpdateStatus('${o.id}',this.value)">
+<option ${o.status==='Ready for Pickup'?'selected':''}>
+Ready for Pickup
+</option>
+<option ${o.status==='Out for Delivery'?'selected':''}>
+Out for Delivery
+</option>
+<option ${o.status==='Delivered'?'selected':''}>
+Delivered
+</option>
+</select>
+
+</div>
+`).join('');
+}
+
+window.deliveryUpdateStatus=async(id,status)=>{
+try{
+await updateDoc(
+doc(db,'orders',id),
+{
+status,
+deliveryStatus:status
+}
+);
+}catch(e){
+alert('Status update failed: '+e.message);
+}
+};
+
+// ADMIN
+function renderAdmin(){
+
+if(currentRole!=='admin'){
+$('adminDenied').classList.remove('hidden');
+$('adminContent').classList.add('hidden');
+return;
+}
+
+$('adminDenied').classList.add('hidden');
+$('adminContent').classList.remove('hidden');
+
+$('statOrders').textContent=orders.length;
+
+$('statSales').textContent=
+'₹'+orders.reduce(
+(s,o)=>s+Number(o.total||0),0
+);
+
+$('statFood').textContent=foods.length;
+$('statUsers').textContent=allUsers.length;
+
+renderAdminMenu();
+renderAdminUsers();
+renderAdminOrders();
+}
+
+function renderAdminMenu(){
+const box=$('adminMenu');
+
+if(!box)return;
+
+box.innerHTML=foods.length
+?foods.map(f=>`
+<div class="order">
+<b>${esc(f.name)}</b>
+<p>₹${Number(f.price||0)}</p>
+<button class="red small-btn"
+onclick="deleteFood('${f.id}')">
+Delete
+</button>
+</div>
+`).join('')
+:'<div class="empty">Menu खाली है।</div>';
+}
+
+window.addFood=async()=>{
+const name=$('foodName').value.trim();
+const price=Number($('foodPrice').value);
+const image=$('foodImage').value.trim()
+||'https://images.unsplash.com/photo-1547592180-85f173990554?w=600';
+const description=$('foodDescription').value.trim();
+
+if(!name||!price)
+return alert('Food name aur price bharo.');
+
+try{
+
+await addDoc(
+collection(db,'foods'),
 {
 name,
 price,
@@ -1712,283 +1334,289 @@ createdAt:serverTimestamp()
 }
 );
 
-$("foodName").value="";
-$("foodPrice").value="";
-$("foodImage").value="";
-$("foodDescription").value="";
+$('foodName').value='';
+$('foodPrice').value='';
+$('foodImage').value='';
+$('foodDescription').value='';
 
-alert(
-"Food successfully add ho gaya."
-);
+alert('Food add ho gaya.');
 
 }catch(e){
-
-alert(
-"Food add failed: "+
-e.message
-);
-
+alert(e.message);
 }
-
 };
 
-
-window.deleteFood=
-async function(id){
-
-if(
-!confirm(
-"Kya aap ye food delete karna chahte hain?"
-)
-)return;
+window.deleteFood=async id=>{
+if(!confirm('Kya aap ye food delete karna chahte hain?'))
+return;
 
 try{
-
-await deleteDoc(
-doc(db,"foods",id)
-);
-
-alert(
-"Food delete ho gaya."
-);
-
+await deleteDoc(doc(db,'foods',id));
 }catch(e){
-
-alert(
-"Delete failed: "+
-e.message
-);
-
+alert(e.message);
 }
-
 };
 
-
-window.updateShopStatus=
-async function(){
-
+window.updateShopStatus=async()=>{
 try{
 
 await setDoc(
-doc(db,"settings","main"),
+doc(db,'settings','main'),
 {
-shop:
-$("adminShopStatus").value
+shop:$('adminShopStatus').value
 },
 {merge:true}
 );
 
-alert(
-"Shop status update ho gaya."
-);
+alert('Shop status update ho gaya.');
 
 }catch(e){
-
 alert(e.message);
-
 }
-
 };
 
-
-window.saveOffer=
-async function(){
-
+window.saveOffer=async()=>{
 try{
 
 await setDoc(
-doc(db,"settings","main"),
+doc(db,'settings','main'),
 {
-offer:
-$("adminOffer").value.trim()
+offer:$('adminOffer').value.trim()
 },
 {merge:true}
 );
 
-alert(
-"Offer save ho gaya."
-);
+alert('Offer save ho gaya.');
 
 }catch(e){
-
 alert(e.message);
-
 }
-
 };
 
-
-window.saveSettings=
-async function(){
-
+window.saveSettings=async()=>{
 try{
 
 await setDoc(
-doc(db,"settings","main"),
+doc(db,'settings','main'),
 {
-delivery:
-Number(
-$("deliveryCharge").value
-)||0,
-
-minOrder:
-Number(
-$("minOrder").value
-)||0
+delivery:Number($('deliveryCharge').value)||0,
+minOrder:Number($('minOrder').value)||0
 },
 {merge:true}
 );
 
-alert(
-"Settings save ho gayi."
-);
+alert('Settings save ho gayi.');
 
 }catch(e){
-
 alert(e.message);
-
 }
-
 };
 
-
-function renderAdminOrders(){
-
-const box=
-$("adminOrders");
+function renderAdminUsers(){
+const box=$('adminUsers');
 
 if(!box)return;
 
-box.innerHTML="";
-
-if(!orders.length){
-
+if(!allUsers.length){
 box.innerHTML=
-'<div class="empty">Abhi koi order nahi hai.</div>';
-
+'<div class="empty">Users नहीं मिले।</div>';
 return;
-
 }
 
-orders.forEach(order=>{
+box.innerHTML=allUsers.map(u=>`
+<div class="assignment">
+<b>${esc(u.name||'No name')}</b>
+<br>
+<span class="muted">${esc(u.email||'')}</span>
 
-const items=
-(order.items||[])
-.map(
-i=>
-`${esc(i.name)} x ${i.qty}`
-)
-.join(", ");
+<select onchange="changeUserRole('${u.id}',this.value)">
+<option value="customer"
+${u.role==='customer'?'selected':''}>
+Customer
+</option>
 
-box.innerHTML+=`
+<option value="restaurant"
+${u.role==='restaurant'?'selected':''}>
+Restaurant
+</option>
 
+<option value="delivery"
+${u.role==='delivery'?'selected':''}>
+Delivery
+</option>
+
+<option value="admin"
+${u.role==='admin'?'selected':''}>
+Admin
+</option>
+</select>
+</div>
+`).join('');
+}
+
+window.changeUserRole=async(uid,role)=>{
+
+if(uid===currentUser.uid&&role!=='admin'){
+alert(
+'Apne current admin account ka role yahan se change na karein.'
+);
+renderAdminUsers();
+return;
+}
+
+try{
+
+await updateDoc(
+doc(db,'users',uid),
+{role}
+);
+
+alert('Role updated: '+role);
+
+}catch(e){
+alert('Role update failed: '+e.message);
+}
+};
+
+function renderAdminOrders(){
+
+const box=$('adminOrders');
+
+if(!box)return;
+
+if(!orders.length){
+box.innerHTML=
+'<div class="empty">Abhi koi order nahi hai.</div>';
+return;
+}
+
+const deliveryUsers=
+allUsers.filter(u=>u.role==='delivery');
+
+box.innerHTML=orders.map(o=>{
+
+const options=deliveryUsers.map(u=>`
+<option value="${u.id}"
+${o.deliveryId===u.id?'selected':''}>
+${esc(u.name||u.email||u.id)}
+</option>
+`).join('');
+
+return `
 <div class="order">
+<h3>Order #${esc(o.id)}</h3>
 
-<h3>
-Order #${esc(order.id)}
-</h3>
+<p><b>Customer:</b>
+${esc(o.customer?.name||'')}</p>
 
-<p>
-<b>Customer:</b>
-${esc(order.customer?.name||"")}
-</p>
+<p><b>Mobile:</b>
+${esc(o.customer?.phone||'')}</p>
 
-<p>
-<b>Mobile:</b>
-${esc(order.customer?.phone||"")}
-</p>
+<p><b>Address:</b>
+${esc(o.customer?.address||'')}</p>
 
-<p>
-<b>Address:</b>
-${esc(order.customer?.address||"")}
-</p>
+<p><b>Items:</b>
+${(o.items||[]).map(
+i=>esc(i.name)+' × '+i.qty
+).join(', ')}</p>
 
-<p>
-<b>Items:</b>
-${items}
-</p>
-
-<p>
-<b>Payment:</b>
-${esc(order.payment)}
-</p>
-
-<p>
-<b>Total:</b>
-₹${Number(order.total||0)}
-</p>
+<p><b>Total:</b>
+₹${Number(o.total||0)}</p>
 
 <p class="status">
-${esc(order.status)}
+${esc(o.status)}
 </p>
 
-<select
-onchange="updateOrderStatus('${order.id}',this.value)">
+<label>🛵 Delivery Partner</label>
 
-<option
-${order.status==="Order Received"?"selected":""}>
+<select onchange="assignDelivery('${o.id}',this.value)">
+<option value="">Not Assigned</option>
+${options}
+</select>
+
+<select onchange="adminUpdateOrderStatus('${o.id}',this.value)">
+
+<option ${o.status==='Order Received'?'selected':''}>
 Order Received
 </option>
 
-<option
-${order.status==="Preparing"?"selected":""}>
+<option ${o.status==='Preparing'?'selected':''}>
 Preparing
 </option>
 
-<option
-${order.status==="Out for Delivery"?"selected":""}>
+<option ${o.status==='Ready for Pickup'?'selected':''}>
+Ready for Pickup
+</option>
+
+<option ${o.status==='Out for Delivery'?'selected':''}>
 Out for Delivery
 </option>
 
-<option
-${order.status==="Delivered"?"selected":""}>
+<option ${o.status==='Delivered'?'selected':''}>
 Delivered
 </option>
 
-<option
-${order.status==="Cancelled"?"selected":""}>
+<option ${o.status==='Cancelled'?'selected':''}>
 Cancelled
 </option>
 
 </select>
 
 </div>
-
 `;
 
-});
-
+}).join('');
 }
 
-
-window.updateOrderStatus=
-async function(id,status){
-
+window.assignDelivery=async(id,deliveryId)=>{
 try{
 
 await updateDoc(
-doc(db,"orders",id),
+doc(db,'orders',id),
 {
-status
+deliveryId:deliveryId||''
 }
 );
 
 alert(
-"Order status update ho gaya."
+deliveryId
+?'Delivery assigned.'
+:'Delivery assignment removed.'
 );
 
 }catch(e){
-
-alert(
-"Status update failed: "+
-e.message
-);
-
+alert(e.message);
 }
-
 };
 
-</script>
+window.adminUpdateOrderStatus=async(id,status)=>{
+try{
 
+await updateDoc(
+doc(db,'orders',id),
+{status}
+);
+
+}catch(e){
+alert(e.message);
+}
+};
+
+function toast(msg){
+
+const t=$('appToast');
+
+t.textContent=msg;
+t.classList.remove('hidden');
+
+clearTimeout(window.__t);
+
+window.__t=setTimeout(
+()=>t.classList.add('hidden'),
+1800
+);
+}
+
+</script>
 </body>
 </html>
