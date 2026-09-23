@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#e65100">
+<title>Maa Annapurna - Home Made Tiffin Service</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#fff8f0;
+ color:#222;
+}
+header{
+ background:linear-gradient(135deg,#e65100,#ff9800);
+ color:white;
+ padding:16px;
+ position:sticky;
+ top:0;
+ z-index:10;
+ box-shadow:0 2px 8px #999;
+}
+.header-row{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+.logo{
+ font-size:22px;
+ font-weight:bold;
+}
+.small{font-size:12px}
+.container{
+ max-width:650px;
+ margin:auto;
+ padding:12px;
+}
+.banner{
+ background:#fff;
+ border-radius:15px;
+ padding:18px;
+ margin:12px 0;
+ box-shadow:0 2px 8px #ddd;
+}
+.banner h2{
+ margin:0 0 8px;
+ color:#e65100;
+}
+.section-title{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-top:18px;
+}
+.grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:10px;
+}
+.card{
+ background:white;
+ border-radius:15px;
+ padding:12px;
+ box-shadow:0 2px 8px #ddd;
+}
+.food-img{
+ width:100%;
+ height:120px;
+ object-fit:cover;
+ border-radius:12px;
+ background:#eee;
+}
+.food-name{
+ font-weight:bold;
+ margin-top:8px;
+}
+.price{
+ color:#e65100;
+ font-weight:bold;
+ font-size:18px;
+ margin:5px 0;
+}
+button{
+ border:0;
+ border-radius:10px;
+ padding:10px 14px;
+ background:#e65100;
+ color:white;
+ font-weight:bold;
+ cursor:pointer;
+}
+button.secondary{
+ background:#555;
+}
+button.green{
+ background:#198754;
+}
+button.red{
+ background:#dc3545;
+}
+button.full{
+ width:100%;
+ margin-top:8px;
+}
+input,select,textarea{
+ width:100%;
+ padding:11px;
+ border:1px solid #ccc;
+ border-radius:9px;
+ margin:5px 0 10px;
+ font-size:15px;
+}
+.nav{
+ position:fixed;
+ bottom:0;
+ left:0;
+ right:0;
+ background:white;
+ display:flex;
+ justify-content:space-around;
+ padding:9px 3px;
+ box-shadow:0 -2px 8px #aaa;
+ z-index:20;
+}
+.nav button{
+ background:transparent;
+ color:#555;
+ padding:6px;
+ font-size:12px;
+}
+.nav button.active{
+ color:#e65100;
+}
+.page{display:none;padding-bottom:80px}
+.page.active{display:block}
+.badge{
+ background:#e65100;
+ color:white;
+ border-radius:20px;
+ padding:4px 8px;
+ font-size:11px;
+}
+.order{
+ background:white;
+ border-radius:12px;
+ padding:12px;
+ margin:10px 0;
+ box-shadow:0 2px 7px #ddd;
+}
+.status{
+ display:inline-block;
+ padding:6px 9px;
+ border-radius:20px;
+ background:#fff0dd;
+ color:#e65100;
+ font-size:12px;
+ font-weight:bold;
+}
+.qty{
+ display:flex;
+ align-items:center;
+ gap:7px;
+}
+.qty button{
+ padding:5px 9px;
+}
+.total{
+ font-size:21px;
+ font-weight:bold;
+ color:#e65100;
+}
+.admin{
+ background:#212529;
+ color:white;
+}
+.admin .card{
+ color:#222;
+}
+.stat{
+ text-align:center;
+ padding:15px;
+}
+.stat b{
+ display:block;
+ font-size:24px;
+ color:#e65100;
+}
+hr{
+ border:0;
+ border-top:1px solid #ddd;
+}
+.empty{
+ text-align:center;
+ padding:35px 10px;
+ color:#777;
+}
+.notice{
+ background:#fff3cd;
+ color:#664d03;
+ padding:10px;
+ border-radius:10px;
+ margin:10px 0;
+}
+.success{
+ background:#d1e7dd;
+ color:#0f5132;
+ padding:10px;
+ border-radius:10px;
+ margin:10px 0;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="header-row">
+<div>
+<div class="logo">🍱 Maa Annapurna</div>
+<div class="small">Home Made Tiffin Service</div>
+</div>
+<div>
+<span id="shopStatus" class="badge">OPEN</span>
+</div>
+</div>
+</header>
+
+<!-- HOME -->
+<div id="home" class="page active">
+<div class="container">
+
+<div class="banner">
+<h2>घर जैसा स्वाद ❤️</h2>
+<p>स्वच्छ, स्वादिष्ट और ताजा घर का बना खाना आपके घर तक।</p>
+<button onclick="showPage('menu')">आज का Menu देखें</button>
+</div>
+
+<div class="banner">
+<h3>📢 आज की Special Offer</h3>
+<p id="offerText">₹299 से ऊपर के ऑर्डर पर विशेष ऑफर।</p>
+</div>
+
+<div class="section-title">
+<h3>🍛 Popular Tiffin</h3>
+<button onclick="showPage('menu')">View All</button>
+</div>
+
+<div id="popular" class="grid"></div>
+
+<div class="banner">
+<h3>⭐ हमारे बारे में</h3>
+<p>माँ अन्नपूर्णा Home Made Tiffin Service में आपको घर जैसा स्वाद और भरोसेमंद सेवा देने का प्रयास किया जाता है।</p>
+</div>
+
+</div>
+</div>
+
+<!-- MENU -->
+<div id="menu" class="page">
+<div class="container">
+
+<div class="section-title">
+<h2>🍛 Today's Menu</h2>
+<span id="menuCount"></span>
+</div>
+
+<div class="notice">
+ताजा घर का बना खाना • Daily Fresh
+</div>
+
+<div id="menuList" class="grid"></div>
+
+</div>
+</div>
+
+<!-- CART -->
+<div id="cart" class="page">
+<div class="container">
+<h2>🛒 आपका Cart</h2>
+<div id="cartItems"></div>
+<div id="cartSummary"></div>
+</div>
+</div>
+
+<!-- ORDERS -->
+<div id="orders" class="page">
+<div class="container">
+<h2>📦 My Orders</h2>
+<div id="ordersList"></div>
+</div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+<div class="container">
+
+<h2>👤 Customer Profile</h2>
+
+<div class="card">
+<label>नाम</label>
+<input id="customerName" placeholder="अपना नाम">
+
+<label>Mobile Number</label>
+<input id="customerPhone" placeholder="10 digit mobile number">
+
+<label>Delivery Address</label>
+<textarea id="customerAddress" rows="3"
+placeholder="पूरा पता"></textarea>
+
+<button class="full" onclick="saveProfile()">Save Profile</button>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h3>🔄 Subscription</h3>
+<p>Daily / Weekly Tiffin Subscription</p>
+
+<select id="subscriptionPlan">
+<option value="">Select Plan</option>
+<option>Daily Tiffin</option>
+<option>Weekly Tiffin</option>
+<option>Monthly Tiffin</option>
+</select>
+
+<button class="full" onclick="saveSubscription()">Subscribe</button>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h3>🎟️ Coupon</h3>
+<input id="couponInput" placeholder="Coupon Code">
+<button class="full" onclick="applyCoupon()">Apply Coupon</button>
+<div id="couponMessage"></div>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h3>⭐ Review</h3>
+<select id="rating">
+<option value="5">⭐⭐⭐⭐⭐</option>
+<option value="4">⭐⭐⭐⭐</option>
+<option value="3">⭐⭐⭐</option>
+<option value="2">⭐⭐</option>
+<option value="1">⭐</option>
+</select>
+<textarea id="reviewText" placeholder="अपना अनुभव लिखें"></textarea>
+<button class="full" onclick="submitReview()">Submit Review</button>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h3>📞 Contact</h3>
+<p>WhatsApp से हमसे संपर्क करें</p>
+<button class="green full" onclick="openWhatsApp()">
+WhatsApp Chat
+</button>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h3>⚙️ Admin</h3>
+<button class="secondary full" onclick="adminLogin()">
+Admin Panel
+</button>
+</div>
+
+</div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="page admin">
+<div class="container">
+
+<h2>🔐 Admin Dashboard</h2>
+
+<div class="grid">
+<div class="card stat">
+<b id="statOrders">0</b>
+Orders
+</div>
+<div class="card stat">
+<b id="statSales">₹0</b>
+Sales
+</div>
+<div class="card stat">
+<b id="statFood">0</b>
+Food Items
+</div>
+<div class="card stat">
+<b id="statCustomers">0</b>
+Customers
+</div>
+</div>
+
+<div class="card">
+<h3>🏪 Shop Status</h3>
+<select id="adminShopStatus">
+<option value="OPEN">OPEN</option>
+<option value="CLOSED">CLOSED</option>
+</select>
+<button class="full" onclick="updateShopStatus()">Update Status</button>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h3>🍛 Add Food Item</h3>
+
+<input id="foodName" placeholder="Food Name">
+<input id="foodPrice" type="number" placeholder="Price">
+<input id="foodImage" placeholder="Image URL">
+<textarea id="foodDescription" placeholder="Description"></textarea>
+
+<button class="full" onclick="addFood()">Add Food</button>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h3>🍽️ Manage Menu</h3>
+<div id="adminMenu"></div>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h3>📦 Manage Orders</h3>
+<div id="adminOrders"></div>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h3>📢 Offer / Banner</h3>
+<input id="adminOffer" placeholder="Offer text">
+<button class="full" onclick="saveOffer()">Save Offer</button>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h3>💰 Business Settings</h3>
+<input id="deliveryCharge" type="number" placeholder="Delivery Charge">
+<input id="minOrder" type="number" placeholder="Minimum Order">
+<button class="full" onclick="saveSettings()">Save Settings</button>
+</div>
+
+<button class="red full" onclick="showPage('home')">
+Exit Admin
+</button>
+
+</div>
+</div>
+
+<!-- NAVIGATION -->
+<div class="nav">
+
+<button onclick="showPage('home')" id="navHome">🏠<br>Home</button>
+
+<button onclick="showPage('menu')" id="navMenu">🍛<br>Menu</button>
+
+<button onclick="showPage('cart')" id="navCart">
+🛒<br>Cart <span id="cartBadge"></span>
+</button>
+
+<button onclick="showPage('orders')" id="navOrders">📦<br>Orders</button>
+
+<button onclick="showPage('profile')" id="navProfile">👤<br>Profile</button>
+
+</div>
+
+<script>
+
+/* ================================
+   DATABASE - LOCAL STORAGE
+================================ */
+
+const defaultFoods=[
+{
+ id:1,
+ name:"Regular Veg Tiffin",
+ price:80,
+ image:"https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600",
+ description:"4 Roti, Dal, Sabji, Rice"
+},
+{
+ id:2,
+ name:"Special Veg Thali",
+ price:120,
+ image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600",
+ description:"Roti, Dal, 2 Sabji, Rice, Salad"
+},
+{
+ id:3,
+ name:"Paneer Tiffin",
+ price:140,
+ image:"https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600",
+ description:"Paneer Sabji, Dal, Roti, Rice"
+},
+{
+ id:4,
+ name:"Dal Rice",
+ price:70,
+ image:"https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600",
+ description:"Dal + Rice + Salad"
+}
+];
+
+let foods=JSON.parse(localStorage.getItem("annapurnaFoods"))||defaultFoods;
+
+let cart=JSON.parse(localStorage.getItem("annapurnaCart"))||[];
+
+let orders=JSON.parse(localStorage.getItem("annapurnaOrders"))||[];
+
+let profile=JSON.parse(localStorage.getItem("annapurnaProfile"))||{
+ name:"",
+ phone:"",
+ address:""
+};
+
+let settings=JSON.parse(localStorage.getItem("annapurnaSettings"))||{
+ shop:"OPEN",
+ delivery:0,
+ minOrder:0,
+ offer:"₹299 से ऊपर के ऑर्डर पर विशेष ऑफर।"
+};
+
+let coupon=localStorage.getItem("annapurnaCoupon")||"";
+
+function saveData(){
+
+localStorage.setItem("annapurnaFoods",JSON.stringify(foods));
+localStorage.setItem("annapurnaCart",JSON.stringify(cart));
+localStorage.setItem("annapurnaOrders",JSON.stringify(orders));
+localStorage.setItem("annapurnaProfile",JSON.stringify(profile));
+localStorage.setItem("annapurnaSettings",JSON.stringify(settings));
+
+}
+
+/* ================================
+   NAVIGATION
+================================ */
+
+function showPage(page){
+
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.remove("active");
+});
+
+document.getElementById(page).classList.add("active");
+
+window.scrollTo(0,0);
+
+if(page==="menu")renderMenu();
+if(page==="cart")renderCart();
+if(page==="orders")renderOrders();
+if(page==="profile")loadProfile();
+if(page==="admin")renderAdmin();
+
+}
+
+/* ================================
+   MENU
+================================ */
+
+function renderMenu(){
+
+const box=document.getElementById("menuList");
+
+box.innerHTML="";
+
+foods.forEach(food=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<img class="food-img"
+src="${food.image}"
+onerror="this.style.display='none'">
+
+<div class="food-name">${food.name}</div>
+
+<p>${food.description||""}</p>
+
+<div class="price">₹${food.price}</div>
+
+<button class="full"
+onclick="addToCart(${food.id})">
+➕ Add to Cart
+</button>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("menuCount").innerText=
+foods.length+" Items";
+
+}
+
+/* ================================
+   POPULAR
+================================ */
+
+function renderPopular(){
+
+const box=document.getElementById("popular");
+
+box.innerHTML="";
+
+foods.slice(0,4).forEach(food=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<img class="food-img"
+src="${food.image}"
+onerror="this.style.display='none'">
+
+<div class="food-name">${food.name}</div>
+
+<div class="price">₹${food.price}</div>
+
+<button class="full"
+onclick="addToCart(${food.id})">
+Add
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+/* ================================
+   CART
+================================ */
+
+function addToCart(id){
+
+if(settings.shop==="CLOSED"){
+
+alert("अभी दुकान बंद है। कृपया बाद में ऑर्डर करें।");
+return;
+
+}
+
+const food=foods.find(x=>x.id===id);
+
+const item=cart.find(x=>x.id===id);
+
+if(item)item.qty++;
+
+else cart.push({
+id:food.id,
+name:food.name,
+price:food.price,
+qty:1
+});
+
+saveData();
+updateCartBadge();
+
+alert(food.name+" cart में add हो गया।");
+
+}
+
+function changeQty(id,change){
+
+const item=cart.find(x=>x.id===id);
+
+if(!item)return;
+
+item.qty+=change;
+
+if(item.qty<=0){
+
+cart=cart.filter(x=>x.id!==id);
+
+}
+
+saveData();
+renderCart();
+updateCartBadge();
+
+}
+
+function getSubtotal(){
+
+return cart.reduce((sum,item)=>
+sum+(item.price*item.qty),0);
+
+}
+
+function renderCart(){
+
+const box=document.getElementById("cartItems");
+
+if(cart.length===0){
+
+box.innerHTML=`<div class="empty">
+🛒 Cart खाली है<br><br>
+<button onclick="showPage('menu')">Menu देखें</button>
+</div>`;
+
+document.getElementById("cartSummary").innerHTML="";
+
+return;
+
+}
+
+box.innerHTML="";
+
+cart.forEach(item=>{
+
+box.innerHTML+=`
+
+<div class="order">
+
+<b>${item.name}</b>
+
+<div>₹${item.price} × ${item.qty}</div>
+
+<div class="qty">
+
+<button onclick="changeQty(${item.id},-1)">−</button>
+
+<b>${item.qty}</b>
+
+<button onclick="changeQty(${item.id},1)">+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+let subtotal=getSubtotal();
+
+let delivery=settings.delivery||0;
+
+let discount=0;
+
+if(coupon==="ANNAPURNA10"){
+
+discount=Math.round(subtotal*0.10);
+
+}
+
+let total=subtotal+delivery-discount;
+
+document.getElementById("cartSummary").innerHTML=`
+
+<div class="card">
+
+<p>Subtotal: ₹${subtotal}</p>
+
+<p>Delivery: ₹${delivery}</p>
+
+<p>Discount: -₹${discount}</p>
+
+<hr>
+
+<div class="total">Total: ₹${total}</div>
+
+<button class="green full"
+onclick="checkout()">
+Proceed to Checkout
+</button>
+
+</div>
+
+`;
+
+}
+
+/* ================================
+   CHECKOUT
+================================ */
+
+function checkout(){
+
+if(cart.length===0){
+
+alert("Cart खाली है");
+return;
+
+}
+
+loadProfile();
+
+if(!profile.name||!profile.phone||!profile.address){
+
+alert("पहले Profile में नाम, mobile और address भरें।");
+showPage("profile");
+return;
+
+}
+
+const subtotal=getSubtotal();
+
+if(settings.minOrder>0 && subtotal<settings.minOrder){
+
+alert("Minimum order ₹"+settings.minOrder+" है।");
+return;
+
+}
+
+const payment=prompt(
+"Payment Method चुनें:\n1 = Cash on Delivery\n2 = UPI"
+);
+
+if(payment!=="1" && payment!=="2")return;
+
+let method=payment==="1"?"COD":"UPI";
+
+let discount=coupon==="ANNAPURNA10"
+?Math.round(subtotal*0.10):0;
+
+let total=subtotal+(settings.delivery||0)-discount;
+
+const order={
+id:"MA"+Date.now(),
+date:new Date().toLocaleString("hi-IN"),
+customer:profile,
+items:[...cart],
+subtotal,
+delivery:settings.delivery||0,
+discount,
+total,
+payment:method,
+status:"Order Received"
+};
+
+orders.unshift(order);
+
+cart=[];
+
+coupon="";
+
+saveData();
+
+alert(
+"Order successfully placed!\n\n"+
+"Order ID: "+order.id+
+"\nTotal: ₹"+order.total
+);
+
+showPage("orders");
+
+}
+
+/* ================================
+   ORDERS
+================================ */
+
+function renderOrders(){
+
+const box=document.getElementById("ordersList");
+
+if(orders.length===0){
+
+box.innerHTML=`
+<div class="empty">
+📦 अभी कोई order नहीं है।
+</div>`;
+
+return;
+
+}
+
+box.innerHTML="";
+
+orders.forEach(order=>{
+
+let items=order.items.map(x=>
+`${x.name} × ${x.qty}`
+).join(", ");
+
+box.innerHTML+=`
+
+<div class="order">
+
+<h3>Order #${order.id}</h3>
+
+<p>${order.date}</p>
+
+<p>${items}</p>
+
+<p>Payment: ${order.payment}</p>
+
+<p class="status">${order.status}</p>
+
+<h3>₹${order.total}</h3>
+
+<button onclick="reorder('${order.id}')">
+🔄 Reorder
+</button>
+
+<button class="green"
+onclick="trackOrder('${order.id}')">
+📍 Track
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+function reorder(id){
+
+const order=orders.find(x=>x.id===id);
+
+if(!order)return;
+
+order.items.forEach(item=>{
+
+const existing=cart.find(x=>x.id===item.id);
+
+if(existing)existing.qty+=item.qty;
+
+else cart.push({...item});
+
+});
+
+saveData();
+
+updateCartBadge();
+
+showPage("cart");
+
+}
+
+function trackOrder(id){
+
+const order=orders.find(x=>x.id===id);
+
+alert(
+"Order Status\n\n"+
+"Order ID: "+order.id+
+"\n\n"+order.status
+);
+
+}
+
+/* ================================
+   PROFILE
+================================ */
+
+function loadProfile(){
+
+document.getElementById("customerName").value=profile.name||"";
+
+document.getElementById("customerPhone").value=profile.phone||"";
+
+document.getElementById("customerAddress").value=profile.address||"";
+
+}
+
+function saveProfile(){
+
+profile={
+name:document.getElementById("customerName").value.trim(),
+phone:document.getElementById("customerPhone").value.trim(),
+address:document.getElementById("customerAddress").value.trim()
+};
+
+saveData();
+
+alert("Profile saved successfully.");
+
+}
+
+/* ================================
+   SUBSCRIPTION
+================================ */
+
+function saveSubscription(){
+
+const plan=document.getElementById("subscriptionPlan").value;
+
+if(!plan){
+
+alert("Plan select करें।");
+return;
+
+}
+
+localStorage.setItem("annapurnaSubscription",plan);
+
+alert(
+"Subscription request saved:\n"+plan+
+"\n\nहम आपसे संपर्क करेंगे।"
+);
+
+}
+
+/* ================================
+   COUPON
+================================ */
+
+function applyCoupon(){
+
+const code=document.getElementById("couponInput").value
+.trim().toUpperCase();
+
+if(code==="ANNAPURNA10"){
+
+coupon=code;
+
+document.getElementById("couponMessage").innerHTML=
+`<div class="success">10% discount applied!</div>`;
+
+saveData();
+
+}else{
+
+document.getElementById("couponMessage").innerHTML=
+`<div class="notice">Invalid coupon.</div>`;
+
+}
+
+}
+
+/* ================================
+   REVIEW
+================================ */
+
+function submitReview(){
+
+const rating=document.getElementById("rating").value;
+
+const text=document.getElementById("reviewText").value;
+
+if(!text){
+
+alert("Review लिखें।");
+return;
+
+}
+
+let reviews=
+JSON.parse(localStorage.getItem("annapurnaReviews")||"[]");
+
+reviews.push({
+rating,
+text,
+date:new Date().toLocaleString("hi-IN")
+});
+
+localStorage.setItem(
+"annapurnaReviews",
+JSON.stringify(reviews)
+);
+
+document.getElementById("reviewText").value="";
+
+alert("Thank you for your review ❤️");
+
+}
+
+/* ================================
+   WHATSAPP
+================================ */
+
+function openWhatsApp(){
+
+const phone=profile.phone||"";
+
+const message=
+"Namaste Maa Annapurna, mujhe tiffin service ke baare mein jankari chahiye.";
+
+window.open(
+"https://wa.me/?text="+encodeURIComponent(message),
+"_blank"
+);
+
+}
+
+/* ================================
+   ADMIN LOGIN
+================================ */
+
+function adminLogin(){
+
+const password=prompt("Admin Password डालें:");
+
+if(password==="1234"){
+
+showPage("admin");
+
+}else{
+
+alert("Wrong password.");
+
+}
+
+}
+
+/* ================================
+   ADMIN DASHBOARD
+================================ */
+
+function renderAdmin(){
+
+document.getElementById("statOrders").innerText=
+orders.length;
+
+const sales=orders.reduce(
+(sum,o)=>sum+Number(o.total||0),0
+);
+
+document.getElementById("statSales").innerText=
+"₹"+sales;
+
+document.getElementById("statFood").innerText=
+foods.length;
+
+const customers=new Set(
+orders.map(o=>o.customer.phone)
+);
+
+document.getElementById("statCustomers").innerText=
+customers.size;
+
+document.getElementById("adminShopStatus").value=
+settings.shop;
+
+document.getElementById("adminOffer").value=
+settings.offer;
+
+document.getElementById("deliveryCharge").value=
+settings.delivery;
+
+document.getElementById("minOrder").value=
+settings.minOrder;
+
+renderAdminMenu();
+renderAdminOrders();
+
+}
+
+function renderAdminMenu(){
+
+const box=document.getElementById("adminMenu");
+
+box.innerHTML="";
+
+foods.forEach(food=>{
+
+box.innerHTML+=`
+
+<div class="order">
+
+<b>${food.name}</b>
+
+<p>₹${food.price}</p>
+
+<button class="red"
+onclick="deleteFood(${food.id})">
+Delete
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+function addFood(){
+
+const name=document.getElementById("foodName").value.trim();
+
+const price=Number(
+document.getElementById("foodPrice").value
+);
+
+const image=document.getElementById("foodImage").value.trim()
+||"https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600";
+
+c
