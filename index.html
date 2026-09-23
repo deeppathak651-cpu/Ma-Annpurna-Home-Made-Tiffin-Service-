@@ -5,215 +5,34 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#e65100">
 <title>Maa Annapurna - Home Made Tiffin Service</title>
-
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;
- font-family:Arial,sans-serif;
- background:#fff8f0;
- color:#222;
-}
-header{
- background:linear-gradient(135deg,#e65100,#ff9800);
- color:white;
- padding:16px;
- position:sticky;
- top:0;
- z-index:10;
- box-shadow:0 2px 8px #999;
-}
-.header-row{
- display:flex;
- justify-content:space-between;
- align-items:center;
-}
-.logo{
- font-size:22px;
- font-weight:bold;
-}
-.small{font-size:12px}
-.container{
- max-width:650px;
- margin:auto;
- padding:12px;
-}
-.banner{
- background:#fff;
- border-radius:15px;
- padding:18px;
- margin:12px 0;
- box-shadow:0 2px 8px #ddd;
-}
-.banner h2{
- margin:0 0 8px;
- color:#e65100;
-}
-.section-title{
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin-top:18px;
-}
-.grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:10px;
-}
-.card{
- background:white;
- border-radius:15px;
- padding:12px;
- box-shadow:0 2px 8px #ddd;
-}
-.food-img{
- width:100%;
- height:120px;
- object-fit:cover;
- border-radius:12px;
- background:#eee;
-}
-.food-name{
- font-weight:bold;
- margin-top:8px;
-}
-.price{
- color:#e65100;
- font-weight:bold;
- font-size:18px;
- margin:5px 0;
-}
-button{
- border:0;
- border-radius:10px;
- padding:10px 14px;
- background:#e65100;
- color:white;
- font-weight:bold;
- cursor:pointer;
-}
-button.secondary{
- background:#555;
-}
-button.green{
- background:#198754;
-}
-button.red{
- background:#dc3545;
-}
-button.full{
- width:100%;
- margin-top:8px;
-}
-input,select,textarea{
- width:100%;
- padding:11px;
- border:1px solid #ccc;
- border-radius:9px;
- margin:5px 0 10px;
- font-size:15px;
-}
-.nav{
- position:fixed;
- bottom:0;
- left:0;
- right:0;
- background:white;
- display:flex;
- justify-content:space-around;
- padding:9px 3px;
- box-shadow:0 -2px 8px #aaa;
- z-index:20;
-}
-.nav button{
- background:transparent;
- color:#555;
- padding:6px;
- font-size:12px;
-}
-.nav button.active{
- color:#e65100;
-}
-.page{display:none;padding-bottom:80px}
-.page.active{display:block}
-.badge{
- background:#e65100;
- color:white;
- border-radius:20px;
- padding:4px 8px;
- font-size:11px;
-}
-.order{
- background:white;
- border-radius:12px;
- padding:12px;
- margin:10px 0;
- box-shadow:0 2px 7px #ddd;
-}
-.status{
- display:inline-block;
- padding:6px 9px;
- border-radius:20px;
- background:#fff0dd;
- color:#e65100;
- font-size:12px;
- font-weight:bold;
-}
-.qty{
- display:flex;
- align-items:center;
- gap:7px;
-}
-.qty button{
- padding:5px 9px;
-}
-.total{
- font-size:21px;
- font-weight:bold;
- color:#e65100;
-}
-.admin{
- background:#212529;
- color:white;
-}
-.admin .card{
- color:#222;
-}
-.stat{
- text-align:center;
- padding:15px;
-}
-.stat b{
- display:block;
- font-size:24px;
- color:#e65100;
-}
-hr{
- border:0;
- border-top:1px solid #ddd;
-}
-.empty{
- text-align:center;
- padding:35px 10px;
- color:#777;
-}
-.notice{
- background:#fff3cd;
- color:#664d03;
- padding:10px;
- border-radius:10px;
- margin:10px 0;
-}
-.success{
- background:#d1e7dd;
- color:#0f5132;
- padding:10px;
- border-radius:10px;
- margin:10px 0;
-}
+body{margin:0;font-family:Arial,sans-serif;background:#fff8f0;color:#222}
+header{background:linear-gradient(135deg,#e65100,#ff9800);color:white;padding:16px;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px #999}
+.header-row{display:flex;justify-content:space-between;align-items:center}.logo{font-size:22px;font-weight:bold}.small{font-size:12px}
+.container{max-width:650px;margin:auto;padding:12px}
+.banner,.card,.order{background:#fff;border-radius:15px;padding:14px;margin:12px 0;box-shadow:0 2px 8px #ddd}
+.banner h2{margin:0 0 8px;color:#e65100}.section-title{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.food-img{width:100%;height:120px;object-fit:cover;border-radius:12px;background:#eee}
+.food-name{font-weight:bold;margin-top:8px}.price{color:#e65100;font-weight:bold;font-size:18px;margin:5px 0}
+button{border:0;border-radius:10px;padding:10px 14px;background:#e65100;color:white;font-weight:bold;cursor:pointer}
+button.secondary{background:#555}button.green{background:#198754}button.red{background:#dc3545}button.full{width:100%;margin-top:8px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;margin:5px 0 10px;font-size:15px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:9px 3px;box-shadow:0 -2px 8px #aaa;z-index:20}
+.nav button{background:transparent;color:#555;padding:6px;font-size:12px}.nav button.active{color:#e65100}
+.page{display:none;padding-bottom:80px}.page.active{display:block}.badge{background:#e65100;color:white;border-radius:20px;padding:4px 8px;font-size:11px}
+.status{display:inline-block;padding:6px 9px;border-radius:20px;background:#fff0dd;color:#e65100;font-size:12px;font-weight:bold}
+.qty{display:flex;align-items:center;gap:7px}.qty button{padding:5px 9px}.total{font-size:21px;font-weight:bold;color:#e65100}
+.admin{background:#212529;color:white}.admin .card{color:#222}.stat{text-align:center;padding:15px}.stat b{display:block;font-size:24px;color:#e65100}
+hr{border:0;border-top:1px solid #ddd}.empty{text-align:center;padding:35px 10px;color:#777}
+.notice{background:#fff3cd;color:#664d03;padding:10px;border-radius:10px;margin:10px 0}
+.success{background:#d1e7dd;color:#0f5132;padding:10px;border-radius:10px;margin:10px 0}
+.error{background:#f8d7da;color:#842029;padding:10px;border-radius:10px;margin:10px 0}
+.auth-card{max-width:500px;margin:30px auto}
+.hidden{display:none!important}
+.small-btn{padding:7px 10px;font-size:12px}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -222,16 +41,28 @@ hr{
 <div class="logo">🍱 Maa Annapurna</div>
 <div class="small">Home Made Tiffin Service</div>
 </div>
-<div>
-<span id="shopStatus" class="badge">OPEN</span>
-</div>
+<div><span id="shopStatus" class="badge">OPEN</span></div>
 </div>
 </header>
 
-<!-- HOME -->
-<div id="home" class="page active">
+<!-- AUTH -->
+<div id="auth" class="page active">
 <div class="container">
+<div class="banner auth-card">
+<h2>🔐 Maa Annapurna Login</h2>
+<p id="authMessage">Login करें या नया customer account बनाएं।</p>
+<input id="authEmail" type="email" placeholder="Email">
+<input id="authPassword" type="password" placeholder="Password">
+<input id="authName" placeholder="नाम (सिर्फ Register के लिए)">
+<button class="full" onclick="loginUser()">Login</button>
+<button class="secondary full" onclick="registerUser()">Create Account</button>
+</div>
+</div>
+</div>
 
+<!-- HOME -->
+<div id="home" class="page">
+<div class="container">
 <div class="banner">
 <h2>घर जैसा स्वाद ❤️</h2>
 <p>स्वच्छ, स्वादिष्ट और ताजा घर का बना खाना आपके घर तक।</p>
@@ -240,7 +71,7 @@ hr{
 
 <div class="banner">
 <h3>📢 आज की Special Offer</h3>
-<p id="offerText">₹299 से ऊपर के ऑर्डर पर विशेष ऑफर।</p>
+<p id="offerText">Loading...</p>
 </div>
 
 <div class="section-title">
@@ -254,25 +85,18 @@ hr{
 <h3>⭐ हमारे बारे में</h3>
 <p>माँ अन्नपूर्णा Home Made Tiffin Service में आपको घर जैसा स्वाद और भरोसेमंद सेवा देने का प्रयास किया जाता है।</p>
 </div>
-
 </div>
 </div>
 
 <!-- MENU -->
 <div id="menu" class="page">
 <div class="container">
-
 <div class="section-title">
 <h2>🍛 Today's Menu</h2>
 <span id="menuCount"></span>
 </div>
-
-<div class="notice">
-ताजा घर का बना खाना • Daily Fresh
-</div>
-
+<div class="notice">ताजा घर का बना खाना • Daily Fresh</div>
 <div id="menuList" class="grid"></div>
-
 </div>
 </div>
 
@@ -307,34 +131,30 @@ hr{
 <input id="customerPhone" placeholder="10 digit mobile number">
 
 <label>Delivery Address</label>
-<textarea id="customerAddress" rows="3"
-placeholder="पूरा पता"></textarea>
+<textarea id="customerAddress" rows="3" placeholder="पूरा पता"></textarea>
 
 <button class="full" onclick="saveProfile()">Save Profile</button>
 </div>
 
-<div class="card" style="margin-top:12px">
+<div class="card">
 <h3>🔄 Subscription</h3>
-<p>Daily / Weekly Tiffin Subscription</p>
-
 <select id="subscriptionPlan">
 <option value="">Select Plan</option>
 <option>Daily Tiffin</option>
 <option>Weekly Tiffin</option>
 <option>Monthly Tiffin</option>
 </select>
-
 <button class="full" onclick="saveSubscription()">Subscribe</button>
 </div>
 
-<div class="card" style="margin-top:12px">
+<div class="card">
 <h3>🎟️ Coupon</h3>
 <input id="couponInput" placeholder="Coupon Code">
 <button class="full" onclick="applyCoupon()">Apply Coupon</button>
 <div id="couponMessage"></div>
 </div>
 
-<div class="card" style="margin-top:12px">
+<div class="card">
 <h3>⭐ Review</h3>
 <select id="rating">
 <option value="5">⭐⭐⭐⭐⭐</option>
@@ -347,20 +167,17 @@ placeholder="पूरा पता"></textarea>
 <button class="full" onclick="submitReview()">Submit Review</button>
 </div>
 
-<div class="card" style="margin-top:12px">
+<div class="card">
 <h3>📞 Contact</h3>
-<p>WhatsApp से हमसे संपर्क करें</p>
-<button class="green full" onclick="openWhatsApp()">
-WhatsApp Chat
-</button>
+<button class="green full" onclick="openWhatsApp()">WhatsApp Chat</button>
 </div>
 
-<div class="card" style="margin-top:12px">
+<div class="card">
 <h3>⚙️ Admin</h3>
-<button class="secondary full" onclick="adminLogin()">
-Admin Panel
-</button>
+<button class="secondary full" onclick="openAdmin()">Admin Panel</button>
 </div>
+
+<button class="red full" onclick="logoutUser()">Logout</button>
 
 </div>
 </div>
@@ -371,23 +188,17 @@ Admin Panel
 
 <h2>🔐 Admin Dashboard</h2>
 
+<div id="adminDenied" class="error hidden">
+Admin access नहीं है।
+</div>
+
+<div id="adminContent">
+
 <div class="grid">
-<div class="card stat">
-<b id="statOrders">0</b>
-Orders
-</div>
-<div class="card stat">
-<b id="statSales">₹0</b>
-Sales
-</div>
-<div class="card stat">
-<b id="statFood">0</b>
-Food Items
-</div>
-<div class="card stat">
-<b id="statCustomers">0</b>
-Customers
-</div>
+<div class="card stat"><b id="statOrders">0</b>Orders</div>
+<div class="card stat"><b id="statSales">₹0</b>Sales</div>
+<div class="card stat"><b id="statFood">0</b>Food Items</div>
+<div class="card stat"><b id="statCustomers">0</b>Customers</div>
 </div>
 
 <div class="card">
@@ -399,354 +210,701 @@ Customers
 <button class="full" onclick="updateShopStatus()">Update Status</button>
 </div>
 
-<div class="card" style="margin-top:12px">
+<div class="card">
 <h3>🍛 Add Food Item</h3>
-
 <input id="foodName" placeholder="Food Name">
 <input id="foodPrice" type="number" placeholder="Price">
 <input id="foodImage" placeholder="Image URL">
 <textarea id="foodDescription" placeholder="Description"></textarea>
-
 <button class="full" onclick="addFood()">Add Food</button>
 </div>
 
-<div class="card" style="margin-top:12px">
+<div class="card">
 <h3>🍽️ Manage Menu</h3>
 <div id="adminMenu"></div>
 </div>
 
-<div class="card" style="margin-top:12px">
+<div class="card">
 <h3>📦 Manage Orders</h3>
 <div id="adminOrders"></div>
 </div>
 
-<div class="card" style="margin-top:12px">
+<div class="card">
 <h3>📢 Offer / Banner</h3>
 <input id="adminOffer" placeholder="Offer text">
 <button class="full" onclick="saveOffer()">Save Offer</button>
 </div>
 
-<div class="card" style="margin-top:12px">
+<div class="card">
 <h3>💰 Business Settings</h3>
 <input id="deliveryCharge" type="number" placeholder="Delivery Charge">
 <input id="minOrder" type="number" placeholder="Minimum Order">
 <button class="full" onclick="saveSettings()">Save Settings</button>
 </div>
 
-<button class="red full" onclick="showPage('home')">
-Exit Admin
-</button>
+</div>
+
+<button class="red full" onclick="showPage('home')">Exit Admin</button>
 
 </div>
 </div>
 
-<!-- NAVIGATION -->
-<div class="nav">
-
-<button onclick="showPage('home')" id="navHome">🏠<br>Home</button>
-
-<button onclick="showPage('menu')" id="navMenu">🍛<br>Menu</button>
-
-<button onclick="showPage('cart')" id="navCart">
-🛒<br>Cart <span id="cartBadge"></span>
-</button>
-
-<button onclick="showPage('orders')" id="navOrders">📦<br>Orders</button>
-
-<button onclick="showPage('profile')" id="navProfile">👤<br>Profile</button>
-
+<div class="nav hidden" id="mainNav">
+<button onclick="showPage('home')">🏠<br>Home</button>
+<button onclick="showPage('menu')">🍛<br>Menu</button>
+<button onclick="showPage('cart')">🛒<br>Cart <span id="cartBadge"></span></button>
+<button onclick="showPage('orders')">📦<br>Orders</button>
+<button onclick="showPage('profile')">👤<br>Profile</button>
 </div>
 
-<script>
+<script type="module">
 
-/* ================================
-   DATABASE - LOCAL STORAGE
-================================ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-const defaultFoods=[
-{
- id:1,
- name:"Regular Veg Tiffin",
- price:80,
- image:"https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600",
- description:"4 Roti, Dal, Sabji, Rice"
-},
-{
- id:2,
- name:"Special Veg Thali",
- price:120,
- image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600",
- description:"Roti, Dal, 2 Sabji, Rice, Salad"
-},
-{
- id:3,
- name:"Paneer Tiffin",
- price:140,
- image:"https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600",
- description:"Paneer Sabji, Dal, Roti, Rice"
-},
-{
- id:4,
- name:"Dal Rice",
- price:70,
- image:"https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600",
- description:"Dal + Rice + Salad"
-}
-];
+import {
+getAuth,
+onAuthStateChanged,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+updateProfile
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-let foods=JSON.parse(localStorage.getItem("annapurnaFoods"))||defaultFoods;
+import {
+getFirestore,
+collection,
+doc,
+getDoc,
+setDoc,
+addDoc,
+updateDoc,
+deleteDoc,
+onSnapshot,
+query,
+where,
+serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-let cart=JSON.parse(localStorage.getItem("annapurnaCart"))||[];
 
-let orders=JSON.parse(localStorage.getItem("annapurnaOrders"))||[];
-
-let profile=JSON.parse(localStorage.getItem("annapurnaProfile"))||{
- name:"",
- phone:"",
- address:""
+const firebaseConfig = {
+apiKey: "AIzaSyBAro8dYjdUo8B7YRCUPX9WpI7_btf0CAI",
+authDomain: "ma-annpurna-tiffin.firebaseapp.com",
+projectId: "ma-annpurna-tiffin",
+storageBucket: "ma-annpurna-tiffin.firebasestorage.app",
+messagingSenderId: "732257430751",
+appId: "1:732257430751:web:59758d59bdc94e348a0d6a",
+measurementId: "G-9NVW0R94RG"
 };
 
-let settings=JSON.parse(localStorage.getItem("annapurnaSettings"))||{
- shop:"OPEN",
- delivery:0,
- minOrder:0,
- offer:"₹299 से ऊपर के ऑर्डर पर विशेष ऑफर।"
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+let currentRole = "customer";
+let foods = [];
+let orders = [];
+
+let cart = JSON.parse(
+localStorage.getItem("annapurnaCart") || "[]"
+);
+
+let settings = {
+shop:"OPEN",
+delivery:0,
+minOrder:0,
+offer:"₹299 से ऊपर के ऑर्डर पर विशेष ऑफर।"
 };
 
-let coupon=localStorage.getItem("annapurnaCoupon")||"";
+let coupon = localStorage.getItem("annapurnaCoupon") || "";
 
-function saveData(){
+let unsubFoods,
+unsubSettings,
+unsubOrders;
 
-localStorage.setItem("annapurnaFoods",JSON.stringify(foods));
-localStorage.setItem("annapurnaCart",JSON.stringify(cart));
-localStorage.setItem("annapurnaOrders",JSON.stringify(orders));
-localStorage.setItem("annapurnaProfile",JSON.stringify(profile));
-localStorage.setItem("annapurnaSettings",JSON.stringify(settings));
 
-}
+const $ = id => document.getElementById(id);
 
-/* ================================
-   NAVIGATION
-================================ */
+const esc = s =>
+String(s ?? "").replace(
+/[&<>"']/g,
+c => ({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#39;'
+}[c])
+);
 
-function showPage(page){
 
-document.querySelectorAll(".page").forEach(p=>{
-p.classList.remove("active");
-});
+window.showPage = function(page){
 
-document.getElementById(page).classList.add("active");
+document.querySelectorAll(".page")
+.forEach(p => p.classList.remove("active"));
+
+$(page).classList.add("active");
 
 window.scrollTo(0,0);
 
-if(page==="menu")renderMenu();
-if(page==="cart")renderCart();
-if(page==="orders")renderOrders();
-if(page==="profile")loadProfile();
-if(page==="admin")renderAdmin();
+if(page==="menu") renderMenu();
+if(page==="cart") renderCart();
+if(page==="orders") renderOrders();
+if(page==="profile") loadProfile();
+if(page==="admin") renderAdmin();
+
+};
+
+
+function setAuthMessage(msg,error=false){
+
+$("authMessage").innerHTML =
+`<div class="${error?'error':'notice'}">${esc(msg)}</div>`;
 
 }
 
-/* ================================
-   MENU
-================================ */
+
+window.loginUser = async function(){
+
+const email = $("authEmail").value.trim();
+const password = $("authPassword").value;
+
+if(!email || !password){
+setAuthMessage("Email और password भरें।",true);
+return;
+}
+
+try{
+
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+}catch(e){
+
+setAuthMessage(
+e.message || "Login failed.",
+true
+);
+
+}
+
+};
+
+
+window.registerUser = async function(){
+
+const email = $("authEmail").value.trim();
+const password = $("authPassword").value;
+const name = $("authName").value.trim();
+
+if(
+!email ||
+password.length < 6 ||
+!name
+){
+
+setAuthMessage(
+"नाम, email और कम से कम 6 character password भरें।",
+true
+);
+
+return;
+}
+
+try{
+
+const cred =
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+await updateProfile(
+cred.user,
+{displayName:name}
+);
+
+await setDoc(
+doc(db,"users",cred.user.uid),
+{
+email,
+name,
+phone:"",
+address:"",
+role:"customer",
+createdAt:serverTimestamp()
+}
+);
+
+}catch(e){
+
+setAuthMessage(
+e.message || "Registration failed.",
+true
+);
+
+}
+
+};
+
+
+window.logoutUser = async function(){
+
+await signOut(auth);
+
+};
+
+
+onAuthStateChanged(auth, async user => {
+
+currentUser = user;
+
+if(!user){
+
+$("mainNav").classList.add("hidden");
+
+showPage("auth");
+
+return;
+
+}
+
+$("mainNav").classList.remove("hidden");
+
+await loadUserRole();
+
+subscribeData();
+
+showPage("home");
+
+});
+
+
+async function loadUserRole(){
+
+currentRole = "customer";
+
+try{
+
+const snap =
+await getDoc(
+doc(db,"users",currentUser.uid)
+);
+
+if(snap.exists()){
+
+const d = snap.data();
+
+currentRole =
+d.role || "customer";
+
+if(
+d.name &&
+!currentUser.displayName
+){
+
+try{
+
+await updateProfile(
+currentUser,
+{displayName:d.name}
+);
+
+}catch(_){}
+
+}
+
+}
+
+}catch(e){
+
+console.error(e);
+
+}
+
+}
+
+
+function subscribeData(){
+
+if(unsubFoods) unsubFoods();
+if(unsubSettings) unsubSettings();
+if(unsubOrders) unsubOrders();
+
+
+unsubFoods =
+onSnapshot(
+collection(db,"foods"),
+snap => {
+
+foods =
+snap.docs.map(
+d => ({
+id:d.id,
+...d.data()
+})
+);
+
+renderMenu();
+renderPopular();
+renderAdminMenu();
+
+$("statFood").innerText =
+foods.length;
+
+},
+e => console.error("Foods:",e)
+);
+
+
+unsubSettings =
+onSnapshot(
+doc(db,"settings","main"),
+snap => {
+
+if(snap.exists())
+settings = {
+...settings,
+...snap.data()
+};
+
+$("shopStatus").innerText =
+settings.shop || "OPEN";
+
+$("offerText").innerText =
+settings.offer || "";
+
+if($("adminShopStatus"))
+$("adminShopStatus").value =
+settings.shop || "OPEN";
+
+if($("adminOffer"))
+$("adminOffer").value =
+settings.offer || "";
+
+if($("deliveryCharge"))
+$("deliveryCharge").value =
+settings.delivery || 0;
+
+if($("minOrder"))
+$("minOrder").value =
+settings.minOrder || 0;
+
+},
+e => console.error("Settings:",e)
+);
+
+
+const oq =
+query(
+collection(db,"orders"),
+where(
+"userId",
+"==",
+currentUser.uid
+)
+);
+
+unsubOrders =
+onSnapshot(
+oq,
+snap => {
+
+orders =
+snap.docs.map(
+d => ({
+id:d.id,
+...d.data()
+})
+);
+
+orders.sort(
+(a,b) =>
+(b.createdAt?.seconds||0) -
+(a.createdAt?.seconds||0)
+);
+
+renderOrders();
+renderAdminOrders();
+
+},
+e => console.error("Orders:",e)
+);
+
+
+updateCartBadge();
+
+}
+
 
 function renderMenu(){
 
-const box=document.getElementById("menuList");
+const box = $("menuList");
 
-box.innerHTML="";
+if(!box) return;
 
-foods.forEach(food=>{
+box.innerHTML = "";
 
-box.innerHTML+=`
+if(!foods.length){
 
+box.innerHTML =
+'<div class="empty">अभी menu में food नहीं है।</div>';
+
+return;
+
+}
+
+foods.forEach(food => {
+
+box.innerHTML += `
 <div class="card">
 
-<img class="food-img"
-src="${food.image}"
+<img
+class="food-img"
+src="${esc(food.image||"")}"
 onerror="this.style.display='none'">
 
-<div class="food-name">${food.name}</div>
+<div class="food-name">
+${esc(food.name)}
+</div>
 
-<p>${food.description||""}</p>
+<p>
+${esc(food.description||"")}
+</p>
 
-<div class="price">₹${food.price}</div>
+<div class="price">
+₹${Number(food.price||0)}
+</div>
 
-<button class="full"
-onclick="addToCart(${food.id})">
+<button
+class="full"
+onclick="addToCart('${food.id}')">
 ➕ Add to Cart
 </button>
 
 </div>
-
 `;
 
 });
 
-document.getElementById("menuCount").innerText=
-foods.length+" Items";
+$("menuCount").innerText =
+foods.length + " Items";
 
 }
 
-/* ================================
-   POPULAR
-================================ */
 
 function renderPopular(){
 
-const box=document.getElementById("popular");
+const box = $("popular");
 
-box.innerHTML="";
+if(!box) return;
 
-foods.slice(0,4).forEach(food=>{
+box.innerHTML = "";
 
-box.innerHTML+=`
+foods.slice(0,4).forEach(food => {
 
+box.innerHTML += `
 <div class="card">
 
-<img class="food-img"
-src="${food.image}"
+<img
+class="food-img"
+src="${esc(food.image||"")}"
 onerror="this.style.display='none'">
 
-<div class="food-name">${food.name}</div>
+<div class="food-name">
+${esc(food.name)}
+</div>
 
-<div class="price">₹${food.price}</div>
+<div class="price">
+₹${Number(food.price||0)}
+</div>
 
-<button class="full"
-onclick="addToCart(${food.id})">
+<button
+class="full"
+onclick="addToCart('${food.id}')">
 Add
 </button>
 
 </div>
-
 `;
 
 });
 
 }
 
-/* ================================
-   CART
-================================ */
 
-function addToCart(id){
+window.addToCart = function(id){
 
 if(settings.shop==="CLOSED"){
 
-alert("अभी दुकान बंद है। कृपया बाद में ऑर्डर करें।");
+alert(
+"अभी दुकान बंद है। कृपया बाद में ऑर्डर करें।"
+);
+
 return;
 
 }
 
-const food=foods.find(x=>x.id===id);
+const food =
+foods.find(x => x.id===id);
 
-const item=cart.find(x=>x.id===id);
+if(!food) return;
 
-if(item)item.qty++;
+const item =
+cart.find(x => x.id===id);
 
-else cart.push({
+if(item)
+item.qty++;
+
+else
+cart.push({
 id:food.id,
 name:food.name,
-price:food.price,
+price:Number(food.price),
 qty:1
 });
 
-saveData();
+localStorage.setItem(
+"annapurnaCart",
+JSON.stringify(cart)
+);
+
 updateCartBadge();
 
-alert(food.name+" cart में add हो गया।");
+alert(
+food.name +
+" cart में add हो गया।"
+);
 
-}
+};
 
-function changeQty(id,change){
 
-const item=cart.find(x=>x.id===id);
+window.changeQty = function(id,change){
 
-if(!item)return;
+const item =
+cart.find(x => x.id===id);
 
-item.qty+=change;
+if(!item) return;
 
-if(item.qty<=0){
+item.qty += change;
 
-cart=cart.filter(x=>x.id!==id);
+if(item.qty<=0)
+cart =
+cart.filter(x => x.id!==id);
 
-}
+localStorage.setItem(
+"annapurnaCart",
+JSON.stringify(cart)
+);
 
-saveData();
 renderCart();
+
 updateCartBadge();
 
-}
+};
+
 
 function getSubtotal(){
 
-return cart.reduce((sum,item)=>
-sum+(item.price*item.qty),0);
+return cart.reduce(
+(s,i) =>
+s +
+(Number(i.price) * i.qty),
+0
+);
 
 }
 
+
+function updateCartBadge(){
+
+const n =
+cart.reduce(
+(s,i) => s+i.qty,
+0
+);
+
+$("cartBadge").innerText =
+n ? n : "";
+
+}
+
+
 function renderCart(){
 
-const box=document.getElementById("cartItems");
+const box = $("cartItems");
+const summary = $("cartSummary");
 
-if(cart.length===0){
+if(!cart.length){
 
-box.innerHTML=`<div class="empty">
-🛒 Cart खाली है<br><br>
-<button onclick="showPage('menu')">Menu देखें</button>
-</div>`;
+box.innerHTML =
+'<div class="empty">🛒 Cart खाली है<br><br><button onclick="showPage(\'menu\')">Menu देखें</button></div>';
 
-document.getElementById("cartSummary").innerHTML="";
+summary.innerHTML = "";
 
 return;
 
 }
 
-box.innerHTML="";
+box.innerHTML = "";
 
-cart.forEach(item=>{
+cart.forEach(item => {
 
-box.innerHTML+=`
-
+box.innerHTML += `
 <div class="order">
 
-<b>${item.name}</b>
+<b>${esc(item.name)}</b>
 
-<div>₹${item.price} × ${item.qty}</div>
+<div>
+₹${item.price} × ${item.qty}
+</div>
 
 <div class="qty">
 
-<button onclick="changeQty(${item.id},-1)">−</button>
+<button
+onclick="changeQty('${item.id}',-1)">
+−
+</button>
 
 <b>${item.qty}</b>
 
-<button onclick="changeQty(${item.id},1)">+</button>
+<button
+onclick="changeQty('${item.id}',1)">
++
+</button>
 
 </div>
 
 </div>
-
 `;
 
 });
 
-let subtotal=getSubtotal();
 
-let delivery=settings.delivery||0;
+const subtotal = getSubtotal();
 
-let discount=0;
+const delivery =
+Number(settings.delivery||0);
 
-if(coupon==="ANNAPURNA10"){
+const discount =
+coupon==="ANNAPURNA10"
+?
+Math.round(subtotal*.10)
+:
+0;
 
-discount=Math.round(subtotal*0.10);
+const total =
+subtotal +
+delivery -
+discount;
 
-}
 
-let total=subtotal+delivery-discount;
-
-document.getElementById("cartSummary").innerHTML=`
-
+summary.innerHTML = `
 <div class="card">
 
 <p>Subtotal: ₹${subtotal}</p>
@@ -757,632 +915,961 @@ document.getElementById("cartSummary").innerHTML=`
 
 <hr>
 
-<div class="total">Total: ₹${total}</div>
+<div class="total">
+Total: ₹${total}
+</div>
 
-<button class="green full"
+<button
+class="green full"
 onclick="checkout()">
 Proceed to Checkout
 </button>
 
 </div>
-
 `;
 
 }
 
-/* ================================
-   CHECKOUT
-================================ */
 
-function checkout(){
+async function getProfile(){
 
-if(cart.length===0){
+const snap =
+await getDoc(
+doc(db,"users",currentUser.uid)
+);
+
+return snap.exists()
+?
+snap.data()
+:
+{
+name:currentUser.displayName||"",
+phone:"",
+address:""
+};
+
+}
+
+
+async function loadProfile(){
+
+if(!currentUser) return;
+
+try{
+
+const p = await getProfile();
+
+$("customerName").value =
+p.name ||
+currentUser.displayName ||
+"";
+
+$("customerPhone").value =
+p.phone || "";
+
+$("customerAddress").value =
+p.address || "";
+
+}catch(e){
+
+console.error(e);
+
+}
+
+}
+
+
+window.saveProfile = async function(){
+
+if(!currentUser) return;
+
+const data = {
+
+name:
+$("customerName").value.trim(),
+
+phone:
+$("customerPhone").value.trim(),
+
+address:
+$("customerAddress").value.trim(),
+
+email:
+currentUser.email || ""
+
+};
+
+try{
+
+await setDoc(
+doc(db,"users",currentUser.uid),
+data,
+{merge:true}
+);
+
+alert(
+"Profile saved successfully."
+);
+
+}catch(e){
+
+alert(
+"Profile save failed: " +
+e.message
+);
+
+}
+
+};
+
+
+window.checkout = async function(){
+
+if(!cart.length){
 
 alert("Cart खाली है");
+
 return;
 
 }
 
-loadProfile();
+const profile =
+await getProfile();
 
-if(!profile.name||!profile.phone||!profile.address){
+if(
+!profile.name ||
+!profile.phone ||
+!profile.address
+){
 
-alert("पहले Profile में नाम, mobile और address भरें।");
+alert(
+"पहले Profile में नाम, mobile और address भरें।"
+);
+
 showPage("profile");
+
 return;
 
 }
 
-const subtotal=getSubtotal();
+const subtotal =
+getSubtotal();
 
-if(settings.minOrder>0 && subtotal<settings.minOrder){
+if(
+Number(settings.minOrder||0)>0 &&
+subtotal < Number(settings.minOrder)
+){
 
-alert("Minimum order ₹"+settings.minOrder+" है।");
+alert(
+"Minimum order ₹" +
+settings.minOrder +
+" है।"
+);
+
 return;
 
 }
 
-const payment=prompt(
+const payment =
+prompt(
 "Payment Method चुनें:\n1 = Cash on Delivery\n2 = UPI"
 );
 
-if(payment!=="1" && payment!=="2")return;
+if(
+payment!=="1" &&
+payment!=="2"
+)
+return;
 
-let method=payment==="1"?"COD":"UPI";
+const discount =
+coupon==="ANNAPURNA10"
+?
+Math.round(subtotal*.10)
+:
+0;
 
-let discount=coupon==="ANNAPURNA10"
-?Math.round(subtotal*0.10):0;
+const total =
+subtotal +
+Number(settings.delivery||0) -
+discount;
 
-let total=subtotal+(settings.delivery||0)-discount;
+try{
 
-const order={
-id:"MA"+Date.now(),
-date:new Date().toLocaleString("hi-IN"),
-customer:profile,
+const ref =
+await addDoc(
+collection(db,"orders"),
+{
+userId:currentUser.uid,
+
+customer:{
+...profile
+},
+
 items:[...cart],
+
 subtotal,
-delivery:settings.delivery||0,
+
+delivery:
+Number(settings.delivery||0),
+
 discount,
+
 total,
-payment:method,
-status:"Order Received"
-};
 
-orders.unshift(order);
+payment:
+payment==="1"
+?
+"COD"
+:
+"UPI",
 
-cart=[];
+status:"Order Received",
 
-coupon="";
+createdAt:
+serverTimestamp()
+}
+);
 
-saveData();
+cart = [];
+
+localStorage.removeItem(
+"annapurnaCart"
+);
+
+coupon = "";
+
+localStorage.removeItem(
+"annapurnaCoupon"
+);
+
+updateCartBadge();
 
 alert(
-"Order successfully placed!\n\n"+
-"Order ID: "+order.id+
-"\nTotal: ₹"+order.total
+"Order successfully placed!\n\n" +
+"Order ID: " +
+ref.id +
+"\nTotal: ₹" +
+total
 );
 
 showPage("orders");
 
+}catch(e){
+
+alert(
+"Order save failed: " +
+e.message
+);
+
 }
 
-/* ================================
-   ORDERS
-================================ */
+};
+
 
 function renderOrders(){
 
-const box=document.getElementById("ordersList");
+const box =
+$("ordersList");
 
-if(orders.length===0){
+if(!box) return;
 
-box.innerHTML=`
-<div class="empty">
-📦 अभी कोई order नहीं है।
-</div>`;
+if(!orders.length){
+
+box.innerHTML =
+'<div class="empty">📦 अभी कोई order नहीं है।</div>';
 
 return;
 
 }
 
-box.innerHTML="";
+box.innerHTML = "";
 
-orders.forEach(order=>{
+orders.forEach(order => {
 
-let items=order.items.map(x=>
-`${x.name} × ${x.qty}`
-).join(", ");
+const items =
+(order.items||[])
+.map(
+x =>
+`${esc(x.name)} × ${x.qty}`
+)
+.join(", ");
 
-box.innerHTML+=`
-
+box.innerHTML += `
 <div class="order">
 
-<h3>Order #${order.id}</h3>
-
-<p>${order.date}</p>
+<h3>
+Order #${esc(order.id)}
+</h3>
 
 <p>${items}</p>
 
-<p>Payment: ${order.payment}</p>
+<p>
+Payment:
+${esc(order.payment)}
+</p>
 
-<p class="status">${order.status}</p>
+<p class="status">
+${esc(order.status)}
+</p>
 
-<h3>₹${order.total}</h3>
+<h3>
+₹${Number(order.total||0)}
+</h3>
 
-<button onclick="reorder('${order.id}')">
+<button
+onclick="reorder('${order.id}')">
 🔄 Reorder
 </button>
 
-<button class="green"
+<button
+class="green"
 onclick="trackOrder('${order.id}')">
 📍 Track
 </button>
 
 </div>
-
 `;
 
 });
 
 }
 
-function reorder(id){
 
-const order=orders.find(x=>x.id===id);
+window.reorder = function(id){
 
-if(!order)return;
+const order =
+orders.find(
+x => x.id===id
+);
 
-order.items.forEach(item=>{
+if(!order) return;
 
-const existing=cart.find(x=>x.id===item.id);
+(order.items||[]).forEach(item => {
 
-if(existing)existing.qty+=item.qty;
+const e =
+cart.find(
+x => x.id===item.id
+);
 
-else cart.push({...item});
+if(e)
+e.qty += item.qty;
+
+else
+cart.push({...item});
 
 });
 
-saveData();
+localStorage.setItem(
+"annapurnaCart",
+JSON.stringify(cart)
+);
 
 updateCartBadge();
 
 showPage("cart");
 
-}
-
-function trackOrder(id){
-
-const order=orders.find(x=>x.id===id);
-
-alert(
-"Order Status\n\n"+
-"Order ID: "+order.id+
-"\n\n"+order.status
-);
-
-}
-
-/* ================================
-   PROFILE
-================================ */
-
-function loadProfile(){
-
-document.getElementById("customerName").value=profile.name||"";
-
-document.getElementById("customerPhone").value=profile.phone||"";
-
-document.getElementById("customerAddress").value=profile.address||"";
-
-}
-
-function saveProfile(){
-
-profile={
-name:document.getElementById("customerName").value.trim(),
-phone:document.getElementById("customerPhone").value.trim(),
-address:document.getElementById("customerAddress").value.trim()
 };
 
-saveData();
 
-alert("Profile saved successfully.");
+window.trackOrder = function(id){
 
-}
+const o =
+orders.find(
+x => x.id===id
+);
 
-/* ================================
-   SUBSCRIPTION
-================================ */
+if(o)
 
-function saveSubscription(){
+alert(
+"Order Status\n\n" +
+"Order ID: " +
+o.id +
+"\n\n" +
+o.status
+);
 
-const plan=document.getElementById("subscriptionPlan").value;
+};
+
+
+window.saveSubscription =
+async function(){
+
+const plan =
+$("subscriptionPlan").value;
 
 if(!plan){
 
 alert("Plan select करें।");
+
 return;
 
 }
 
-localStorage.setItem("annapurnaSubscription",plan);
+try{
+
+await addDoc(
+collection(db,"subscriptions"),
+{
+userId:currentUser.uid,
+plan,
+status:"Requested",
+createdAt:serverTimestamp()
+}
+);
 
 alert(
-"Subscription request saved:\n"+plan+
-"\n\nहम आपसे संपर्क करेंगे।"
+"Subscription request saved: " +
+plan
+);
+
+}catch(e){
+
+alert(
+"Subscription failed: " +
+e.message
 );
 
 }
 
-/* ================================
-   COUPON
-================================ */
+};
 
-function applyCoupon(){
 
-const code=document.getElementById("couponInput").value
-.trim().toUpperCase();
+window.applyCoupon = function(){
+
+const code =
+$("couponInput")
+.value
+.trim()
+.toUpperCase();
 
 if(code==="ANNAPURNA10"){
 
-coupon=code;
+coupon = code;
 
-document.getElementById("couponMessage").innerHTML=
-`<div class="success">10% discount applied!</div>`;
+localStorage.setItem(
+"annapurnaCoupon",
+code
+);
 
-saveData();
+$("couponMessage").innerHTML =
+'<div class="success">10% discount applied!</div>';
+
+renderCart();
 
 }else{
 
-document.getElementById("couponMessage").innerHTML=
-`<div class="notice">Invalid coupon.</div>`;
+$("couponMessage").innerHTML =
+'<div class="notice">Invalid coupon.</div>';
 
 }
 
-}
+};
 
-/* ================================
-   REVIEW
-================================ */
 
-function submitReview(){
+window.submitReview =
+async function(){
 
-const rating=document.getElementById("rating").value;
-
-const text=document.getElementById("reviewText").value;
+const text =
+$("reviewText")
+.value
+.trim();
 
 if(!text){
 
 alert("Review लिखें।");
+
 return;
 
 }
 
-let reviews=
-JSON.parse(localStorage.getItem("annapurnaReviews")||"[]");
+try{
 
-reviews.push({
-rating,
+await addDoc(
+collection(db,"reviews"),
+{
+userId:currentUser.uid,
+rating:Number(
+$("rating").value
+),
 text,
-date:new Date().toLocaleString("hi-IN")
-});
-
-localStorage.setItem(
-"annapurnaReviews",
-JSON.stringify(reviews)
+createdAt:
+serverTimestamp()
+}
 );
 
-document.getElementById("reviewText").value="";
+$("reviewText").value="";
 
-alert("Thank you for your review ❤️");
+alert(
+"Thank you for your review ❤️"
+);
+
+}catch(e){
+
+alert(
+"Review save failed: " +
+e.message
+);
 
 }
 
-/* ================================
-   WHATSAPP
-================================ */
+};
 
-function openWhatsApp(){
 
-const phone=profile.phone||"";
-
-const message=
-"Namaste Maa Annapurna, mujhe tiffin service ke baare mein jankari chahiye.";
+window.openWhatsApp = function(){
 
 window.open(
-"https://wa.me/?text="+encodeURIComponent(message),
+"https://wa.me/?text=" +
+encodeURIComponent(
+"Namaste Maa Annapurna, mujhe tiffin service ke baare mein jankari chahiye."
+),
 "_blank"
 );
 
+};
+
+
+window.openAdmin =
+async function(){
+
+await loadUserRole();
+
+if(currentRole!=="admin"){
+
+alert(
+"Admin access नहीं है।"
+);
+
+return;
+
 }
-
-/* ================================
-   ADMIN LOGIN
-================================ */
-
-function adminLogin(){
-
-const password=prompt("Admin Password डालें:");
-
-if(password==="1234"){
 
 showPage("admin");
 
-}else{
+};
 
-alert("Wrong password.");
+
+async function renderAdmin(){
+
+if(currentRole!=="admin"){
+
+$("adminDenied")
+.classList.remove("hidden");
+
+$("adminContent")
+.classList.add("hidden");
+
+return;
 
 }
 
-}
+$("adminDenied")
+.classList.add("hidden");
 
-/* ================================
-   ADMIN DASHBOARD
-================================ */
+$("adminContent")
+.classList.remove("hidden");
 
-function renderAdmin(){
-
-document.getElementById("statOrders").innerText=
+$("statOrders").innerText =
 orders.length;
 
-const sales=orders.reduce(
-(sum,o)=>sum+Number(o.total||0),0
+$("statSales").innerText =
+"₹" +
+orders.reduce(
+(s,o) =>
+s +
+Number(o.total||0),
+0
 );
 
-document.getElementById("statSales").innerText=
-"₹"+sales;
-
-document.getElementById("statFood").innerText=
+$("statFood").innerText =
 foods.length;
 
-const customers=new Set(
-orders.map(o=>o.customer.phone)
+const customers =
+new Set(
+orders.map(o => o.userId)
 );
 
-document.getElementById("statCustomers").innerText=
+$("statCustomers").innerText =
 customers.size;
 
-document.getElementById("adminShopStatus").value=
-settings.shop;
+$("adminShopStatus").value =
+settings.shop || "OPEN";
 
-document.getElementById("adminOffer").value=
-settings.offer;
+$("adminOffer").value =
+settings.offer || "";
 
-document.getElementById("deliveryCharge").value=
-settings.delivery;
+$("deliveryCharge").value =
+settings.delivery || 0;
 
-document.getElementById("minOrder").value=
-settings.minOrder;
+$("minOrder").value =
+settings.minOrder || 0;
 
 renderAdminMenu();
+
 renderAdminOrders();
 
 }
 
+
 function renderAdminMenu(){
 
-const box=document.getElementById("adminMenu");
+const box =
+$("adminMenu");
 
-box.innerHTML="";
+if(!box) return;
 
-foods.forEach(food=>{
+box.innerHTML = "";
 
-box.innerHTML+=`
+foods.forEach(food => {
 
+box.innerHTML += `
 <div class="order">
 
-<b>${food.name}</b>
+<b>${esc(food.name)}</b>
 
-<p>₹${food.price}</p>
+<p>
+₹${Number(food.price||0)}
+</p>
 
-<button class="red"
-onclick="deleteFood(${food.id})">
+<button
+class="red small-btn"
+onclick="deleteFood('${food.id}')">
 Delete
 </button>
 
 </div>
-
 `;
 
 });
 
 }
 
-function addFood(){
 
-  const name = document.getElementById("foodName").value.trim();
+window.addFood =
+async function(){
 
-  const price = Number(
-    document.getElementById("foodPrice").value
-  );
+const name =
+$("foodName")
+.value
+.trim();
 
-  const image =
-    document.getElementById("foodImage").value.trim()
-    || "https://images.unsplash.com/photo-1547592180-85f173990554?w=600";
+const price =
+Number(
+$("foodPrice").value
+);
 
-  if(!name || !price){
-    alert("Food name aur price bharo.");
-    return;
-  }
+const image =
+$("foodImage")
+.value
+.trim()
+||
+"https://images.unsplash.com/photo-1547592180-85f173990554?w=600";
 
-  foods.push({
-    id: Date.now(),
-    name: name,
-    price: price,
-    image: image
-  });
+const description =
+$("foodDescription")
+.value
+.trim();
 
-  saveData();
+if(!name || !price){
 
-  document.getElementById("foodName").value = "";
-  document.getElementById("foodPrice").value = "";
-  document.getElementById("foodImage").value = "";
+alert(
+"Food name aur price bharo."
+);
 
-  renderMenu();
-  renderAdmin();
+return;
 
-  alert("Food successfully add ho gaya.");
 }
 
+try{
 
-function deleteFood(id){
+await addDoc(
+collection(db,"foods"),
+{
+name,
+price,
+image,
+description,
+createdAt:
+serverTimestamp()
+}
+);
 
-  if(!confirm("Kya aap ye food delete karna chahte hain?")){
-    return;
-  }
+$("foodName").value="";
 
-  foods = foods.filter(food => food.id !== id);
+$("foodPrice").value="";
 
-  saveData();
+$("foodImage").value="";
 
-  renderMenu();
-  renderAdmin();
+$("foodDescription").value="";
 
-  alert("Food delete ho gaya.");
+alert(
+"Food successfully add ho gaya."
+);
+
+}catch(e){
+
+alert(
+"Food add failed: " +
+e.message
+);
+
 }
 
+};
 
-function updateShopStatus(){
 
-  settings.shop =
-    document.getElementById("adminShopStatus").value;
+window.deleteFood =
+async function(id){
 
-  saveData();
+if(
+!confirm(
+"Kya aap ye food delete karna chahte hain?"
+)
+)
+return;
 
-  document.getElementById("shopStatus").innerText =
-    settings.shop;
+try{
 
-  alert("Shop status update ho gaya.");
+await deleteDoc(
+doc(db,"foods",id)
+);
+
+alert(
+"Food delete ho gaya."
+);
+
+}catch(e){
+
+alert(
+"Delete failed: " +
+e.message
+);
+
 }
 
+};
 
-function saveOffer(){
 
-  settings.offer =
-    document.getElementById("adminOffer").value.trim();
+window.updateShopStatus =
+async function(){
 
-  saveData();
+try{
 
-  alert("Offer save ho gaya.");
+await setDoc(
+doc(db,"settings","main"),
+{
+shop:
+$("adminShopStatus").value
+},
+{merge:true}
+);
+
+alert(
+"Shop status update ho gaya."
+);
+
+}catch(e){
+
+alert(e.message);
+
 }
 
+};
 
-function saveSettings(){
 
-  settings.delivery =
-    Number(document.getElementById("deliveryCharge").value) || 0;
+window.saveOffer =
+async function(){
 
-  settings.minOrder =
-    Number(document.getElementById("minOrder").value) || 0;
+try{
 
-  saveData();
+await setDoc(
+doc(db,"settings","main"),
+{
+offer:
+$("adminOffer").value.trim()
+},
+{merge:true}
+);
 
-  alert("Settings save ho gayi.");
+alert(
+"Offer save ho gaya."
+);
+
+}catch(e){
+
+alert(e.message);
+
 }
+
+};
+
+
+window.saveSettings =
+async function(){
+
+try{
+
+await setDoc(
+doc(db,"settings","main"),
+{
+delivery:
+Number(
+$("deliveryCharge").value
+) || 0,
+
+minOrder:
+Number(
+$("minOrder").value
+) || 0
+},
+{merge:true}
+);
+
+alert(
+"Settings save ho gayi."
+);
+
+}catch(e){
+
+alert(e.message);
+
+}
+
+};
 
 
 function renderAdminOrders(){
 
-  const box =
-    document.getElementById("adminOrders");
+const box =
+$("adminOrders");
 
-  if(!box) return;
+if(!box) return;
 
-  box.innerHTML = "";
+box.innerHTML = "";
 
-  if(orders.length === 0){
+if(!orders.length){
 
-    box.innerHTML =
-      '<div class="empty">Abhi koi order nahi hai.</div>';
+box.innerHTML =
+'<div class="empty">Abhi koi order nahi hai.</div>';
 
-    return;
-  }
+return;
 
-  orders.forEach(order => {
-
-    box.innerHTML += `
-      <div class="order">
-
-        <h3>Order #${order.id}</h3>
-
-        <p><b>Customer:</b> ${order.customer.name || ""}</p>
-
-        <p><b>Mobile:</b> ${order.customer.phone || ""}</p>
-
-        <p><b>Address:</b> ${order.customer.address || ""}</p>
-
-        <p><b>Date:</b> ${order.date}</p>
-
-        <p><b>Items:</b>
-          ${order.items.map(item =>
-            `${item.name} x ${item.qty}`
-          ).join(", ")}
-        </p>
-
-        <p><b>Payment:</b> ${order.payment}</p>
-
-        <p><b>Total:</b> ₹${order.total}</p>
-
-        <p class="status">
-          ${order.status}
-        </p>
-
-        <select
-          onchange="updateOrderStatus(${order.id}, this.value)">
-          <option value="Order Received"
-            ${order.status === "Order Received" ? "selected" : ""}>
-            Order Received
-          </option>
-
-          <option value="Preparing"
-            ${order.status === "Preparing" ? "selected" : ""}>
-            Preparing
-          </option>
-
-          <option value="Out for Delivery"
-            ${order.status === "Out for Delivery" ? "selected" : ""}>
-            Out for Delivery
-          </option>
-
-          <option value="Delivered"
-            ${order.status === "Delivered" ? "selected" : ""}>
-            Delivered
-          </option>
-
-          <option value="Cancelled"
-            ${order.status === "Cancelled" ? "selected" : ""}>
-            Cancelled
-          </option>
-        </select>
-
-      </div>
-    `;
-
-  });
 }
 
+orders.forEach(order => {
 
-function updateOrderStatus(id, status){
+const items =
+(order.items||[])
+.map(
+i =>
+`${esc(i.name)} x ${i.qty}`
+)
+.join(", ");
 
-  const order =
-    orders.find(order => order.id === id);
+box.innerHTML += `
+<div class="order">
 
-  if(!order) return;
+<h3>
+Order #${esc(order.id)}
+</h3>
 
-  order.status = status;
+<p>
+<b>Customer:</b>
+${esc(order.customer?.name||"")}
+</p>
 
-  saveData();
+<p>
+<b>Mobile:</b>
+${esc(order.customer?.phone||"")}
+</p>
 
-  renderOrders();
-  renderAdminOrders();
+<p>
+<b>Address:</b>
+${esc(order.customer?.address||"")}
+</p>
 
-  alert("Order status update ho gaya.");
-}
+<p>
+<b>Items:</b>
+${items}
+</p>
 
+<p>
+<b>Payment:</b>
+${esc(order.payment)}
+</p>
 
-/* ================================
-   APP START
-================================ */
+<p>
+<b>Total:</b>
+₹${Number(order.total||0)}
+</p>
 
-document.addEventListener("DOMContentLoaded", function(){
+<p class="status">
+${esc(order.status)}
+</p>
 
-  updateCartBadge();
+<select
+onchange="updateOrderStatus('${order.id}',this.value)">
 
-  renderMenu();
+<option
+${order.status==="Order Received"?"selected":""}>
+Order Received
+</option>
 
-  renderOrders();
+<option
+${order.status==="Preparing"?"selected":""}>
+Preparing
+</option>
 
-  loadProfile();
+<option
+${order.status==="Out for Delivery"?"selected":""}>
+Out for Delivery
+</option>
 
-  const shopStatus =
-    document.getElementById("shopStatus");
+<option
+${order.status==="Delivered"?"selected":""}>
+Delivered
+</option>
 
-  if(shopStatus){
-    shopStatus.innerText = settings.shop;
-  }
+<option
+${order.status==="Cancelled"?"selected":""}>
+Cancelled
+</option>
+
+</select>
+
+</div>
+`;
 
 });
 
+}
+
+
+window.updateOrderStatus =
+async function(id,status){
+
+try{
+
+await updateDoc(
+doc(db,"orders",id),
+{
+status
+}
+);
+
+alert(
+"Order status update ho gaya."
+);
+
+}catch(e){
+
+alert(
+"Status update failed: " +
+e.message
+);
+
+}
+
+};
 
 </script>
 
