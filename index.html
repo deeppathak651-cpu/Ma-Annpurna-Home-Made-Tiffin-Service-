@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="theme-color" content="#e65100">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Maa Annapurna - Home Made Tiffin Service</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 html,body{
   margin:0;
   padding:0;
-  font-family:Arial,sans-serif;
+  width:100%;
+  min-height:100%;
+  font-family:Arial,Helvetica,sans-serif;
   background:#fff8f0;
   color:#333;
 }
 
 body{
-  min-height:100vh;
+  overflow-x:hidden;
 }
 
-button,input,select,textarea{
-  font:inherit;
+button,
+input,
+select,
+textarea{
+  font-family:inherit;
 }
 
 button{
@@ -33,18 +41,35 @@ button{
   display:none!important;
 }
 
+.page{
+  display:none;
+  min-height:calc(100vh - 80px);
+}
+
+.page.active{
+  display:block;
+}
+
+.container{
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+  padding:12px;
+}
+
 /* ================= HEADER ================= */
 
 header#mainHeader{
   width:100%;
-  min-height:175px;
-  padding:18px 12px 22px;
+  min-height:165px;
+  padding:18px 12px 20px;
   background:#e65100;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
   text-align:center;
+  position:relative;
 }
 
 .header-row{
@@ -53,8 +78,7 @@ header#mainHeader{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  text-align:center;
-  gap:10px;
+  gap:9px;
 }
 
 .header-brand{
@@ -62,33 +86,32 @@ header#mainHeader{
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
 }
 
 .logo{
   display:block;
   width:max-content;
   max-width:95%;
-  margin:0 auto;
-  padding:10px 24px;
+  margin:auto;
+  padding:9px 20px;
   background:#fff;
   color:#b53b12;
   border:4px double #6d260f;
   border-radius:16px;
-  font-family:Georgia,'Times New Roman',serif;
-  font-size:26px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:25px;
   font-weight:900;
-  letter-spacing:1.5px;
+  letter-spacing:1.2px;
   line-height:1.15;
   text-align:center;
   box-shadow:0 3px 0 #6d260f,0 5px 14px rgba(0,0,0,.22);
 }
 
-.small{
-  margin:7px auto 0;
-  text-align:center;
-  font-size:12px;
+.header-brand .small{
+  margin-top:6px;
   color:#fff;
+  font-size:12px;
+  font-weight:bold;
 }
 
 .shop-box{
@@ -102,158 +125,427 @@ header#mainHeader{
   display:flex;
   align-items:center;
   justify-content:center;
-  width:110px;
-  height:42px;
-  margin:0 auto;
-  padding:0;
+  width:112px;
+  height:40px;
   background:#fff;
   color:#198754;
   border:4px double #198754;
   border-radius:13px;
-  font-size:17px;
+  font-size:16px;
   font-weight:900;
-  letter-spacing:1.5px;
-  text-align:center;
-  box-shadow:0 3px 0 #126b43,0 5px 12px rgba(0,0,0,.18);
+  letter-spacing:1px;
+  box-shadow:0 3px 0 #126b43;
+}
+
+#shopStatus.closed{
+  color:#c62828;
+  border-color:#c62828;
+  box-shadow:0 3px 0 #8e1c1c;
 }
 
 /* ================= LOCATION ================= */
 
 .location-banner{
-  margin:12px;
-  padding:14px;
+  width:calc(100% - 24px);
+  max-width:1050px;
+  margin:12px auto 0;
+  padding:12px;
   background:#fff;
-  border:2px solid #e65100;
-  border-radius:15px;
+  border:3px solid #e65100;
+  border-radius:18px;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:12px;
+  gap:10px;
+  text-align:center;
   box-shadow:0 3px 10px rgba(0,0,0,.08);
 }
 
 .location-icon{
-  font-size:30px;
+  font-size:28px;
 }
 
 .location-title{
   color:#e65100;
-  font-weight:900;
-  font-size:13px;
+  font-size:12px;
+  font-weight:bold;
+  text-transform:uppercase;
 }
 
 .location-text{
-  font-size:16px;
-  margin-top:3px;
+  font-size:19px;
+  color:#444;
 }
 
-/* ================= PAGES ================= */
-
-.page{
-  display:none;
-  padding-bottom:90px;
-}
-
-.page.active{
-  display:block;
-}
-
-.container{
-  width:100%;
-  max-width:850px;
-  margin:auto;
-  padding:12px;
-}
+/* ================= CARDS ================= */
 
 .banner,
-.card,
-.panel{
+.card{
   background:#fff;
-  border-radius:16px;
-  padding:16px;
+  border:1px solid #efd5c2;
+  border-radius:18px;
+  box-shadow:0 3px 15px rgba(0,0,0,.07);
+  padding:18px;
   margin-bottom:14px;
-  box-shadow:0 3px 12px rgba(0,0,0,.08);
-  border:1px solid #f1d5c0;
 }
 
 h1,h2,h3{
-  margin-top:0;
+  color:#d84315;
+}
+
+h2{
+  margin:8px 0 12px;
+}
+
+h3{
+  margin:8px 0;
 }
 
 .section-title{
-  color:#d84315;
   text-align:center;
-  margin:8px 0 15px;
+  color:#d84315;
 }
 
-/* ================= FORM ================= */
+/* ================= AUTH ================= */
 
-input,select,textarea{
+.auth-card{
+  max-width:760px!important;
+  margin:12px auto!important;
+  padding:15px!important;
+}
+
+.auth-logo{
   width:100%;
-  padding:13px;
-  margin:6px 0;
-  border:1px solid #ccc;
-  border-radius:10px;
+  text-align:center;
+  margin:0 auto 9px;
+}
+
+.auth-logo-box{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:8px 16px;
   background:#fff;
+  border:4px double #6d260f;
+  border-radius:15px;
+  color:#b53b12;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:21px;
+  font-weight:900;
+  letter-spacing:1px;
+  box-shadow:0 3px 0 #6d260f;
+}
+
+.auth-logo-sub{
+  text-align:center;
+  color:#e65100;
+  font-size:11px;
+  font-weight:bold;
+  margin-top:4px;
+}
+
+.auth-icon{
+  font-size:30px;
+  text-align:center;
+  margin:0;
+}
+
+.auth-title{
+  font-size:27px!important;
+  margin:3px 0 4px!important;
+  text-align:center;
+  color:#d84315;
+}
+
+.auth-subtitle{
+  font-size:13px!important;
+  margin:3px 0 11px!important;
+  text-align:center;
+  color:#777;
+}
+
+.auth-tabs{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-bottom:12px;
+}
+
+.auth-tab{
+  min-height:52px;
+  padding:6px 3px!important;
+  margin:0!important;
+  font-size:12px!important;
+  font-weight:bold;
+  color:#c64b1b;
+  background:#fff8f0;
+  border:3px solid #efc7ad;
+  border-radius:11px;
+}
+
+.auth-tab.active{
+  background:#e65100!important;
+  color:#fff!important;
+  border-color:#e65100!important;
+}
+
+.auth-form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 10px;
+}
+
+.auth-field{
+  min-width:0;
+}
+
+.auth-field input,
+.auth-field select,
+.auth-field textarea{
+  width:100%;
+  height:48px;
+  margin:0;
+  padding:9px 11px;
+  border:2px solid #d8d8d8;
+  border-radius:13px;
+  font-size:15px;
   outline:none;
+  background:#fff;
 }
 
-input:focus,select:focus,textarea:focus{
+.auth-field textarea{
+  height:80px;
+  resize:vertical;
+}
+
+.auth-field input:focus,
+.auth-field select:focus,
+.auth-field textarea:focus{
   border-color:#e65100;
-  box-shadow:0 0 0 2px rgba(230,81,0,.12);
 }
 
-button{
-  border:0;
-  border-radius:10px;
-  padding:12px 15px;
-  background:#e65100;
-  color:white;
-  font-weight:800;
-  margin:5px 0;
+.auth-full{
+  grid-column:1/-1;
 }
 
-button:hover{
-  opacity:.92;
-}
+/* ================= BUTTONS ================= */
 
 button.full{
   width:100%;
 }
 
-button.secondary{
-  background:#fff;
-  color:#e65100;
-  border:2px solid #e65100;
+button{
+  border:0;
+  border-radius:11px;
+  padding:11px 15px;
+  background:#e65100;
+  color:#fff;
+  font-weight:bold;
+  font-size:14px;
 }
 
-button.green{
+button:hover{
+  opacity:.93;
+}
+
+button.secondary{
+  background:#fff3e8;
+  color:#d84315;
+  border:2px solid #efc7ad;
+}
+
+button.success{
   background:#198754;
 }
 
-button.red{
+button.danger{
   background:#c62828;
 }
 
-button.blue{
-  background:#1976d2;
-}
-
 button.dark{
-  background:#333;
+  background:#424242;
 }
 
-.small-btn{
-  padding:8px 10px;
+button.small-btn{
+  padding:7px 10px;
+  font-size:12px;
+}
+
+/* ================= NAV ================= */
+
+#mainNav{
+  position:sticky;
+  bottom:0;
+  z-index:100;
+  width:100%;
+  background:#fff;
+  border-top:1px solid #ddd;
+  box-shadow:0 -2px 10px rgba(0,0,0,.1);
+  display:flex;
+  justify-content:center;
+}
+
+.nav-inner{
+  width:100%;
+  max-width:700px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+}
+
+.nav-btn{
+  background:#fff;
+  color:#555;
+  border-radius:0;
+  padding:8px 2px;
+  font-size:11px;
+  border-top:3px solid transparent;
+}
+
+.nav-btn.active{
+  color:#e65100;
+  border-top-color:#e65100;
+}
+
+/* ================= GRID ================= */
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.two-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.menu-card{
+  background:#fff;
+  border:1px solid #efd5c2;
+  border-radius:16px;
+  padding:14px;
+  text-align:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.menu-emoji{
+  font-size:42px;
+}
+
+.price{
+  color:#e65100;
+  font-weight:900;
+  font-size:20px;
+}
+
+.qty-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:8px;
+}
+
+.qty{
+  min-width:30px;
+  text-align:center;
+  font-weight:bold;
+}
+
+/* ================= TABLE ================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+}
+
+th,td{
+  padding:9px;
+  border-bottom:1px solid #eee;
+  text-align:left;
   font-size:13px;
 }
 
+th{
+  background:#fff3e8;
+  color:#c64b1b;
+}
+
+/* ================= STATUS ================= */
+
+.status{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  background:#eee;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.status.pending{
+  background:#fff3cd;
+  color:#856404;
+}
+
+.status.approved,
+.status.delivered{
+  background:#d1e7dd;
+  color:#0f5132;
+}
+
+.status.disabled,
+.status.cancelled{
+  background:#f8d7da;
+  color:#842029;
+}
+
+.status.preparing{
+  background:#cfe2ff;
+  color:#084298;
+}
+
+/* ================= STATS ================= */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.stat{
+  background:#fff;
+  border:1px solid #efd5c2;
+  border-radius:14px;
+  padding:13px 7px;
+  text-align:center;
+}
+
+.stat b{
+  display:block;
+  color:#e65100;
+  font-size:22px;
+}
+
+.stat span{
+  font-size:11px;
+  color:#666;
+}
+
+/* ================= MESSAGE ================= */
+
 .message{
-  padding:11px;
+  padding:9px 11px;
   border-radius:10px;
   margin:8px 0;
   display:none;
-  font-weight:700;
+  font-size:13px;
 }
 
 .message.show{
@@ -261,403 +553,177 @@ button.dark{
 }
 
 .message.success{
-  background:#e8f5e9;
-  color:#176b35;
+  background:#d1e7dd;
+  color:#0f5132;
 }
 
 .message.error{
-  background:#ffebee;
-  color:#b71c1c;
+  background:#f8d7da;
+  color:#842029;
 }
 
 .message.info{
-  background:#e3f2fd;
-  color:#0d47a1;
-}
-
-/* ================= AUTH ================= */
-
-.auth-card{
-  max-width:500px;
-  margin:20px auto;
-}
-
-.auth-tabs{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:6px;
-  margin-bottom:15px;
-}
-
-.auth-tab{
-  background:#fff3e8;
-  color:#d84315;
-  border:2px solid #f3c2a5;
-  padding:11px 5px;
-  font-size:13px;
-}
-
-.auth-tab.active{
-  background:#e65100;
-  color:#fff;
-  border-color:#e65100;
-}
-
-.auth-icon{
-  font-size:42px;
-  text-align:center;
-  margin:5px 0;
-}
-
-.auth-title{
-  text-align:center;
-  color:#d84315;
-}
-
-.auth-subtitle{
-  text-align:center;
-  color:#777;
-  font-size:14px;
+  background:#cfe2ff;
+  color:#084298;
 }
 
 /* ================= HOME ================= */
 
 .hero{
-  background:linear-gradient(135deg,#fff3e0,#fff);
-  border:2px solid #ffcc80;
-  border-radius:18px;
-  padding:20px;
   text-align:center;
-  margin-bottom:15px;
+  padding:20px 10px;
 }
 
-.hero h2{
-  color:#e65100;
-}
-
-.feature-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-
-.feature{
-  background:#fff;
-  padding:16px 10px;
-  border-radius:14px;
-  border:1px solid #f0d5c2;
-  text-align:center;
-}
-
-.feature .icon{
-  font-size:30px;
-}
-
-/* ================= MENU ================= */
-
-.menu-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-  gap:12px;
-}
-
-.food-card{
-  background:#fff;
-  border:1px solid #ead7ca;
-  border-radius:15px;
-  overflow:hidden;
-}
-
-.food-image{
-  height:125px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#fff0e4;
+.hero-icon{
   font-size:55px;
 }
 
-.food-body{
-  padding:13px;
+.hero h1{
+  font-size:28px;
+  margin:6px 0;
 }
 
-.food-name{
-  font-weight:900;
-  font-size:18px;
-  color:#333;
+.hero p{
+  color:#666;
 }
 
-.food-desc{
-  color:#777;
-  font-size:13px;
-  margin:5px 0;
+.home-action{
+  padding:16px;
+  border-radius:16px;
+  background:#fff;
+  border:1px solid #efd5c2;
+  margin-bottom:10px;
 }
 
-.food-price{
-  font-size:18px;
-  font-weight:900;
-  color:#e65100;
-}
+/* ================= MODAL ================= */
 
-/* ================= CART ================= */
-
-.cart-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  border-bottom:1px solid #eee;
-  padding:12px 0;
-}
-
-.cart-row:last-child{
-  border-bottom:0;
-}
-
-.qty{
-  display:flex;
-  align-items:center;
-  gap:7px;
-}
-
-.qty button{
-  width:35px;
-  height:35px;
-  padding:0;
-  margin:0;
-}
-
-.total-box{
-  background:#fff3e0;
-  border:2px solid #ffb74d;
-  border-radius:13px;
-  padding:15px;
-  margin-top:15px;
-}
-
-.total-line{
-  display:flex;
-  justify-content:space-between;
-  padding:4px 0;
-}
-
-/* ================= NAV ================= */
-
-#mainNav{
+.modal{
+  display:none;
   position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  z-index:50;
+  inset:0;
+  z-index:500;
+  background:rgba(0,0,0,.5);
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow:auto;
   background:#fff;
-  border-top:1px solid #ddd;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  box-shadow:0 -2px 10px rgba(0,0,0,.12);
-}
-
-.nav-btn{
-  background:#fff;
-  color:#555;
-  border-radius:0;
-  margin:0;
-  padding:8px 3px;
-  font-size:11px;
-}
-
-.nav-btn.active{
-  color:#e65100;
-  font-weight:900;
-}
-
-.nav-icon{
-  display:block;
-  font-size:21px;
+  border-radius:18px;
+  padding:18px;
 }
 
 /* ================= STAFF ================= */
 
-.staff-header{
-  background:linear-gradient(135deg,#e65100,#ff8f00);
-  color:white;
-  border-radius:16px;
-  padding:18px;
-  margin-bottom:15px;
-}
-
-.staff-header h2{
-  margin-bottom:4px;
-}
-
-.staff-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-
-.stat-card{
-  background:#fff;
-  border:1px solid #ead7ca;
-  border-radius:14px;
-  padding:14px;
-  text-align:center;
-}
-
-.stat-number{
-  font-size:27px;
-  font-weight:900;
-  color:#e65100;
-}
-
-.order-card{
-  background:#fff;
-  border:1px solid #ead7ca;
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:10px;
-}
-
-.order-head{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  align-items:center;
-}
-
-.status{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:20px;
-  background:#fff3e0;
-  color:#e65100;
-  font-size:12px;
-  font-weight:800;
-}
-
-.status.green{
-  background:#e8f5e9;
-  color:#198754;
-}
-
-.status.red{
-  background:#ffebee;
-  color:#c62828;
-}
-
-.status.blue{
-  background:#e3f2fd;
-  color:#1565c0;
-}
-
-.status.gray{
-  background:#eee;
-  color:#555;
-}
-
-/* ================= ADMIN ================= */
-
-.admin-menu{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-
-.admin-action{
-  background:#fff;
-  color:#333;
-  border:2px solid #f0d5c2;
-  min-height:80px;
-}
-
-.admin-action strong{
-  display:block;
-  color:#e65100;
-  margin-bottom:5px;
-}
-
-.admin-section{
-  display:none;
-}
-
-.admin-section.active{
-  display:block;
-}
-
-.user-row{
-  border:1px solid #ead7ca;
-  border-radius:12px;
-  padding:12px;
-  margin:8px 0;
-  background:#fff;
-}
-
-.user-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:5px;
-  margin-top:7px;
-}
-
-.permission-list{
+.permission-box{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:6px;
+  margin:8px 0;
 }
 
-.permission-item{
-  background:#fff7ef;
+.permission-box label{
+  background:#fff8f0;
+  border:1px solid #efd5c2;
+  padding:7px;
   border-radius:8px;
-  padding:8px;
-}
-
-/* ================= PROFILE ================= */
-
-.profile-line{
-  padding:10px 0;
-  border-bottom:1px solid #eee;
-}
-
-.profile-line:last-child{
-  border-bottom:0;
-}
-
-.badge{
-  display:inline-block;
-  background:#fff3e0;
-  color:#e65100;
-  padding:5px 9px;
-  border-radius:20px;
   font-size:12px;
-  font-weight:800;
 }
 
-/* ================= RESPONSIVE ================= */
+/* ================= MOBILE ================= */
 
-@media(max-width:430px){
-  .logo{
-    font-size:23px;
-    padding:9px 15px;
-  }
+@media(max-width:700px){
 
-  .feature-grid,
-  .staff-grid,
-  .admin-menu{
+  .grid{
     grid-template-columns:1fr 1fr;
   }
 
-  .auth-tabs button{
-    font-size:11px;
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .logo{
+    font-size:21px;
+  }
+
+  .location-text{
+    font-size:16px;
   }
 }
 
-@media(min-width:700px){
-  #mainNav{
-    position:static;
-    max-width:850px;
-    margin:0 auto 15px;
-    border:1px solid #ddd;
-    border-radius:14px;
-    overflow:hidden;
+@media(max-width:520px){
+
+  header#mainHeader{
+    min-height:145px;
+    padding-top:15px;
+  }
+
+  .auth-card{
+    margin:8px auto!important;
+    padding:11px!important;
+  }
+
+  .auth-logo-box{
+    font-size:18px;
+    padding:7px 12px;
+  }
+
+  .auth-title{
+    font-size:22px!important;
+  }
+
+  .auth-subtitle{
+    font-size:11px!important;
+  }
+
+  .auth-tabs{
+    gap:4px;
+  }
+
+  .auth-tab{
+    min-height:47px;
+    font-size:10px!important;
+  }
+
+  .auth-form-grid{
+    gap:7px;
+  }
+
+  .auth-field input,
+  .auth-field select{
+    height:44px;
+    font-size:13px;
+  }
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .two-grid{
+    grid-template-columns:1fr;
+  }
+
+  .container{
+    padding:8px;
+  }
+
+  .banner,
+  .card{
+    padding:13px;
+  }
+
+  th,td{
+    padding:7px;
+    font-size:11px;
   }
 }
 </style>
@@ -668,674 +734,880 @@ button.dark{
 <!-- ================= HEADER ================= -->
 
 <header id="mainHeader">
+
   <div class="header-row">
+
     <div class="header-brand">
-      <div class="logo">🍱 Maa Annapurna</div>
-      <div class="small">Home Made Tiffin Service</div>
+
+      <div class="logo">
+        🍱 Maa Annapurna
+      </div>
+
+      <div class="small">
+        Home Made Tiffin Service
+      </div>
+
     </div>
 
     <div class="shop-box">
-      <span id="shopStatus">OPEN</span>
+
+      <span id="shopStatus">
+        OPEN
+      </span>
+
     </div>
+
   </div>
+
 </header>
+
 
 <!-- ================= LOCATION ================= -->
 
 <div class="location-banner">
-  <div class="location-icon">📍</div>
-  <div>
-    <div class="location-title">SERVICE AREA</div>
-    <div class="location-text">Serving Only in <b>Haldwani</b></div>
+
+  <div class="location-icon">
+    📍
   </div>
+
+  <div>
+
+    <div class="location-title">
+      Service Area
+    </div>
+
+    <div class="location-text">
+      Serving Only in <b>Haldwani</b>
+    </div>
+
+  </div>
+
 </div>
 
-<!-- ================= AUTH ================= -->
+
+<!-- ========================================================= -->
+<!-- AUTH -->
+<!-- ========================================================= -->
 
 <div id="auth" class="page active">
+
   <div class="container">
 
     <div class="banner auth-card">
 
-      <div class="auth-icon">🔐</div>
+      <div class="auth-logo">
 
-      <h2 class="auth-title">Maa Annapurna Login</h2>
+        <div class="auth-logo-box">
+          🍱 Maa Annapurna
+        </div>
+
+        <div class="auth-logo-sub">
+          HOME MADE TIFFIN SERVICE
+        </div>
+
+      </div>
+
+      <div class="auth-icon">
+        🔐
+      </div>
+
+      <h2 class="auth-title">
+        Maa Annapurna Login
+      </h2>
 
       <p class="auth-subtitle">
         Apne account ke according login ya signup karein.
       </p>
 
+
+      <!-- ROLE TABS -->
+
       <div class="auth-tabs">
-        <button id="customerTab"
-                class="auth-tab active"
-                onclick="selectAuthRole('customer')">
-          👤 Customer
+
+        <button
+          id="customerTab"
+          class="auth-tab active"
+          onclick="selectAuthRole('customer')">
+          👤<br>Customer
         </button>
 
-        <button id="restaurantTab"
-                class="auth-tab"
-                onclick="selectAuthRole('restaurant')">
-          🍳 Restaurant
+        <button
+          id="restaurantTab"
+          class="auth-tab"
+          onclick="selectAuthRole('restaurant')">
+          🍳<br>Restaurant
         </button>
 
-        <button id="deliveryTab"
-                class="auth-tab"
-                onclick="selectAuthRole('delivery')">
-          🛵 Delivery
+        <button
+          id="deliveryTab"
+          class="auth-tab"
+          onclick="selectAuthRole('delivery')">
+          🛵<br>Delivery
         </button>
+
+        <button
+          id="adminTab"
+          class="auth-tab"
+          onclick="selectAuthRole('admin')">
+          👑<br>Admin
+        </button>
+
       </div>
 
-      <div id="authMessage" class="message"></div>
+
+      <div id="authMessage"
+           class="message">
+      </div>
+
 
       <!-- LOGIN -->
 
       <div id="loginBox">
 
-        <h3 id="loginTitle" class="section-title">
+        <h3 id="loginTitle"
+            class="section-title">
           👤 Customer Sign In
         </h3>
 
-        <input
-          id="authLogin"
-          type="text"
-          placeholder="📱 Mobile Number या 📧 Email Address">
+        <div class="auth-form-grid">
 
-        <input
-          id="authPassword"
-          type="password"
-          placeholder="🔒 Password">
+          <div class="auth-field auth-full">
 
-        <button class="full" onclick="loginUser()">
-          🔐 Sign In
-        </button>
+            <input
+              id="authLogin"
+              type="text"
+              placeholder="📱 Mobile Number या 📧 Email Address">
 
-        <button class="secondary full" onclick="showSignupBox()">
-          ✨ Create Account / Sign Up
-        </button>
+          </div>
+
+          <div class="auth-field auth-full">
+
+            <input
+              id="authPassword"
+              type="password"
+              placeholder="🔒 Password">
+
+          </div>
+
+          <div class="auth-field auth-full">
+
+            <button
+              class="full"
+              onclick="loginUser()">
+              🔐 Sign In
+            </button>
+
+          </div>
+
+          <div
+            id="customerSignupButton"
+            class="auth-field auth-full">
+
+            <button
+              class="secondary full"
+              onclick="showSignupBox()">
+              ✨ Create Account / Sign Up
+            </button>
+
+          </div>
+
+        </div>
 
       </div>
 
+
       <!-- SIGNUP -->
 
-      <div id="signupBox" style="display:none;">
+      <div id="signupBox"
+           style="display:none;">
 
-        <h3 id="signupTitle" class="section-title">
+        <h3 id="signupTitle"
+            class="section-title">
           ✨ Customer Sign Up
         </h3>
 
-        <input
-          id="authFirstName"
-          type="text"
-          placeholder="👤 First Name">
-
-        <input
-          id="authLastName"
-          type="text"
-          placeholder="👤 Last Name">
-
-        <input
-          id="authPhone"
-          type="tel"
-          inputmode="numeric"
-          maxlength="10"
-          placeholder="📱 Mobile Number">
-
-        <input
-          id="authEmail"
-          type="email"
-          placeholder="📧 Email Address">
-
-        <input
-          id="authAddress"
-          type="text"
-          placeholder="🏠 Address">
-
-        <input
-          id="authSignupPassword"
-          type="password"
-          placeholder="🔒 Password">
-
-        <input
-          id="authConfirmPassword"
-          type="password"
-          placeholder="🔒 Confirm Password">
-
-        <div id="staffSignupNote"
-             class="message info show"
-             style="display:none;">
+        <div
+          id="staffSignupNote"
+          class="message info show"
+          style="display:none;">
           Restaurant/Delivery signup ke baad Admin approval required hoga.
         </div>
 
-        <button class="full" onclick="registerUser()">
-          ✨ Create Account
-        </button>
+        <div class="auth-form-grid">
 
-        <button class="secondary full" onclick="showLoginBox()">
-          🔐 Already have an account? Sign In
-        </button>
+          <div class="auth-field">
+
+            <input
+              id="authFirstName"
+              type="text"
+              placeholder="👤 First Name">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authLastName"
+              type="text"
+              placeholder="👤 Last Name">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authPhone"
+              type="tel"
+              inputmode="numeric"
+              maxlength="10"
+              placeholder="📱 Mobile Number">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authEmail"
+              type="email"
+              placeholder="📧 Email Address">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authAddress"
+              type="text"
+              placeholder="🏠 Address">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authSignupPassword"
+              type="password"
+              placeholder="🔒 Password">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authConfirmPassword"
+              type="password"
+              placeholder="🔒 Confirm Password">
+
+          </div>
+
+          <div class="auth-field">
+
+            <button
+              class="full"
+              onclick="registerUser()">
+              ✨ Create Account
+            </button>
+
+          </div>
+
+          <div class="auth-field auth-full">
+
+            <button
+              class="secondary full"
+              onclick="showLoginBox()">
+              🔐 Already have an account? Sign In
+            </button>
+
+          </div>
+
+        </div>
 
       </div>
 
     </div>
 
   </div>
+
 </div>
 
-<!-- ================= CUSTOMER HOME ================= -->
+
+<!-- ========================================================= -->
+<!-- CUSTOMER HOME -->
+<!-- ========================================================= -->
 
 <div id="home" class="page">
+
   <div class="container">
 
-    <div class="hero">
-      <h2>घर जैसा स्वाद ❤️</h2>
-      <p>Fresh • Hygienic • Homemade</p>
-      <p><b>📍 Serving Only in Haldwani</b></p>
+    <div class="hero banner">
+
+      <div class="hero-icon">
+        🍱
+      </div>
+
+      <h1>
+        घर जैसा स्वाद ❤️
+      </h1>
+
+      <p>
+        Fresh • Homemade • Hygienic
+      </p>
 
       <button onclick="showPage('menu')">
         🍱 आज का Menu देखें
       </button>
-    </div>
-
-    <div class="feature-grid">
-
-      <div class="feature" onclick="showPage('menu')">
-        <div class="icon">🍱</div>
-        <b>Today's Menu</b>
-        <p>Fresh homemade food</p>
-      </div>
-
-      <div class="feature" onclick="showPage('cart')">
-        <div class="icon">🛒</div>
-        <b>My Cart</b>
-        <p>Order your meal</p>
-      </div>
-
-      <div class="feature" onclick="showPage('orders')">
-        <div class="icon">📦</div>
-        <b>My Orders</b>
-        <p>Track your orders</p>
-      </div>
-
-      <div class="feature">
-        <div class="icon">❤️</div>
-        <b>Homemade</b>
-        <p>घर जैसा स्वाद</p>
-      </div>
 
     </div>
 
-  </div>
-</div>
 
-<!-- ================= MENU ================= -->
+    <div class="home-action">
 
-<div id="menu" class="page">
-  <div class="container">
+      <h3>
+        🎁 आज की Special Offer
+      </h3>
 
-    <h2 class="section-title">🍱 Today's Menu</h2>
+      <p id="homeOffer">
+        Homemade food with love ❤️
+      </p>
 
-    <div id="menuGrid" class="menu-grid">
-      <div class="card">
-        <p>Menu loading...</p>
-      </div>
     </div>
 
-  </div>
-</div>
 
-<!-- ================= CART ================= -->
+    <div class="home-action">
 
-<div id="cart" class="page">
-  <div class="container">
+      <h3>
+        📍 Service Area
+      </h3>
 
-    <h2 class="section-title">🛒 My Cart</h2>
+      <p>
+        Maa Annapurna अभी केवल <b>Haldwani</b> में service देती है।
+      </p>
 
-    <div id="cartItems" class="card">
-      <p>Cart empty hai.</p>
     </div>
 
-    <div class="total-box">
 
-      <div class="total-line">
-        <span>Subtotal</span>
-        <b id="cartSubtotal">₹0</b>
-      </div>
+    <div class="home-action">
 
-      <div class="total-line">
-        <span>Delivery</span>
-        <b id="deliveryCharge">₹0</b>
-      </div>
+      <h3>
+        ⭐ Popular Tiffin
+      </h3>
 
-      <hr>
+      <div id="homePopular"></div>
 
-      <div class="total-line">
-        <strong>Total</strong>
-        <strong id="cartTotal">₹0</strong>
-      </div>
-
-      <button class="full" onclick="placeOrder()">
-        ✅ Place Order
+      <button onclick="showPage('menu')">
+        View Full Menu
       </button>
 
     </div>
 
   </div>
+
 </div>
 
-<!-- ================= ORDERS ================= -->
 
-<div id="orders" class="page">
+<!-- ========================================================= -->
+<!-- CUSTOMER MENU -->
+<!-- ========================================================= -->
+
+<div id="menu" class="page">
+
   <div class="container">
 
-    <h2 class="section-title">📦 My Orders</h2>
+    <div class="banner">
 
-    <div id="customerOrders">
-      <div class="card">
-        <p>Orders loading...</p>
+      <h2>
+        🍱 Today's Menu
+      </h2>
+
+      <div id="menuList"
+           class="grid">
       </div>
+
     </div>
 
   </div>
+
 </div>
 
-<!-- ================= PROFILE ================= -->
 
-<div id="profile" class="page">
+<!-- ========================================================= -->
+<!-- CART -->
+<!-- ========================================================= -->
+
+<div id="cart" class="page">
+
   <div class="container">
 
-    <h2 class="section-title">👤 My Profile</h2>
+    <div class="banner">
 
-    <div class="card">
+      <h2>
+        🛒 My Cart
+      </h2>
 
-      <div class="profile-line">
-        <b>Name</b>
-        <div id="profileName">-</div>
+      <div id="cartList">
       </div>
 
-      <div class="profile-line">
-        <b>Mobile</b>
-        <div id="profilePhone">-</div>
+      <hr>
+
+      <h3>
+        Total:
+        ₹<span id="cartTotal">0</span>
+      </h3>
+
+      <button
+        class="full"
+        onclick="placeOrder()">
+        🧾 Place Order
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- ORDERS -->
+<!-- ========================================================= -->
+
+<div id="orders" class="page">
+
+  <div class="container">
+
+    <div class="banner">
+
+      <h2>
+        🧾 My Orders
+      </h2>
+
+      <div id="customerOrders">
       </div>
 
-      <div class="profile-line">
-        <b>Email</b>
-        <div id="profileEmail">-</div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- PROFILE -->
+<!-- ========================================================= -->
+
+<div id="profile" class="page">
+
+  <div class="container">
+
+    <div class="banner">
+
+      <h2>
+        👤 My Profile
+      </h2>
+
+      <div id="profileInfo">
       </div>
 
-      <div class="profile-line">
-        <b>Address</b>
-        <div id="profileAddress">-</div>
-      </div>
-
-      <button class="full red" onclick="logoutUser()">
+      <button
+        class="danger full"
+        onclick="logoutUser()">
         🚪 Logout
       </button>
 
     </div>
 
   </div>
+
 </div>
 
-<!-- ================= RESTAURANT PANEL ================= -->
+
+<!-- ========================================================= -->
+<!-- RESTAURANT -->
+<!-- ========================================================= -->
 
 <div id="restaurant" class="page">
+
   <div class="container">
 
-    <div class="staff-header">
-      <h2>🍳 Restaurant Panel</h2>
-      <div id="restaurantWelcome">Restaurant Staff</div>
-      <small>Admin controlled access</small>
-    </div>
+    <div class="banner">
 
-    <div id="restaurantApprovalNotice"
-         class="message info show">
-      Your restaurant account is controlled by Admin.
-    </div>
+      <h2>
+        🍳 Restaurant Panel
+      </h2>
 
-    <div class="staff-grid">
+      <div id="restaurantNotice"></div>
 
-      <div class="stat-card">
-        <div class="stat-number" id="restaurantOrdersCount">0</div>
-        <div>Orders</div>
+      <div id="restaurantPanel">
       </div>
 
-      <div class="stat-card">
-        <div class="stat-number" id="restaurantMenuCount">0</div>
-        <div>Menu Items</div>
-      </div>
+      <button
+        class="danger full"
+        onclick="logoutUser()">
+        🚪 Logout
+      </button>
 
     </div>
-
-    <div class="panel">
-
-      <h3>🍱 Menu Management</h3>
-
-      <div id="restaurantMenuPermission">
-        <input id="restaurantFoodName"
-               placeholder="Food Name">
-
-        <input id="restaurantFoodPrice"
-               type="number"
-               placeholder="Price">
-
-        <input id="restaurantFoodDescription"
-               placeholder="Description">
-
-        <button onclick="restaurantAddFood()">
-          ➕ Add Food
-        </button>
-      </div>
-
-      <div id="restaurantMenuList"></div>
-
-    </div>
-
-    <div class="panel">
-
-      <h3>📦 Incoming Orders</h3>
-
-      <div id="restaurantOrders">
-        <p>Orders loading...</p>
-      </div>
-
-    </div>
-
-    <button class="full red" onclick="logoutUser()">
-      🚪 Logout
-    </button>
 
   </div>
+
 </div>
 
-<!-- ================= DELIVERY PANEL ================= -->
+
+<!-- ========================================================= -->
+<!-- DELIVERY -->
+<!-- ========================================================= -->
 
 <div id="delivery" class="page">
+
   <div class="container">
 
-    <div class="staff-header">
-      <h2>🛵 Delivery Panel</h2>
-      <div id="deliveryWelcome">Delivery Staff</div>
-      <small>Only Admin-assigned orders are shown</small>
-    </div>
+    <div class="banner">
 
-    <div class="staff-grid">
+      <h2>
+        🛵 Delivery Panel
+      </h2>
 
-      <div class="stat-card">
-        <div class="stat-number" id="deliveryOrdersCount">0</div>
-        <div>Assigned Orders</div>
+      <div id="deliveryPanel">
       </div>
 
-      <div class="stat-card">
-        <div class="stat-number" id="deliveryCompletedCount">0</div>
-        <div>Delivered</div>
-      </div>
+      <button
+        class="danger full"
+        onclick="logoutUser()">
+        🚪 Logout
+      </button>
 
     </div>
-
-    <div class="panel">
-
-      <h3>📦 My Assigned Orders</h3>
-
-      <div id="deliveryOrders">
-        <p>Orders loading...</p>
-      </div>
-
-    </div>
-
-    <button class="full red" onclick="logoutUser()">
-      🚪 Logout
-    </button>
 
   </div>
+
 </div>
 
-<!-- ================= ADMIN PANEL ================= -->
 
-<div id="admin" class="page">
+<!-- ========================================================= -->
+<!-- PENDING STAFF -->
+<!-- ========================================================= -->
+
+<div id="staffPending" class="page">
+
   <div class="container">
 
-    <div class="staff-header">
-      <h2>👑 Admin Control Panel</h2>
-      <div id="adminWelcome">Maa Annapurna Administrator</div>
-      <small>Master Control</small>
-    </div>
+    <div class="banner"
+         style="text-align:center">
 
-    <div class="staff-grid">
-
-      <div class="stat-card">
-        <div class="stat-number" id="adminOrdersCount">0</div>
-        <div>Total Orders</div>
+      <div style="font-size:60px">
+        ⏳
       </div>
 
-      <div class="stat-card">
-        <div class="stat-number" id="adminUsersCount">0</div>
-        <div>Total Users</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-number" id="adminRestaurantCount">0</div>
-        <div>Restaurants</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-number" id="adminDeliveryCount">0</div>
-        <div>Delivery Staff</div>
-      </div>
-
-    </div>
-
-    <div class="admin-menu">
-
-      <button class="admin-action"
-              onclick="adminSection('dashboard')">
-        <strong>📊 Dashboard</strong>
-        Overview
-      </button>
-
-      <button class="admin-action"
-              onclick="adminSection('users')">
-        <strong>👥 Users</strong>
-        Customer / Staff
-      </button>
-
-      <button class="admin-action"
-              onclick="adminSection('menuAdmin')">
-        <strong>🍱 Menu</strong>
-        Food & Prices
-      </button>
-
-      <button class="admin-action"
-              onclick="adminSection('ordersAdmin')">
-        <strong>📦 Orders</strong>
-        Manage Orders
-      </button>
-
-      <button class="admin-action"
-              onclick="adminSection('deliveryAdmin')">
-        <strong>🛵 Delivery</strong>
-        Assign Orders
-      </button>
-
-      <button class="admin-action"
-              onclick="adminSection('settingsAdmin')">
-        <strong>⚙️ Settings</strong>
-        Shop Control
-      </button>
-
-    </div>
-
-    <!-- ADMIN DASHBOARD -->
-
-    <div id="adminDashboard"
-         class="admin-section active panel">
-
-      <h3>📊 Admin Dashboard</h3>
+      <h2>
+        Admin Approval Pending
+      </h2>
 
       <p>
-        👑 Admin ke paas Restaurant aur Delivery dono ka complete control hai.
+        Aapka staff account create ho gaya hai.
       </p>
 
       <p>
-        Restaurant staff sirf approved permissions ke according kaam karega.
+        Admin approval ke baad aapka panel activate hoga.
       </p>
 
-      <p>
-        Delivery staff sirf Admin ke assigned orders dekhega.
-      </p>
-
-    </div>
-
-    <!-- ADMIN USERS -->
-
-    <div id="adminUsers"
-         class="admin-section panel">
-
-      <h3>👥 User & Staff Management</h3>
-
-      <p>
-        Restaurant/Delivery signup requests yahan approve karein.
-      </p>
-
-      <div id="adminUsersList">
-        Loading users...
-      </div>
-
-    </div>
-
-    <!-- ADMIN MENU -->
-
-    <div id="adminMenuAdmin"
-         class="admin-section panel">
-
-      <h3>🍱 Menu Management</h3>
-
-      <input id="adminFoodName"
-             placeholder="Food Name">
-
-      <input id="adminFoodPrice"
-             type="number"
-             placeholder="Price">
-
-      <input id="adminFoodDescription"
-             placeholder="Description">
-
-      <button onclick="adminAddFood()">
-        ➕ Add Food
+      <button
+        class="danger"
+        onclick="logoutUser()">
+        🚪 Logout
       </button>
 
-      <div id="adminMenuList"></div>
-
     </div>
 
-    <!-- ADMIN ORDERS -->
+  </div>
 
-    <div id="adminOrdersAdmin"
-         class="admin-section panel">
+</div>
 
-      <h3>📦 All Orders</h3>
 
-      <div id="adminOrdersList">
-        Loading orders...
+<!-- ========================================================= -->
+<!-- ADMIN -->
+<!-- ========================================================= -->
+
+<div id="admin" class="page">
+
+  <div class="container">
+
+    <div class="banner">
+
+      <h2>
+        👑 Admin Control Panel
+      </h2>
+
+      <p>
+        Maa Annapurna ke sabhi panels ka control yahan se hoga.
+      </p>
+
+      <div class="stats">
+
+        <div class="stat">
+          <b id="statOrders">0</b>
+          <span>Orders</span>
+        </div>
+
+        <div class="stat">
+          <b id="statSales">₹0</b>
+          <span>Sales</span>
+        </div>
+
+        <div class="stat">
+          <b id="statFoods">0</b>
+          <span>Food Items</span>
+        </div>
+
+        <div class="stat">
+          <b id="statUsers">0</b>
+          <span>Users</span>
+        </div>
+
       </div>
 
     </div>
 
-    <!-- ADMIN DELIVERY -->
 
-    <div id="adminDeliveryAdmin"
-         class="admin-section panel">
+    <!-- SHOP CONTROL -->
 
-      <h3>🛵 Delivery Assignment</h3>
+    <div class="banner">
 
-      <div id="adminDeliveryList">
-        Loading delivery staff...
+      <h3>
+        🟢 Shop Status
+      </h3>
+
+      <div class="two-grid">
+
+        <button
+          class="success"
+          onclick="setShopStatus(true)">
+          🟢 OPEN
+        </button>
+
+        <button
+          class="danger"
+          onclick="setShopStatus(false)">
+          🔴 CLOSED
+        </button>
+
       </div>
 
     </div>
 
-    <!-- ADMIN SETTINGS -->
 
-    <div id="adminSettingsAdmin"
-         class="admin-section panel">
+    <!-- MENU CONTROL -->
 
-      <h3>⚙️ Business Settings</h3>
+    <div class="banner">
 
-      <label>
-        Shop Status
-      </label>
+      <h3>
+        🍱 Menu Management
+      </h3>
 
-      <select id="adminShopStatus">
-        <option value="OPEN">OPEN</option>
-        <option value="CLOSED">CLOSED</option>
-      </select>
+      <div class="auth-form-grid">
 
-      <button onclick="saveShopStatus()">
-        💾 Save Shop Status
-      </button>
+        <div class="auth-field">
 
-      <hr>
+          <input
+            id="foodName"
+            placeholder="🍱 Food Name">
 
-      <h3>📍 Service Area</h3>
+        </div>
+
+        <div class="auth-field">
+
+          <input
+            id="foodPrice"
+            type="number"
+            placeholder="₹ Price">
+
+        </div>
+
+        <div class="auth-field">
+
+          <input
+            id="foodEmoji"
+            placeholder="🍛 Emoji">
+
+        </div>
+
+        <div class="auth-field">
+
+          <button
+            onclick="adminAddFood()">
+            ➕ Add Food
+          </button>
+
+        </div>
+
+      </div>
+
+      <div id="adminMenuList">
+      </div>
+
+    </div>
+
+
+    <!-- STAFF CONTROL -->
+
+    <div class="banner">
+
+      <h3>
+        👥 Restaurant & Delivery Staff Control
+      </h3>
 
       <p>
-        <b>Haldwani</b>
+        Admin hi staff ko approve, disable aur permissions de sakta hai.
+      </p>
+
+      <div id="staffList">
+      </div>
+
+    </div>
+
+
+    <!-- ALL USERS -->
+
+    <div class="banner">
+
+      <h3>
+        👤 Customer Management
+      </h3>
+
+      <div id="adminUsers">
+      </div>
+
+    </div>
+
+
+    <!-- ALL ORDERS -->
+
+    <div class="banner">
+
+      <h3>
+        🧾 All Orders & Delivery Assignment
+      </h3>
+
+      <div id="adminOrders">
+      </div>
+
+    </div>
+
+
+    <!-- OFFER -->
+
+    <div class="banner">
+
+      <h3>
+        🎁 Offer / Banner
+      </h3>
+
+      <div class="auth-form-grid">
+
+        <div class="auth-field auth-full">
+
+          <input
+            id="offerText"
+            placeholder="Special Offer">
+
+        </div>
+
+        <div class="auth-field auth-full">
+
+          <button
+            onclick="saveOffer()">
+            💾 Save Offer
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- BUSINESS SETTINGS -->
+
+    <div class="banner">
+
+      <h3>
+        ⚙️ Business Settings
+      </h3>
+
+      <p>
+        📍 Service Area: <b>Haldwani Only</b>
       </p>
 
       <p>
-        Service currently available only in Haldwani.
+        🍱 Service: Homemade Tiffin
       </p>
 
     </div>
 
-    <button class="full red" onclick="logoutUser()">
+
+    <button
+      class="danger full"
+      onclick="logoutUser()">
       🚪 Admin Logout
     </button>
 
   </div>
-</div>
-
-<!-- ================= CUSTOMER NAV ================= -->
-
-<div id="mainNav" class="hidden">
-
-  <button class="nav-btn active"
-          onclick="showPage('home')">
-    <span class="nav-icon">🏠</span>
-    Home
-  </button>
-
-  <button class="nav-btn"
-          onclick="showPage('menu')">
-    <span class="nav-icon">🍱</span>
-    Menu
-  </button>
-
-  <button class="nav-btn"
-          onclick="showPage('cart')">
-    <span class="nav-icon">🛒</span>
-    Cart
-  </button>
-
-  <button class="nav-btn"
-          onclick="showPage('orders')">
-    <span class="nav-icon">📦</span>
-    Orders
-  </button>
-
-  <button class="nav-btn"
-          onclick="showPage('profile')">
-    <span class="nav-icon">👤</span>
-    Profile
-  </button>
 
 </div>
 
-<!-- ================= FIREBASE ================= -->
+
+<!-- ========================================================= -->
+<!-- NAVIGATION -->
+<!-- ========================================================= -->
+
+<nav id="mainNav"
+     class="hidden">
+
+  <div class="nav-inner">
+
+    <button
+      class="nav-btn"
+      onclick="showPage('home')">
+      🏠<br>Home
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="showPage('menu')">
+      🍱<br>Menu
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="showPage('cart')">
+      🛒<br>Cart
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="showPage('orders')">
+      🧾<br>Orders
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="showPage('profile')">
+      👤<br>Profile
+    </button>
+
+  </div>
+
+</nav>
+
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
 import {
   getAuth,
@@ -1344,8 +1616,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
   getFirestore,
@@ -1361,50 +1632,81 @@ import {
   where,
   getDocs,
   serverTimestamp
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 
-/* ================= FIREBASE CONFIG ================= */
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBAro8dYjdUo8B7YRCUPX9WpI7_btf0CAI",
-  authDomain: "ma-annpurna-tiffin.firebaseapp.com",
-  projectId: "ma-annpurna-tiffin",
-  storageBucket: "ma-annpurna-tiffin.firebasestorage.app",
-  messagingSenderId: "732257430751",
-  appId: "1:732257430751:web:59758d59bdc94e348a0d6a",
-  measurementId: "G-9NVW0R94RG"
+
+  apiKey:
+  "AIzaSyBAro8dYjdUo8B7YRCUPX9WpI7_btf0CAI",
+
+  authDomain:
+  "ma-annpurna-tiffin.firebaseapp.com",
+
+  projectId:
+  "ma-annpurna-tiffin",
+
+  storageBucket:
+  "ma-annpurna-tiffin.firebasestorage.app",
+
+  messagingSenderId:
+  "732257430751",
+
+  appId:
+  "1:732257430751:web:59758d59bdc94e348a0d6a",
+
+  measurementId:
+  "G-9NVW0R94RG"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+
+const app =
+  initializeApp(firebaseConfig);
+
+const auth =
+  getAuth(app);
+
+const db =
+  getFirestore(app);
 
 
-/* ================= GLOBAL VARIABLES ================= */
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
 
 let currentUser = null;
-let currentUserData = null;
 let currentRole = "customer";
-
+let currentUserData = null;
 let selectedAuthRole = "customer";
 
-let cart = [];
+let cartItems = [];
 
 let menuItems = [];
-let allUsers = [];
-let allOrders = [];
 
 let shopOpen = true;
 
+let offerText =
+  "Homemade food with love ❤️";
 
-/* ================= HELPERS ================= */
 
-const $ = id => document.getElementById(id);
+/* =========================================================
+   HELPERS
+========================================================= */
 
-function escapeHTML(value){
-  if(value === null || value === undefined) return "";
+const $ = id =>
+  document.getElementById(id);
+
+
+function escapeHtml(value){
+
+  if(value === undefined ||
+     value === null) return "";
+
   return String(value)
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
@@ -1413,148 +1715,286 @@ function escapeHTML(value){
     .replaceAll("'","&#039;");
 }
 
-function money(value){
-  return "₹" + Number(value || 0).toFixed(0);
-}
 
 function showMessage(text,type="info"){
+
   const box = $("authMessage");
 
   if(!box) return;
 
   box.textContent = text;
-  box.className = "message show " + type;
+
+  box.className =
+    "message show " + type;
+
 }
 
-function clearMessage(){
-  const box = $("authMessage");
 
-  if(box){
-    box.textContent = "";
-    box.className = "message";
+function hideAuth(){
+
+  $("auth").classList.remove("active");
+
+}
+
+
+function showPage(id){
+
+  document
+    .querySelectorAll(".page")
+    .forEach(p=>{
+      p.classList.remove("active");
+    });
+
+  const page = $(id);
+
+  if(page){
+    page.classList.add("active");
   }
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
 }
 
 
-/* ================= AUTH ROLE SELECT ================= */
+/* =========================================================
+   ROLE SELECT
+========================================================= */
 
-window.selectAuthRole = function(role){
+window.selectAuthRole =
+function(role){
 
   selectedAuthRole = role;
 
-  document.querySelectorAll(".auth-tab")
-    .forEach(x => x.classList.remove("active"));
+  document
+    .querySelectorAll(".auth-tab")
+    .forEach(btn=>{
+      btn.classList.remove("active");
+    });
+
 
   if(role === "customer"){
-    $("customerTab").classList.add("active");
-    $("loginTitle").textContent = "👤 Customer Sign In";
-    $("signupTitle").textContent = "✨ Customer Sign Up";
-    $("staffSignupNote").style.display = "none";
+
+    $("customerTab")
+      .classList.add("active");
+
+    $("loginTitle").textContent =
+      "👤 Customer Sign In";
+
+    $("signupTitle").textContent =
+      "✨ Customer Sign Up";
+
+    $("staffSignupNote")
+      .style.display="none";
+
+    $("customerSignupButton")
+      .style.display="block";
   }
+
 
   if(role === "restaurant"){
-    $("restaurantTab").classList.add("active");
-    $("loginTitle").textContent = "🍳 Restaurant Sign In";
-    $("signupTitle").textContent = "🍳 Restaurant Sign Up";
-    $("staffSignupNote").style.display = "block";
+
+    $("restaurantTab")
+      .classList.add("active");
+
+    $("loginTitle").textContent =
+      "🍳 Restaurant Sign In";
+
+    $("signupTitle").textContent =
+      "🍳 Restaurant Sign Up";
+
+    $("staffSignupNote")
+      .style.display="block";
+
+    $("customerSignupButton")
+      .style.display="block";
   }
+
 
   if(role === "delivery"){
-    $("deliveryTab").classList.add("active");
-    $("loginTitle").textContent = "🛵 Delivery Sign In";
-    $("signupTitle").textContent = "🛵 Delivery Sign Up";
-    $("staffSignupNote").style.display = "block";
+
+    $("deliveryTab")
+      .classList.add("active");
+
+    $("loginTitle").textContent =
+      "🛵 Delivery Sign In";
+
+    $("signupTitle").textContent =
+      "🛵 Delivery Sign Up";
+
+    $("staffSignupNote")
+      .style.display="block";
+
+    $("customerSignupButton")
+      .style.display="block";
   }
 
-  showLoginBox();
+
+  if(role === "admin"){
+
+    $("adminTab")
+      .classList.add("active");
+
+    $("loginTitle").textContent =
+      "👑 Admin Sign In";
+
+    $("customerSignupButton")
+      .style.display="none";
+
+    $("staffSignupNote")
+      .style.display="none";
+
+    $("loginBox")
+      .style.display="block";
+
+    $("signupBox")
+      .style.display="none";
+  }
+
 };
 
 
-/* ================= SHOW LOGIN ================= */
+/* =========================================================
+   LOGIN / SIGNUP BOX
+========================================================= */
 
-window.showLoginBox = function(){
+window.showSignupBox =
+function(){
 
-  $("loginBox").style.display = "block";
-  $("signupBox").style.display = "none";
+  if(selectedAuthRole === "admin"){
 
-  clearMessage();
+    showMessage(
+      "Admin ke liye public Sign Up allowed nahi hai.",
+      "error"
+    );
+
+    return;
+  }
+
+  $("loginBox")
+    .style.display="none";
+
+  $("signupBox")
+    .style.display="block";
+
 };
 
 
-/* ================= SHOW SIGNUP ================= */
+window.showLoginBox =
+function(){
 
-window.showSignupBox = function(){
+  $("signupBox")
+    .style.display="none";
 
-  $("loginBox").style.display = "none";
-  $("signupBox").style.display = "block";
+  $("loginBox")
+    .style.display="block";
 
-  clearMessage();
 };
 
 
-/* ================= REGISTER ================= */
+/* =========================================================
+   REGISTER
+========================================================= */
 
-window.registerUser = async function(){
+window.registerUser =
+async function(){
+
+  if(selectedAuthRole === "admin"){
+
+    showMessage(
+      "Admin account ka public Sign Up allowed nahi hai.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  const firstName =
+    $("authFirstName").value.trim();
+
+  const lastName =
+    $("authLastName").value.trim();
+
+  const phone =
+    $("authPhone").value.trim();
+
+  const email =
+    $("authEmail").value.trim();
+
+  const address =
+    $("authAddress").value.trim();
+
+  const password =
+    $("authSignupPassword").value;
+
+  const confirmPassword =
+    $("authConfirmPassword").value;
+
+
+  if(
+    !firstName ||
+    !lastName ||
+    !phone ||
+    !email ||
+    !password ||
+    !confirmPassword
+  ){
+
+    showMessage(
+      "Sabhi required fields bharein.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  if(password !== confirmPassword){
+
+    showMessage(
+      "Password aur Confirm Password same nahi hain.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  if(phone.length !== 10){
+
+    showMessage(
+      "Valid 10 digit mobile number डालें.",
+      "error"
+    );
+
+    return;
+  }
+
 
   try{
 
-    const firstName = $("authFirstName").value.trim();
-    const lastName = $("authLastName").value.trim();
-    const phone = $("authPhone").value.trim();
-    const email = $("authEmail").value.trim().toLowerCase();
-    const address = $("authAddress").value.trim();
+    const phoneQuery =
+      query(
+        collection(db,"users"),
+        where("phone","==",phone)
+      );
 
-    const password = $("authSignupPassword").value;
-    const confirmPassword = $("authConfirmPassword").value;
-
-    if(!firstName){
-      showMessage("First Name डालें.","error");
-      return;
-    }
-
-    if(!lastName){
-      showMessage("Last Name डालें.","error");
-      return;
-    }
-
-    if(!/^[0-9]{10}$/.test(phone)){
-      showMessage("10 digit mobile number डालें.","error");
-      return;
-    }
-
-    if(!email || !email.includes("@")){
-      showMessage("Valid email डालें.","error");
-      return;
-    }
-
-    if(password.length < 6){
-      showMessage("Password कम से कम 6 characters का होना चाहिए.","error");
-      return;
-    }
-
-    if(password !== confirmPassword){
-      showMessage("Password और Confirm Password अलग हैं.","error");
-      return;
-    }
-
-    if(!address){
-      showMessage("Address डालें.","error");
-      return;
-    }
-
-    showMessage("Account बनाया जा रहा है...","info");
-
-    const phoneQuery = query(
-      collection(db,"users"),
-      where("phone","==",phone)
-    );
-
-    const phoneResult = await getDocs(phoneQuery);
+    const phoneResult =
+      await getDocs(phoneQuery);
 
     if(!phoneResult.empty){
-      showMessage("यह mobile number पहले से registered है.","error");
+
+      showMessage(
+        "Ye mobile number already registered hai.",
+        "error"
+      );
+
       return;
     }
+
 
     const credential =
       await createUserWithEmailAndPassword(
@@ -1563,35 +2003,47 @@ window.registerUser = async function(){
         password
       );
 
-    const user = credential.user;
 
-    const name = firstName + " " + lastName;
+    const uid =
+      credential.user.uid;
 
-    await updateProfile(user,{
-      displayName:name
-    });
 
-    let role = selectedAuthRole;
+    await updateProfile(
+      credential.user,
+      {
+        displayName:
+        firstName + " " + lastName
+      }
+    );
 
-    /*
-      Customer automatically active.
-      Restaurant/Delivery pending approval.
-    */
+
+    const role =
+      selectedAuthRole;
+
 
     const status =
       role === "customer"
-        ? "approved"
-        : "pending";
+      ? "approved"
+      : "pending";
+
 
     await setDoc(
-      doc(db,"users",user.uid),
+      doc(db,"users",uid),
       {
-        uid:user.uid,
+
+        uid:uid,
+
         firstName:firstName,
+
         lastName:lastName,
-        name:name,
+
+        name:
+          firstName + " " + lastName,
+
         phone:phone,
+
         email:email,
+
         address:address,
 
         role:role,
@@ -1604,1394 +2056,1352 @@ window.registerUser = async function(){
           delivery:false
         },
 
-        createdAt:serverTimestamp()
+        createdAt:
+          serverTimestamp()
+
       }
     );
+
 
     if(role === "customer"){
 
       showMessage(
-        "Customer account successfully created. Login हो गया है.",
+        "Account successfully create ho gaya.",
         "success"
       );
 
     }else{
 
       showMessage(
-        "Account बन गया है. Admin approval के बाद आप panel access कर पाएंगे.",
+        "Account create ho gaya. Admin approval ke baad panel activate hoga.",
         "success"
       );
 
-      await signOut(auth);
-
-      setTimeout(()=>{
-        showLoginBox();
-      },1000);
     }
+
 
   }catch(error){
 
-    console.error(error);
+    showMessage(
+      error.message,
+      "error"
+    );
 
-    let msg = error.message || "Registration failed.";
-
-    if(error.code === "auth/email-already-in-use"){
-      msg = "यह email पहले से registered है.";
-    }
-
-    if(error.code === "auth/invalid-email"){
-      msg = "Invalid email address.";
-    }
-
-    showMessage(msg,"error");
   }
+
 };
 
 
-/* ================= LOGIN ================= */
+/* =========================================================
+   LOGIN
+========================================================= */
 
-window.loginUser = async function(){
+window.loginUser =
+async function(){
 
-  try{
+  const loginValue =
+    $("authLogin").value.trim();
 
-    const login = $("authLogin").value.trim();
-    const password = $("authPassword").value;
-
-    if(!login || !password){
-      showMessage(
-        "Mobile/Email और Password दोनों डालें.",
-        "error"
-      );
-      return;
-    }
-
-    showMessage("Login हो रहा है...","info");
-
-    let email = login;
-
-    /*
-      If mobile number entered,
-      find registered email.
-    */
-
-    if(/^[0-9]{10}$/.test(login)){
-
-      const q = query(
-        collection(db,"users"),
-        where("phone","==",login)
-      );
-
-      const result = await getDocs(q);
-
-      if(result.empty){
-        showMessage(
-          "इस mobile number से account नहीं मिला.",
-          "error"
-        );
-        return;
-      }
-
-      email = result.docs[0].data().email;
-    }
-
-    const credential =
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-    const user = credential.user;
-
-    const userSnap =
-      await getDoc(doc(db,"users",user.uid));
-
-    if(!userSnap.exists()){
-
-      showMessage(
-        "User profile नहीं मिला.",
-        "error"
-      );
-
-      await signOut(auth);
-      return;
-    }
-
-    const data = userSnap.data();
-
-    /*
-      Admin account
-    */
-
-    if(data.role === "admin"){
-
-      currentRole = "admin";
-
-      currentUserData = data;
-
-      showPage("admin");
-      $("mainNav").classList.add("hidden");
-
-      loadAdminData();
-
-      return;
-    }
-
-    /*
-      Role selected at login must match
-      actual account role.
-    */
-
-    if(
-      selectedAuthRole !== "customer" &&
-      data.role !== selectedAuthRole
-    ){
-
-      showMessage(
-        "यह account " +
-        data.role +
-        " role का है. सही login section चुनें.",
-        "error"
-      );
-
-      await signOut(auth);
-      return;
-    }
-
-    /*
-      Restaurant/Delivery approval
-    */
-
-    if(
-      data.role === "restaurant" ||
-      data.role === "delivery"
-    ){
-
-      if(data.status !== "approved"){
-
-        if(data.status === "disabled"){
-
-          showMessage(
-            "आपका account Admin द्वारा disabled है.",
-            "error"
-          );
-
-        }else{
-
-          showMessage(
-            "आपका account अभी Admin approval के लिए pending है.",
-            "info"
-          );
-        }
-
-        await signOut(auth);
-        return;
-      }
-    }
-
-    currentUser = user;
-    currentUserData = data;
-    currentRole = data.role;
-
-    if(data.role === "restaurant"){
-
-      showPage("restaurant");
-      $("mainNav").classList.add("hidden");
-
-      loadRestaurantData();
-
-    }else if(data.role === "delivery"){
-
-      showPage("delivery");
-      $("mainNav").classList.add("hidden");
-
-      loadDeliveryData();
-
-    }else{
-
-      showPage("home");
-      $("mainNav").classList.remove("hidden");
-
-      loadCustomerProfile();
-      loadMenu();
-      loadCustomerOrders();
-    }
-
-    showMessage("Login successful.","success");
-
-  }catch(error){
-
-    console.error(error);
-
-    let msg = "Login failed.";
-
-    if(
-      error.code === "auth/invalid-credential" ||
-      error.code === "auth/wrong-password" ||
-      error.code === "auth/user-not-found"
-    ){
-      msg = "Email/Mobile या Password गलत है.";
-    }
-
-    showMessage(msg,"error");
-  }
-};
+  const password =
+    $("authPassword").value;
 
 
-/* ================= AUTH STATE ================= */
+  if(!loginValue || !password){
 
-onAuthStateChanged(auth,async(user)=>{
+    showMessage(
+      "Email/Mobile aur Password डालें.",
+      "error"
+    );
 
-  if(!user){
-    currentUser = null;
     return;
   }
 
+
   try{
 
-    const snap =
-      await getDoc(doc(db,"users",user.uid));
+    let email =
+      loginValue;
 
-    if(!snap.exists()) return;
 
-    currentUser = user;
-    currentUserData = snap.data();
-    currentRole = currentUserData.role || "customer";
+    /* MOBILE LOGIN */
+
+    if(!loginValue.includes("@")){
+
+      const phoneQuery =
+        query(
+          collection(db,"users"),
+          where("phone","==",loginValue)
+        );
+
+      const result =
+        await getDocs(phoneQuery);
+
+
+      if(result.empty){
+
+        showMessage(
+          "Is mobile number ka account nahi mila.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      email =
+        result.docs[0].data().email;
+
+    }
+
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
 
   }catch(error){
-    console.error(error);
+
+    showMessage(
+      "Login failed: " + error.message,
+      "error"
+    );
+
   }
 
-});
+};
 
 
-/* ================= PAGE CONTROL ================= */
+/* =========================================================
+   AUTH STATE
+========================================================= */
 
-window.showPage = function(pageId){
+onAuthStateChanged(
+  auth,
+  async user=>{
 
-  document.querySelectorAll(".page")
+    if(!user){
+
+      currentUser=null;
+      currentUserData=null;
+      currentRole="customer";
+
+      $("mainNav")
+        .classList.add("hidden");
+
+      showPage("auth");
+
+      return;
+    }
+
+
+    currentUser =
+      user;
+
+
+    try{
+
+      const snap =
+        await getDoc(
+          doc(db,"users",user.uid)
+        );
+
+
+      if(!snap.exists()){
+
+        await signOut(auth);
+
+        showPage("auth");
+
+        showMessage(
+          "User profile nahi mila.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      currentUserData =
+        snap.data();
+
+
+      currentRole =
+        currentUserData.role ||
+        "customer";
+
+
+      /*
+       * IMPORTANT:
+       * Login karne wale user ko
+       * sirf uska apna panel milega.
+       */
+
+      openRolePanel();
+
+
+    }catch(error){
+
+      console.error(error);
+
+      showMessage(
+        "Profile load nahi ho paya.",
+        "error"
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   ROLE ROUTING
+========================================================= */
+
+function openRolePanel(){
+
+  /*
+   * Sab pages hide
+   */
+
+  document
+    .querySelectorAll(".page")
     .forEach(page=>{
       page.classList.remove("active");
     });
 
-  const page = $(pageId);
 
-  if(page){
-    page.classList.add("active");
+  /*
+   * Customer navigation default hidden
+   */
+
+  $("mainNav")
+    .classList.add("hidden");
+
+
+  /* ================= ADMIN ================= */
+
+  if(currentRole === "admin"){
+
+    showPage("admin");
+
+    loadAdmin();
+
+    return;
   }
 
-  if(pageId === "home"){
-    document.querySelectorAll(".nav-btn")
-      .forEach(x=>x.classList.remove("active"));
 
-    document.querySelector(".nav-btn")
-      ?.classList.add("active");
+  /* ================= RESTAURANT ================= */
+
+  if(currentRole === "restaurant"){
+
+    if(currentUserData.status !== "approved"){
+
+      showPage("staffPending");
+
+      return;
+    }
+
+    showPage("restaurant");
+
+    loadRestaurant();
+
+    return;
   }
 
-  if(
-    pageId === "auth" ||
-    pageId === "restaurant" ||
-    pageId === "delivery" ||
-    pageId === "admin"
-  ){
-    $("mainNav").classList.add("hidden");
+
+  /* ================= DELIVERY ================= */
+
+  if(currentRole === "delivery"){
+
+    if(currentUserData.status !== "approved"){
+
+      showPage("staffPending");
+
+      return;
+    }
+
+    showPage("delivery");
+
+    loadDelivery();
+
+    return;
   }
+
+
+  /* ================= CUSTOMER ================= */
+
+  currentRole="customer";
+
+  $("mainNav")
+    .classList.remove("hidden");
+
+  showPage("home");
+
+  loadCustomer();
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+window.logoutUser =
+async function(){
+
+  await signOut(auth);
+
+  location.reload();
+
 };
 
 
-/* ================= LOGOUT ================= */
+/* =========================================================
+   CUSTOMER
+========================================================= */
 
-window.logoutUser = async function(){
+async function loadCustomer(){
 
-  try{
+  loadMenu();
 
-    await signOut(auth);
+  loadCustomerOrders();
 
-    currentUser = null;
-    currentUserData = null;
-    currentRole = "customer";
+  loadProfile();
 
-    $("mainNav").classList.add("hidden");
+  $("homeOffer").textContent =
+    offerText;
 
-    showPage("auth");
-
-    showLoginBox();
-
-    $("authLogin").value = "";
-    $("authPassword").value = "";
-
-    showMessage(
-      "You have been logged out.",
-      "success"
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-  }
-};
+}
 
 
-/* ================= MENU ================= */
+/* =========================================================
+   MENU LOAD
+========================================================= */
 
 function loadMenu(){
 
-  const q = collection(db,"menu");
-
-  onSnapshot(q,(snapshot)=>{
-
-    menuItems = [];
-
-    snapshot.forEach(docSnap=>{
-
-      menuItems.push({
-        id:docSnap.id,
-        ...docSnap.data()
-      });
-
-    });
-
-    renderMenu();
-    renderAdminMenu();
-    renderRestaurantMenu();
-
-  },error=>{
-    console.error(error);
-  });
-
-}
-
-function renderMenu(){
-
-  const box = $("menuGrid");
-
-  if(!box) return;
-
-  if(menuItems.length === 0){
-
-    box.innerHTML = `
-      <div class="card">
-        <h3>🍱 Menu अभी available नहीं है.</h3>
-        <p>Admin menu add करेगा.</p>
-      </div>
-    `;
-
-    return;
-  }
-
-  box.innerHTML = menuItems.map(item=>`
-
-    <div class="food-card">
-
-      <div class="food-image">
-        ${escapeHTML(item.icon || "🍱")}
-      </div>
-
-      <div class="food-body">
-
-        <div class="food-name">
-          ${escapeHTML(item.name)}
-        </div>
-
-        <div class="food-desc">
-          ${escapeHTML(item.description || "")}
-        </div>
-
-        <div class="food-price">
-          ${money(item.price)}
-        </div>
-
-        <button
-          class="full"
-          onclick="addToCart('${item.id}')">
-          🛒 Add to Cart
-        </button>
-
-      </div>
-
-    </div>
-
-  `).join("");
-}
-
-
-/* ================= CART ================= */
-
-window.addToCart = function(id){
-
-  const item = menuItems.find(x=>x.id === id);
-
-  if(!item) return;
-
-  const existing =
-    cart.find(x=>x.id === id);
-
-  if(existing){
-    existing.qty++;
-  }else{
-    cart.push({
-      id:item.id,
-      name:item.name,
-      price:Number(item.price || 0),
-      qty:1
-    });
-  }
-
-  renderCart();
-
-  showPage("cart");
-};
-
-window.changeQty = function(id,change){
-
-  const item = cart.find(x=>x.id === id);
-
-  if(!item) return;
-
-  item.qty += change;
-
-  if(item.qty <= 0){
-    cart = cart.filter(x=>x.id !== id);
-  }
-
-  renderCart();
-};
-
-function renderCart(){
-
-  const box = $("cartItems");
-
-  if(!box) return;
-
-  if(cart.length === 0){
-
-    box.innerHTML = `
-      <p>🛒 Cart अभी empty है.</p>
-    `;
-
-    $("cartSubtotal").textContent = "₹0";
-    $("deliveryCharge").textContent = "₹0";
-    $("cartTotal").textContent = "₹0";
-
-    return;
-  }
-
-  let subtotal = 0;
-
-  box.innerHTML = cart.map(item=>{
-
-    const total =
-      Number(item.price) * Number(item.qty);
-
-    subtotal += total;
-
-    return `
-
-      <div class="cart-row">
-
-        <div>
-          <b>${escapeHTML(item.name)}</b>
-          <br>
-          ${money(item.price)} × ${item.qty}
-        </div>
-
-        <div class="qty">
-
-          <button
-            onclick="changeQty('${item.id}',-1)">
-            −
-          </button>
-
-          <b>${item.qty}</b>
-
-          <button
-            onclick="changeQty('${item.id}',1)">
-            +
-          </button>
-
-        </div>
-
-      </div>
-
-    `;
-
-  }).join("");
-
-  const delivery = subtotal > 0 ? 30 : 0;
-  const total = subtotal + delivery;
-
-  $("cartSubtotal").textContent = money(subtotal);
-  $("deliveryCharge").textContent = money(delivery);
-  $("cartTotal").textContent = money(total);
-}
-
-
-/* ================= PLACE ORDER ================= */
-
-window.placeOrder = async function(){
-
-  if(!currentUser){
-    alert("Please login first.");
-    return;
-  }
-
-  if(cart.length === 0){
-    alert("Cart empty hai.");
-    return;
-  }
-
-  if(!shopOpen){
-    alert("Shop abhi CLOSED hai.");
-    return;
-  }
-
-  try{
-
-    const subtotal =
-      cart.reduce(
-        (sum,item)=>
-          sum + Number(item.price) * Number(item.qty),
-        0
-      );
-
-    const delivery = 30;
-
-    const total = subtotal + delivery;
-
-    await addDoc(
-      collection(db,"orders"),
-      {
-        userId:currentUser.uid,
-
-        customerName:
-          currentUserData?.name ||
-          currentUser.displayName ||
-          "",
-
-        customerPhone:
-          currentUserData?.phone || "",
-
-        customerEmail:
-          currentUserData?.email ||
-          currentUser.email ||
-          "",
-
-        address:
-          currentUserData?.address || "",
-
-        items:cart,
-
-        subtotal:subtotal,
-        deliveryCharge:delivery,
-        total:total,
-
-        status:"Order Received",
-
-        deliveryId:"",
-
-        createdAt:serverTimestamp()
-      }
-    );
-
-    cart = [];
-
-    renderCart();
-
-    alert(
-      "Order successfully placed!"
-    );
-
-    showPage("orders");
-
-    loadCustomerOrders();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Order place नहीं हो पाया."
-    );
-  }
-};
-
-
-/* ================= CUSTOMER ORDERS ================= */
-
-function loadCustomerOrders(){
-
-  if(!currentUser) return;
-
-  const q = query(
-    collection(db,"orders"),
-    where("userId","==",currentUser.uid)
-  );
-
-  onSnapshot(q,(snapshot)=>{
-
-    allOrders = [];
-
-    snapshot.forEach(docSnap=>{
-      allOrders.push({
-        id:docSnap.id,
-        ...docSnap.data()
-      });
-    });
-
-    allOrders.sort(
-      (a,b)=>
-        (b.createdAt?.seconds || 0) -
-        (a.createdAt?.seconds || 0)
-    );
-
-    renderCustomerOrders();
-
-  },error=>{
-    console.error(error);
-  });
-}
-
-function renderCustomerOrders(){
-
-  const box = $("customerOrders");
-
-  if(!box) return;
-
-  if(allOrders.length === 0){
-
-    box.innerHTML = `
-      <div class="card">
-        <p>अभी कोई order नहीं है.</p>
-      </div>
-    `;
-
-    return;
-  }
-
-  box.innerHTML = allOrders.map(order=>`
-
-    <div class="order-card">
-
-      <div class="order-head">
-
-        <b>Order #${escapeHTML(order.id.slice(0,6))}</b>
-
-        <span class="status">
-          ${escapeHTML(order.status || "Pending")}
-        </span>
-
-      </div>
-
-      <p>
-        ${order.items?.map(i=>
-          escapeHTML(i.name) +
-          " × " +
-          i.qty
-        ).join("<br>") || ""}
-      </p>
-
-      <b>Total: ${money(order.total)}</b>
-
-      <p>
-        📍 ${escapeHTML(order.address || "")}
-      </p>
-
-    </div>
-
-  `).join("");
-}
-
-
-/* ================= PROFILE ================= */
-
-function loadCustomerProfile(){
-
-  if(!currentUserData) return;
-
-  $("profileName").textContent =
-    currentUserData.name || "-";
-
-  $("profilePhone").textContent =
-    currentUserData.phone || "-";
-
-  $("profileEmail").textContent =
-    currentUserData.email || "-";
-
-  $("profileAddress").textContent =
-    currentUserData.address || "-";
-}
-
-
-/* ================= RESTAURANT DATA ================= */
-
-async function loadRestaurantData(){
-
-  if(!currentUser) return;
-
-  $("restaurantWelcome").textContent =
-    currentUserData?.name ||
-    "Restaurant Staff";
-
-  const q = query(
-    collection(db,"orders")
-  );
-
-  onSnapshot(q,(snapshot)=>{
-
-    const orders = [];
-
-    snapshot.forEach(d=>{
-      orders.push({
-        id:d.id,
-        ...d.data()
-      });
-    });
-
-    $("restaurantOrdersCount").textContent =
-      orders.length;
-
-    renderRestaurantOrders(orders);
-
-  });
-
-  renderRestaurantMenu();
-
-  /*
-    Permission controlled by Admin.
-  */
-
-  const permissions =
-    currentUserData?.permissions || {};
-
-  $("restaurantMenuPermission").style.display =
-    permissions.menu ? "block" : "none";
-
-}
-
-
-/* ================= RESTAURANT MENU ================= */
-
-function renderRestaurantMenu(){
-
-  const box = $("restaurantMenuList");
-
-  if(!box) return;
-
-  $("restaurantMenuCount").textContent =
-    menuItems.length;
-
-  if(menuItems.length === 0){
-
-    box.innerHTML = `
-      <p>No menu items.</p>
-    `;
-
-    return;
-  }
-
-  box.innerHTML = menuItems.map(item=>`
-
-    <div class="user-row">
-
-      <b>${escapeHTML(item.name)}</b>
-
-      <br>
-
-      ${money(item.price)}
-
-      <br>
-
-      <small>
-        ${escapeHTML(item.description || "")}
-      </small>
-
-    </div>
-
-  `).join("");
-}
-
-
-/* ================= RESTAURANT ADD FOOD ================= */
-
-window.restaurantAddFood = async function(){
-
-  if(!currentUserData?.permissions?.menu){
-
-    alert(
-      "Admin ने आपको menu permission नहीं दी है."
-    );
-
-    return;
-  }
-
-  const name =
-    $("restaurantFoodName").value.trim();
-
-  const price =
-    Number($("restaurantFoodPrice").value);
-
-  const description =
-    $("restaurantFoodDescription").value.trim();
-
-  if(!name || !price){
-    alert("Food name और price डालें.");
-    return;
-  }
-
-  try{
-
-    await addDoc(
-      collection(db,"menu"),
-      {
-        name:name,
-        price:price,
-        description:description,
-        icon:"🍱",
-        createdAt:serverTimestamp()
-      }
-    );
-
-    $("restaurantFoodName").value="";
-    $("restaurantFoodPrice").value="";
-    $("restaurantFoodDescription").value="";
-
-    alert("Food added.");
-
-  }catch(error){
-
-    console.error(error);
-    alert("Food add नहीं हो पाया.");
-  }
-};
-
-
-/* ================= RESTAURANT ORDERS ================= */
-
-function renderRestaurantOrders(orders){
-
-  const box = $("restaurantOrders");
-
-  if(!box) return;
-
-  if(orders.length === 0){
-
-    box.innerHTML =
-      "<p>No orders.</p>";
-
-    return;
-  }
-
-  box.innerHTML = orders.map(order=>`
-
-    <div class="order-card">
-
-      <div class="order-head">
-
-        <b>
-          Order #${escapeHTML(order.id.slice(0,6))}
-        </b>
-
-        <span class="status">
-          ${escapeHTML(order.status || "")}
-        </span>
-
-      </div>
-
-      <p>
-        👤 ${escapeHTML(order.customerName || "")}
-      </p>
-
-      <p>
-        📱 ${escapeHTML(order.customerPhone || "")}
-      </p>
-
-      <p>
-        ${order.items?.map(i=>
-          escapeHTML(i.name)+" × "+i.qty
-        ).join("<br>") || ""}
-      </p>
-
-      <b>Total: ${money(order.total)}</b>
-
-      <select
-        onchange="restaurantUpdateOrder('${order.id}',this.value)">
-
-        <option value="">
-          Change Status
-        </option>
-
-        <option value="Order Received">
-          Order Received
-        </option>
-
-        <option value="Preparing">
-          Preparing
-        </option>
-
-        <option value="Ready for Pickup">
-          Ready for Pickup
-        </option>
-
-        <option value="Cancelled">
-          Cancelled
-        </option>
-
-      </select>
-
-    </div>
-
-  `).join("");
-}
-
-
-/* ================= RESTAURANT UPDATE ORDER ================= */
-
-window.restaurantUpdateOrder =
-async function(orderId,status){
-
-  if(!currentUserData?.permissions?.orders){
-
-    alert(
-      "Admin ने आपको order management permission नहीं दी है."
-    );
-
-    return;
-  }
-
-  if(!status) return;
-
-  try{
-
-    await updateDoc(
-      doc(db,"orders",orderId),
-      {
-        status:status
-      }
-    );
-
-  }catch(error){
-
-    console.error(error);
-    alert("Order status update failed.");
-  }
-};
-
-
-/* ================= DELIVERY DATA ================= */
-
-function loadDeliveryData(){
-
-  if(!currentUser) return;
-
-  $("deliveryWelcome").textContent =
-    currentUserData?.name ||
-    "Delivery Staff";
-
-  const q = query(
-    collection(db,"orders"),
-    where("deliveryId","==",currentUser.uid)
-  );
-
-  onSnapshot(q,(snapshot)=>{
-
-    const orders=[];
-
-    snapshot.forEach(d=>{
-      orders.push({
-        id:d.id,
-        ...d.data()
-      });
-    });
-
-    $("deliveryOrdersCount").textContent =
-      orders.length;
-
-    $("deliveryCompletedCount").textContent =
-      orders.filter(
-        x=>x.status==="Delivered"
-      ).length;
-
-    renderDeliveryOrders(orders);
-
-  },error=>{
-    console.error(error);
-  });
-}
-
-
-/* ================= DELIVERY ORDERS ================= */
-
-function renderDeliveryOrders(orders){
-
-  const box = $("deliveryOrders");
-
-  if(!box) return;
-
-  if(orders.length===0){
-
-    box.innerHTML=`
-      <div class="card">
-        <p>Admin ने अभी कोई order assign नहीं किया है.</p>
-      </div>
-    `;
-
-    return;
-  }
-
-  box.innerHTML=orders.map(order=>`
-
-    <div class="order-card">
-
-      <div class="order-head">
-
-        <b>
-          Order #${escapeHTML(order.id.slice(0,6))}
-        </b>
-
-        <span class="status blue">
-          ${escapeHTML(order.status || "")}
-        </span>
-
-      </div>
-
-      <p>
-        👤 ${escapeHTML(order.customerName || "")}
-      </p>
-
-      <p>
-        📱 ${escapeHTML(order.customerPhone || "")}
-      </p>
-
-      <p>
-        🏠 ${escapeHTML(order.address || "")}
-      </p>
-
-      <p>
-        💰 ${money(order.total)}
-      </p>
-
-      <select
-        onchange="deliveryUpdateOrder('${order.id}',this.value)">
-
-        <option value="">
-          Update Delivery Status
-        </option>
-
-        <option value="Ready for Pickup">
-          Ready for Pickup
-        </option>
-
-        <option value="Out for Delivery">
-          Out for Delivery
-        </option>
-
-        <option value="Delivered">
-          Delivered
-        </option>
-
-      </select>
-
-    </div>
-
-  `).join("");
-}
-
-
-/* ================= DELIVERY UPDATE ================= */
-
-window.deliveryUpdateOrder =
-async function(orderId,status){
-
-  if(!status) return;
-
-  if(!currentUserData?.permissions?.delivery){
-
-    alert(
-      "Admin ने आपको delivery permission नहीं दी है."
-    );
-
-    return;
-  }
-
-  try{
-
-    await updateDoc(
-      doc(db,"orders",orderId),
-      {
-        status:status
-      }
-    );
-
-  }catch(error){
-
-    console.error(error);
-    alert("Delivery status update failed.");
-  }
-};
-
-
-/* ================= ADMIN SECTION ================= */
-
-window.adminSection = function(section){
-
-  document.querySelectorAll(".admin-section")
-    .forEach(x=>{
-      x.classList.remove("active");
-    });
-
-  const id =
-    "admin" +
-    section.charAt(0).toUpperCase() +
-    section.slice(1);
-
-  const target = $(id);
-
-  if(target){
-    target.classList.add("active");
-  }
-
-};
-
-
-/* ================= ADMIN DATA ================= */
-
-async function loadAdminData(){
-
-  $("adminWelcome").textContent =
-    currentUserData?.name ||
-    "Administrator";
-
-  loadAdminUsers();
-  loadAdminOrders();
-  loadAdminDelivery();
-  loadMenu();
-
-}
-
-
-/* ================= ADMIN USERS ================= */
-
-function loadAdminUsers(){
-
   onSnapshot(
-    collection(db,"users"),
+    collection(db,"foods"),
     snapshot=>{
 
-      allUsers=[];
-
-      snapshot.forEach(d=>{
-
-        allUsers.push({
+      menuItems =
+        snapshot.docs.map(d=>({
           id:d.id,
           ...d.data()
-        });
+        }));
 
-      });
 
-      const customers =
-        allUsers.filter(
-          x=>x.role==="customer"
-        ).length;
+      renderMenu();
 
-      const restaurants =
-        allUsers.filter(
-          x=>x.role==="restaurant"
-        ).length;
+      renderAdminMenu();
 
-      const delivery =
-        allUsers.filter(
-          x=>x.role==="delivery"
-        ).length;
-
-      $("adminUsersCount").textContent =
-        allUsers.length;
-
-      $("adminRestaurantCount").textContent =
-        restaurants;
-
-      $("adminDeliveryCount").textContent =
-        delivery;
-
-      renderAdminUsers();
+      $("statFoods").textContent =
+        menuItems.length;
 
     },
     error=>{
       console.error(error);
     }
   );
+
 }
 
 
-/* ================= ADMIN USER RENDER ================= */
+/* =========================================================
+   RENDER MENU
+========================================================= */
 
-function renderAdminUsers(){
+function renderMenu(){
 
-  const box = $("adminUsersList");
+  const box =
+    $("menuList");
 
   if(!box) return;
 
-  if(allUsers.length===0){
 
-    box.innerHTML="<p>No users.</p>";
+  if(menuItems.length === 0){
+
+    box.innerHTML =
+      "<p>No menu items available.</p>";
 
     return;
   }
 
-  box.innerHTML = allUsers.map(user=>`
 
-    <div class="user-row">
+  box.innerHTML =
+    menuItems.map(item=>`
 
-      <b>
-        ${escapeHTML(user.name || "Unnamed")}
-      </b>
+      <div class="menu-card">
 
-      <br>
+        <div class="menu-emoji">
+          ${escapeHtml(item.emoji || "🍱")}
+        </div>
 
-      📱 ${escapeHTML(user.phone || "")}
+        <h3>
+          ${escapeHtml(item.name)}
+        </h3>
 
-      <br>
-
-      📧 ${escapeHTML(user.email || "")}
-
-      <br>
-
-      <span class="badge">
-        ${escapeHTML(user.role || "customer")}
-      </span>
-
-      <span class="badge">
-        ${escapeHTML(user.status || "approved")}
-      </span>
-
-      <div class="user-actions">
-
-        ${
-          user.role==="restaurant" ||
-          user.role==="delivery"
-          ?
-          `
-          <button
-            class="small-btn green"
-            onclick="adminApproveUser('${user.id}')">
-            ✅ Approve
-          </button>
-
-          <button
-            class="small-btn red"
-            onclick="adminDisableUser('${user.id}')">
-            🚫 Disable
-          </button>
-          `
-          :
-          ""
-        }
+        <div class="price">
+          ₹${Number(item.price || 0)}
+        </div>
 
         <button
-          class="small-btn blue"
-          onclick="adminChangeRole('${user.id}')">
-          🔄 Change Role
+          onclick="addToCart('${item.id}')">
+          🛒 Add
         </button>
-
-        ${
-          user.role==="restaurant"
-          ?
-          `
-          <button
-            class="small-btn"
-            onclick="adminRestaurantPermissions('${user.id}')">
-            ⚙️ Restaurant Permissions
-          </button>
-          `
-          :
-          ""
-        }
-
-        ${
-          user.role==="delivery"
-          ?
-          `
-          <button
-            class="small-btn"
-            onclick="adminDeliveryPermissions('${user.id}')">
-            🛵 Delivery Permission
-          </button>
-          `
-          :
-          ""
-        }
 
       </div>
 
-    </div>
+    `).join("");
 
-  `).join("");
+
+  $("homePopular").innerHTML =
+    menuItems.slice(0,3)
+    .map(item=>`
+
+      <div class="home-action">
+
+        <b>
+          ${escapeHtml(item.emoji || "🍱")}
+          ${escapeHtml(item.name)}
+        </b>
+
+        — ₹${Number(item.price || 0)}
+
+      </div>
+
+    `).join("");
+
 }
 
 
-/* ================= ADMIN APPROVE ================= */
+/* =========================================================
+   CART
+========================================================= */
 
-window.adminApproveUser =
-async function(uid){
+window.addToCart =
+function(id){
 
-  try{
+  const item =
+    menuItems.find(x=>x.id===id);
 
-    await updateDoc(
-      doc(db,"users",uid),
-      {
-        status:"approved"
-      }
-    );
+  if(!item) return;
 
-    alert("Account approved.");
 
-  }catch(error){
+  const existing =
+    cartItems.find(x=>x.id===id);
 
-    console.error(error);
-    alert("Approval failed.");
+
+  if(existing){
+
+    existing.qty++;
+
+  }else{
+
+    cartItems.push({
+      ...item,
+      qty:1
+    });
+
   }
+
+
+  renderCart();
+
+  showPage("cart");
+
 };
 
 
-/* ================= ADMIN DISABLE ================= */
+function renderCart(){
 
-window.adminDisableUser =
-async function(uid){
+  const box =
+    $("cartList");
 
-  try{
+  if(!box) return;
 
-    await updateDoc(
-      doc(db,"users",uid),
-      {
-        status:"disabled"
-      }
-    );
 
-    alert("Account disabled.");
+  if(cartItems.length===0){
 
-  }catch(error){
+    box.innerHTML =
+      "<p>🛒 Cart empty hai.</p>";
 
-    console.error(error);
-    alert("Disable failed.");
+    $("cartTotal").textContent="0";
+
+    return;
   }
+
+
+  let total=0;
+
+
+  box.innerHTML =
+    cartItems.map((item,index)=>{
+
+      const line =
+        Number(item.price || 0) *
+        item.qty;
+
+      total += line;
+
+
+      return `
+
+        <div class="card">
+
+          <b>
+            ${escapeHtml(item.emoji || "🍱")}
+            ${escapeHtml(item.name)}
+          </b>
+
+          <p>
+            ₹${item.price} × ${item.qty}
+            = ₹${line}
+          </p>
+
+          <div class="qty-row">
+
+            <button
+              class="small-btn"
+              onclick="changeQty(${index},-1)">
+              −
+            </button>
+
+            <span class="qty">
+              ${item.qty}
+            </span>
+
+            <button
+              class="small-btn"
+              onclick="changeQty(${index},1)">
+              +
+            </button>
+
+            <button
+              class="danger small-btn"
+              onclick="removeCart(${index})">
+              Remove
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+
+  $("cartTotal").textContent =
+    total;
+
+}
+
+
+window.changeQty =
+function(index,change){
+
+  cartItems[index].qty += change;
+
+  if(cartItems[index].qty<=0){
+
+    cartItems.splice(index,1);
+
+  }
+
+  renderCart();
+
 };
 
 
-/* ================= ADMIN ROLE CHANGE ================= */
+window.removeCart =
+function(index){
 
-window.adminChangeRole =
+  cartItems.splice(index,1);
+
+  renderCart();
+
+};
+
+
+/* =========================================================
+   PLACE ORDER
+========================================================= */
+
+window.placeOrder =
+async function(){
+
+  if(!currentUser){
+
+    return;
+  }
+
+
+  if(cartItems.length===0){
+
+    alert("Cart empty hai.");
+
+    return;
+  }
+
+
+  if(!shopOpen){
+
+    alert("Shop abhi CLOSED hai.");
+
+    return;
+  }
+
+
+  const address =
+    currentUserData.address || "";
+
+
+  const total =
+    cartItems.reduce(
+      (sum,item)=>
+        sum +
+        Number(item.price||0)*item.qty,
+      0
+    );
+
+
+  try{
+
+    await addDoc(
+      collection(db,"orders"),
+      {
+
+        userId:
+          currentUser.uid,
+
+        customerName:
+          currentUserData.name || "",
+
+        customerPhone:
+          currentUserData.phone || "",
+
+        address:address,
+
+        items:
+          cartItems.map(item=>({
+            id:item.id,
+            name:item.name,
+            price:item.price,
+            qty:item.qty
+          })),
+
+        total:total,
+
+        status:
+          "Order Received",
+
+        deliveryId:"",
+
+        createdAt:
+          serverTimestamp()
+
+      }
+    );
+
+
+    cartItems=[];
+
+    renderCart();
+
+    alert(
+      "Order successfully place ho gaya."
+    );
+
+    showPage("orders");
+
+    loadCustomerOrders();
+
+
+  }catch(error){
+
+    alert(error.message);
+
+  }
+
+};
+
+
+/* =========================================================
+   CUSTOMER ORDERS
+========================================================= */
+
+function loadCustomerOrders(){
+
+  if(!currentUser) return;
+
+
+  const q =
+    query(
+      collection(db,"orders"),
+      where("userId","==",currentUser.uid)
+    );
+
+
+  onSnapshot(
+    q,
+    snapshot=>{
+
+      const box =
+        $("customerOrders");
+
+      if(!box) return;
+
+
+      if(snapshot.empty){
+
+        box.innerHTML =
+          "<p>Abhi koi order nahi hai.</p>";
+
+        return;
+      }
+
+
+      box.innerHTML =
+        snapshot.docs.map(d=>{
+
+          const o =
+            d.data();
+
+
+          return `
+
+            <div class="card">
+
+              <b>
+                🧾 Order
+              </b>
+
+              <p>
+                Total: ₹${Number(o.total||0)}
+              </p>
+
+              <span class="status">
+                ${escapeHtml(o.status || "")}
+              </span>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+function loadProfile(){
+
+  const box =
+    $("profileInfo");
+
+  if(!box || !currentUserData)
+    return;
+
+
+  box.innerHTML = `
+
+    <div class="card">
+
+      <p>
+        <b>Name:</b>
+        ${escapeHtml(currentUserData.name)}
+      </p>
+
+      <p>
+        <b>Mobile:</b>
+        ${escapeHtml(currentUserData.phone)}
+      </p>
+
+      <p>
+        <b>Email:</b>
+        ${escapeHtml(currentUserData.email)}
+      </p>
+
+      <p>
+        <b>Address:</b>
+        ${escapeHtml(currentUserData.address || "Not added")}
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   RESTAURANT PANEL
+========================================================= */
+
+function loadRestaurant(){
+
+  const p =
+    currentUserData.permissions || {};
+
+
+  let html="";
+
+
+  if(p.menu){
+
+    html += `
+
+      <div class="card">
+
+        <h3>
+          🍱 Menu Management
+        </h3>
+
+        <p>
+          Admin ne menu permission di hai.
+        </p>
+
+        <div id="restaurantMenu"></div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  if(p.orders){
+
+    html += `
+
+      <div class="card">
+
+        <h3>
+          🧾 Incoming Orders
+        </h3>
+
+        <div id="restaurantOrders">
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  if(!p.menu && !p.orders){
+
+    html += `
+
+      <div class="message info show">
+
+        Admin ne abhi koi Restaurant permission
+        enable nahi ki hai.
+
+      </div>
+
+    `;
+
+  }
+
+
+  $("restaurantPanel").innerHTML =
+    html;
+
+
+  loadRestaurantOrders();
+
+}
+
+
+function loadRestaurantOrders(){
+
+  const box =
+    $("restaurantOrders");
+
+  if(!box) return;
+
+
+  onSnapshot(
+    collection(db,"orders"),
+    snapshot=>{
+
+      box.innerHTML =
+        snapshot.docs.map(d=>{
+
+          const o =
+            d.data();
+
+
+          return `
+
+            <div class="card">
+
+              <b>
+                ${escapeHtml(o.customerName || "Customer")}
+              </b>
+
+              <p>
+                📱 ${escapeHtml(o.customerPhone || "")}
+              </p>
+
+              <p>
+                ₹${Number(o.total||0)}
+              </p>
+
+              <span class="status">
+                ${escapeHtml(o.status || "")}
+              </span>
+
+              <br><br>
+
+              <button
+                class="small-btn"
+                onclick="restaurantUpdateOrder('${d.id}','Preparing')">
+                👨‍🍳 Preparing
+              </button>
+
+              <button
+                class="success small-btn"
+                onclick="restaurantUpdateOrder('${d.id}','Ready for Pickup')">
+                ✅ Ready
+              </button>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+  );
+
+}
+
+
+window.restaurantUpdateOrder =
+async function(id,status){
+
+  if(currentRole!=="restaurant")
+    return;
+
+  await updateDoc(
+    doc(db,"orders",id),
+    {
+      status:status
+    }
+  );
+
+};
+
+
+/* =========================================================
+   DELIVERY PANEL
+========================================================= */
+
+function loadDelivery(){
+
+  const box =
+    $("deliveryPanel");
+
+  onSnapshot(
+    query(
+      collection(db,"orders"),
+      where("deliveryId","==",currentUser.uid)
+    ),
+    snapshot=>{
+
+      if(snapshot.empty){
+
+        box.innerHTML =
+          "<p>Admin ne abhi koi delivery assign nahi ki hai.</p>";
+
+        return;
+      }
+
+
+      box.innerHTML =
+        snapshot.docs.map(d=>{
+
+          const o =
+            d.data();
+
+
+          return `
+
+            <div class="card">
+
+              <h3>
+                🧾 Delivery Order
+              </h3>
+
+              <p>
+                <b>Customer:</b>
+                ${escapeHtml(o.customerName || "")}
+              </p>
+
+              <p>
+                📱 ${escapeHtml(o.customerPhone || "")}
+              </p>
+
+              <p>
+                🏠 ${escapeHtml(o.address || "")}
+              </p>
+
+              <p>
+                💰 ₹${Number(o.total||0)}
+              </p>
+
+              <span class="status">
+                ${escapeHtml(o.status || "")}
+              </span>
+
+              <br><br>
+
+              <button
+                class="small-btn"
+                onclick="deliveryStatus('${d.id}','Out for Delivery')">
+                🛵 Out for Delivery
+              </button>
+
+              <button
+                class="success small-btn"
+                onclick="deliveryStatus('${d.id}','Delivered')">
+                ✅ Delivered
+              </button>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+  );
+
+}
+
+
+window.deliveryStatus =
+async function(id,status){
+
+  if(currentRole!=="delivery")
+    return;
+
+
+  await updateDoc(
+    doc(db,"orders",id),
+    {
+      status:status
+    }
+  );
+
+};
+
+
+/* =========================================================
+   ADMIN LOAD
+========================================================= */
+
+function loadAdmin(){
+
+  loadAdminStats();
+
+  loadAdminStaff();
+
+  loadAdminUsers();
+
+  loadAdminOrders();
+
+  loadMenu();
+
+  loadShopSettings();
+
+}
+
+
+/* =========================================================
+   ADMIN STATS
+========================================================= */
+
+function loadAdminStats(){
+
+  onSnapshot(
+    collection(db,"orders"),
+    snapshot=>{
+
+      $("statOrders").textContent =
+        snapshot.size;
+
+
+      let sales=0;
+
+      snapshot.docs.forEach(d=>{
+
+        const o=d.data();
+
+        sales +=
+          Number(o.total||0);
+
+      });
+
+
+      $("statSales").textContent =
+        "₹"+sales;
+
+    }
+  );
+
+
+  onSnapshot(
+    collection(db,"users"),
+    snapshot=>{
+
+      $("statUsers").textContent =
+        snapshot.size;
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   ADMIN STAFF
+========================================================= */
+
+function loadAdminStaff(){
+
+  onSnapshot(
+    collection(db,"users"),
+    snapshot=>{
+
+      const box =
+        $("staffList");
+
+      const staff =
+        snapshot.docs
+        .map(d=>({
+          id:d.id,
+          ...d.data()
+        }))
+        .filter(u=>
+          u.role==="restaurant" ||
+          u.role==="delivery"
+        );
+
+
+      if(staff.length===0){
+
+        box.innerHTML =
+          "<p>No restaurant/delivery staff.</p>";
+
+        return;
+      }
+
+
+      box.innerHTML =
+        staff.map(u=>{
+
+          const p =
+            u.permissions || {};
+
+
+          return `
+
+            <div class="card">
+
+              <h3>
+                ${u.role==="restaurant" ? "🍳" : "🛵"}
+                ${escapeHtml(u.name || "")}
+              </h3>
+
+              <p>
+                📱 ${escapeHtml(u.phone || "")}
+              </p>
+
+              <p>
+                📧 ${escapeHtml(u.email || "")}
+              </p>
+
+              <p>
+                Status:
+                <span class="status ${u.status}">
+                  ${escapeHtml(u.status || "")}
+                </span>
+              </p>
+
+
+              <div class="permission-box">
+
+                <label>
+                  <input
+                    type="checkbox"
+                    ${p.menu ? "checked":""}
+                    onchange="changePermission('${u.id}','menu',this.checked)">
+                  Menu
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    ${p.orders ? "checked":""}
+                    onchange="changePermission('${u.id}','orders',this.checked)">
+                  Orders
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    ${p.delivery ? "checked":""}
+                    onchange="changePermission('${u.id}','delivery',this.checked)">
+                  Delivery
+                </label>
+
+              </div>
+
+
+              <button
+                class="success small-btn"
+                onclick="approveStaff('${u.id}')">
+                ✅ Approve
+              </button>
+
+              <button
+                class="danger small-btn"
+                onclick="disableStaff('${u.id}')">
+                🚫 Disable
+              </button>
+
+              <button
+                class="dark small-btn"
+                onclick="changeRole('${u.id}')">
+                🔄 Role
+              </button>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   APPROVE STAFF
+========================================================= */
+
+window.approveStaff =
 async function(uid){
 
-  const user =
-    allUsers.find(x=>x.id===uid);
+  if(currentRole!=="admin")
+    return;
 
-  if(!user) return;
+
+  await updateDoc(
+    doc(db,"users",uid),
+    {
+      status:"approved"
+    }
+  );
+
+};
+
+
+/* =========================================================
+   DISABLE STAFF
+========================================================= */
+
+window.disableStaff =
+async function(uid){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  await updateDoc(
+    doc(db,"users",uid),
+    {
+      status:"disabled"
+    }
+  );
+
+};
+
+
+/* =========================================================
+   PERMISSION
+========================================================= */
+
+window.changePermission =
+async function(uid,permission,value){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  const snap =
+    await getDoc(
+      doc(db,"users",uid)
+    );
+
+
+  if(!snap.exists()) return;
+
+
+  const data =
+    snap.data();
+
+
+  const permissions =
+    data.permissions || {};
+
+
+  permissions[permission] =
+    value;
+
+
+  await updateDoc(
+    doc(db,"users",uid),
+    {
+      permissions:permissions
+    }
+  );
+
+};
+
+
+/* =========================================================
+   CHANGE ROLE
+========================================================= */
+
+window.changeRole =
+async function(uid){
+
+  if(currentRole!=="admin")
+    return;
+
 
   const role =
     prompt(
-      "New role लिखें:\ncustomer / restaurant / delivery / admin",
-      user.role || "customer"
+      "New role: customer / restaurant / delivery / admin"
     );
+
 
   if(
     !role ||
@@ -3002,583 +3412,380 @@ async function(uid){
       "admin"
     ].includes(role)
   ){
-    alert("Invalid role.");
-    return;
-  }
-
-  try{
-
-    await updateDoc(
-      doc(db,"users",uid),
-      {
-        role:role
-      }
-    );
-
-    alert("Role updated.");
-
-  }catch(error){
-
-    console.error(error);
-    alert("Role update failed.");
-  }
-};
-
-
-/* ================= RESTAURANT PERMISSIONS ================= */
-
-window.adminRestaurantPermissions =
-async function(uid){
-
-  const user =
-    allUsers.find(x=>x.id===uid);
-
-  if(!user) return;
-
-  const old =
-    user.permissions || {};
-
-  const menu =
-    confirm(
-      "Restaurant ko MENU management permission deni hai?\n\nOK = Yes\nCancel = No"
-    );
-
-  const orders =
-    confirm(
-      "Restaurant ko ORDER management permission deni hai?\n\nOK = Yes\nCancel = No"
-    );
-
-  try{
-
-    await updateDoc(
-      doc(db,"users",uid),
-      {
-        permissions:{
-          ...old,
-          menu:menu,
-          orders:orders
-        }
-      }
-    );
-
-    alert(
-      "Restaurant permissions updated."
-    );
-
-  }catch(error){
-
-    console.error(error);
-    alert("Permission update failed.");
-  }
-};
-
-
-/* ================= DELIVERY PERMISSIONS ================= */
-
-window.adminDeliveryPermissions =
-async function(uid){
-
-  const delivery =
-    confirm(
-      "Delivery staff ko delivery status update permission deni hai?\n\nOK = Yes\nCancel = No"
-    );
-
-  try{
-
-    await updateDoc(
-      doc(db,"users",uid),
-      {
-        permissions:{
-          menu:false,
-          orders:false,
-          delivery:delivery
-        }
-      }
-    );
-
-    alert(
-      "Delivery permissions updated."
-    );
-
-  }catch(error){
-
-    console.error(error);
-    alert("Permission update failed.");
-  }
-};
-
-
-/* ================= ADMIN MENU ================= */
-
-function renderAdminMenu(){
-
-  const box = $("adminMenuList");
-
-  if(!box) return;
-
-  if(menuItems.length===0){
-
-    box.innerHTML =
-      "<p>No menu items.</p>";
 
     return;
   }
 
-  box.innerHTML = menuItems.map(item=>`
 
-    <div class="user-row">
+  await updateDoc(
+    doc(db,"users",uid),
+    {
+      role:role
+    }
+  );
 
-      <b>
-        ${escapeHTML(item.name)}
-      </b>
+};
 
-      <br>
 
-      ${money(item.price)}
+/* =========================================================
+   ADMIN USERS
+========================================================= */
 
-      <br>
+function loadAdminUsers(){
 
-      <small>
-        ${escapeHTML(item.description || "")}
-      </small>
+  onSnapshot(
+    collection(db,"users"),
+    snapshot=>{
 
-      <br>
+      const box =
+        $("adminUsers");
 
-      <button
-        class="small-btn red"
-        onclick="adminDeleteFood('${item.id}')">
-        🗑️ Delete
-      </button>
 
-      <button
-        class="small-btn blue"
-        onclick="adminEditFood('${item.id}')">
-        ✏️ Edit Price
-      </button>
+      box.innerHTML =
+        snapshot.docs.map(d=>{
 
-    </div>
+          const u =
+            d.data();
 
-  `).join("");
+
+          return `
+
+            <div class="card">
+
+              <b>
+                ${escapeHtml(u.name || "")}
+              </b>
+
+              <p>
+                📱 ${escapeHtml(u.phone || "")}
+              </p>
+
+              <p>
+                📧 ${escapeHtml(u.email || "")}
+              </p>
+
+              <p>
+                Role:
+                <span class="status">
+                  ${escapeHtml(u.role || "")}
+                </span>
+              </p>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+  );
+
 }
 
 
-/* ================= ADMIN ADD FOOD ================= */
-
-window.adminAddFood = async function(){
-
-  const name =
-    $("adminFoodName").value.trim();
-
-  const price =
-    Number($("adminFoodPrice").value);
-
-  const description =
-    $("adminFoodDescription").value.trim();
-
-  if(!name || !price){
-
-    alert(
-      "Food name और price डालें."
-    );
-
-    return;
-  }
-
-  try{
-
-    await addDoc(
-      collection(db,"menu"),
-      {
-        name:name,
-        price:price,
-        description:description,
-        icon:"🍱",
-        createdAt:serverTimestamp()
-      }
-    );
-
-    $("adminFoodName").value="";
-    $("adminFoodPrice").value="";
-    $("adminFoodDescription").value="";
-
-    alert("Food added.");
-
-  }catch(error){
-
-    console.error(error);
-    alert("Food add failed.");
-  }
-};
-
-
-/* ================= ADMIN DELETE FOOD ================= */
-
-window.adminDeleteFood =
-async function(id){
-
-  if(!confirm(
-    "Kya aap ye food item delete karna chahte hain?"
-  )){
-    return;
-  }
-
-  try{
-
-    await deleteDoc(
-      doc(db,"menu",id)
-    );
-
-    alert("Food deleted.");
-
-  }catch(error){
-
-    console.error(error);
-    alert("Delete failed.");
-  }
-};
-
-
-/* ================= ADMIN EDIT FOOD ================= */
-
-window.adminEditFood =
-async function(id){
-
-  const item =
-    menuItems.find(x=>x.id===id);
-
-  if(!item) return;
-
-  const newPrice =
-    prompt(
-      "New price:",
-      item.price
-    );
-
-  if(newPrice === null) return;
-
-  const price =
-    Number(newPrice);
-
-  if(!price || price < 0){
-
-    alert("Invalid price.");
-    return;
-  }
-
-  try{
-
-    await updateDoc(
-      doc(db,"menu",id),
-      {
-        price:price
-      }
-    );
-
-    alert("Price updated.");
-
-  }catch(error){
-
-    console.error(error);
-    alert("Price update failed.");
-  }
-};
-
-
-/* ================= ADMIN ORDERS ================= */
+/* =========================================================
+   ADMIN ORDERS
+========================================================= */
 
 function loadAdminOrders(){
 
   onSnapshot(
     collection(db,"orders"),
-    snapshot=>{
+    async snapshot=>{
 
-      const orders=[];
+      const box =
+        $("adminOrders");
 
-      snapshot.forEach(d=>{
-        orders.push({
-          id:d.id,
-          ...d.data()
-        });
-      });
 
-      orders.sort(
-        (a,b)=>
-          (b.createdAt?.seconds || 0) -
-          (a.createdAt?.seconds || 0)
-      );
+      const deliveryUsers =
+        await getDeliveryUsers();
 
-      $("adminOrdersCount").textContent =
-        orders.length;
 
-      renderAdminOrders(orders);
+      box.innerHTML =
+        snapshot.docs.map(d=>{
 
-    },
-    error=>{
-      console.error(error);
+          const o =
+            d.data();
+
+
+          const options =
+            deliveryUsers.map(u=>`
+
+              <option
+                value="${u.id}"
+                ${o.deliveryId===u.id ? "selected":""}>
+                ${escapeHtml(u.name)}
+              </option>
+
+            `).join("");
+
+
+          return `
+
+            <div class="card">
+
+              <b>
+                🧾 ${escapeHtml(o.customerName || "")}
+              </b>
+
+              <p>
+                📱 ${escapeHtml(o.customerPhone || "")}
+              </p>
+
+              <p>
+                🏠 ${escapeHtml(o.address || "")}
+              </p>
+
+              <p>
+                💰 ₹${Number(o.total||0)}
+              </p>
+
+              <p>
+                Status:
+                <span class="status">
+                  ${escapeHtml(o.status || "")}
+                </span>
+              </p>
+
+
+              <select
+                onchange="assignDelivery('${d.id}',this.value)">
+
+                <option value="">
+                  🛵 Assign Delivery
+                </option>
+
+                ${options}
+
+              </select>
+
+
+              <br><br>
+
+
+              <button
+                class="small-btn"
+                onclick="adminOrderStatus('${d.id}','Order Received')">
+                Received
+              </button>
+
+              <button
+                class="small-btn"
+                onclick="adminOrderStatus('${d.id}','Preparing')">
+                Preparing
+              </button>
+
+              <button
+                class="success small-btn"
+                onclick="adminOrderStatus('${d.id}','Ready for Pickup')">
+                Ready
+              </button>
+
+              <button
+                class="danger small-btn"
+                onclick="adminOrderStatus('${d.id}','Cancelled')">
+                Cancel
+              </button>
+
+            </div>
+
+          `;
+
+        }).join("");
+
     }
   );
+
 }
 
 
-/* ================= ADMIN ORDER RENDER ================= */
+/* =========================================================
+   DELIVERY USERS
+========================================================= */
 
-function renderAdminOrders(orders){
+async function getDeliveryUsers(){
 
-  const box = $("adminOrdersList");
+  const q =
+    query(
+      collection(db,"users"),
+      where("role","==","delivery"),
+      where("status","==","approved")
+    );
 
-  if(!box) return;
 
-  if(orders.length===0){
+  const result =
+    await getDocs(q);
 
-    box.innerHTML =
-      "<p>No orders.</p>";
+
+  return result.docs.map(d=>({
+    id:d.id,
+    ...d.data()
+  }));
+
+}
+
+
+/* =========================================================
+   ASSIGN DELIVERY
+========================================================= */
+
+window.assignDelivery =
+async function(orderId,deliveryId){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  await updateDoc(
+    doc(db,"orders",orderId),
+    {
+      deliveryId:deliveryId
+    }
+  );
+
+};
+
+
+/* =========================================================
+   ADMIN ORDER STATUS
+========================================================= */
+
+window.adminOrderStatus =
+async function(orderId,status){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  await updateDoc(
+    doc(db,"orders",orderId),
+    {
+      status:status
+    }
+  );
+
+};
+
+
+/* =========================================================
+   ADMIN ADD FOOD
+========================================================= */
+
+window.adminAddFood =
+async function(){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  const name =
+    $("foodName").value.trim();
+
+  const price =
+    Number($("foodPrice").value);
+
+  const emoji =
+    $("foodEmoji").value.trim() ||
+    "🍱";
+
+
+  if(!name || !price){
+
+    alert(
+      "Food name aur price डालें."
+    );
 
     return;
   }
 
-  box.innerHTML = orders.map(order=>`
 
-    <div class="order-card">
+  await addDoc(
+    collection(db,"foods"),
+    {
 
-      <div class="order-head">
+      name:name,
+
+      price:price,
+
+      emoji:emoji,
+
+      active:true,
+
+      createdAt:
+        serverTimestamp()
+
+    }
+  );
+
+
+  $("foodName").value="";
+  $("foodPrice").value="";
+  $("foodEmoji").value="";
+
+};
+
+
+/* =========================================================
+   ADMIN MENU
+========================================================= */
+
+function renderAdminMenu(){
+
+  const box =
+    $("adminMenuList");
+
+  if(!box) return;
+
+
+  box.innerHTML =
+    menuItems.map(item=>`
+
+      <div class="card">
 
         <b>
-          Order #${escapeHTML(order.id.slice(0,6))}
+          ${escapeHtml(item.emoji || "🍱")}
+          ${escapeHtml(item.name)}
         </b>
 
-        <span class="status">
-          ${escapeHTML(order.status || "")}
-        </span>
+        — ₹${Number(item.price||0)}
+
+        <button
+          class="danger small-btn"
+          onclick="deleteFood('${item.id}')">
+          Delete
+        </button>
 
       </div>
 
-      <p>
-        👤 ${escapeHTML(order.customerName || "")}
-      </p>
+    `).join("");
 
-      <p>
-        📱 ${escapeHTML(order.customerPhone || "")}
-      </p>
-
-      <p>
-        🏠 ${escapeHTML(order.address || "")}
-      </p>
-
-      <p>
-        ${order.items?.map(i=>
-          escapeHTML(i.name)+" × "+i.qty
-        ).join("<br>") || ""}
-      </p>
-
-      <b>
-        Total: ${money(order.total)}
-      </b>
-
-      <select
-        onchange="adminUpdateOrder('${order.id}',this.value)">
-
-        <option value="">
-          Admin: Change Status
-        </option>
-
-        <option value="Order Received">
-          Order Received
-        </option>
-
-        <option value="Preparing">
-          Preparing
-        </option>
-
-        <option value="Ready for Pickup">
-          Ready for Pickup
-        </option>
-
-        <option value="Out for Delivery">
-          Out for Delivery
-        </option>
-
-        <option value="Delivered">
-          Delivered
-        </option>
-
-        <option value="Cancelled">
-          Cancelled
-        </option>
-
-      </select>
-
-    </div>
-
-  `).join("");
 }
 
 
-/* ================= ADMIN UPDATE ORDER ================= */
+window.deleteFood =
+async function(id){
 
-window.adminUpdateOrder =
-async function(orderId,status){
-
-  if(!status) return;
-
-  try{
-
-    await updateDoc(
-      doc(db,"orders",orderId),
-      {
-        status:status
-      }
-    );
-
-  }catch(error){
-
-    console.error(error);
-    alert("Order update failed.");
-  }
-};
+  if(currentRole!=="admin")
+    return;
 
 
-/* ================= ADMIN DELIVERY ================= */
+  if(!confirm(
+    "Is food item ko delete karna hai?"
+  )) return;
 
-function loadAdminDelivery(){
 
-  const q = query(
-    collection(db,"users"),
-    where("role","==","delivery")
+  await deleteDoc(
+    doc(db,"foods",id)
   );
 
-  onSnapshot(q,snapshot=>{
-
-    const deliveryUsers=[];
-
-    snapshot.forEach(d=>{
-      deliveryUsers.push({
-        id:d.id,
-        ...d.data()
-      });
-    });
-
-    renderAdminDelivery(deliveryUsers);
-
-  },error=>{
-    console.error(error);
-  });
-}
-
-
-/* ================= DELIVERY ASSIGNMENT ================= */
-
-function renderAdminDelivery(users){
-
-  const box = $("adminDeliveryList");
-
-  if(!box) return;
-
-  if(users.length===0){
-
-    box.innerHTML=`
-      <p>
-        कोई Delivery Staff registered नहीं है.
-      </p>
-    `;
-
-    return;
-  }
-
-  box.innerHTML = users.map(user=>`
-
-    <div class="user-row">
-
-      <b>
-        🛵 ${escapeHTML(user.name || "")}
-      </b>
-
-      <br>
-
-      📱 ${escapeHTML(user.phone || "")}
-
-      <br>
-
-      Status:
-      <span class="badge">
-        ${escapeHTML(user.status || "")}
-      </span>
-
-      <p>
-        नीचे order ID डालकर assign करें:
-      </p>
-
-      <input
-        id="assign_${user.id}"
-        placeholder="Order ID">
-
-      <button
-        onclick="assignOrderToDelivery('${user.id}')">
-        📦 Assign Order
-      </button>
-
-    </div>
-
-  `).join("");
-}
-
-
-/* ================= ASSIGN ORDER ================= */
-
-window.assignOrderToDelivery =
-async function(deliveryId){
-
-  const input =
-    $("assign_"+deliveryId);
-
-  if(!input) return;
-
-  const orderId =
-    input.value.trim();
-
-  if(!orderId){
-
-    alert("Order ID डालें.");
-    return;
-  }
-
-  try{
-
-    const orderSnap =
-      await getDoc(
-        doc(db,"orders",orderId)
-      );
-
-    if(!orderSnap.exists()){
-
-      alert("Order नहीं मिला.");
-      return;
-    }
-
-    await updateDoc(
-      doc(db,"orders",orderId),
-      {
-        deliveryId:deliveryId,
-        status:"Ready for Pickup"
-      }
-    );
-
-    input.value="";
-
-    alert(
-      "Order successfully assigned."
-    );
-
-  }catch(error){
-
-    console.error(error);
-    alert("Assignment failed.");
-  }
 };
 
 
-/* ================= SHOP STATUS ================= */
+/* =========================================================
+   SHOP SETTINGS
+========================================================= */
 
-async function loadShopStatus(){
+async function loadShopSettings(){
 
   try{
 
@@ -3587,103 +3794,154 @@ async function loadShopStatus(){
         doc(db,"settings","business")
       );
 
+
     if(snap.exists()){
 
-      const data=snap.data();
+      const data =
+        snap.data();
+
 
       shopOpen =
-        data.shopStatus !== "CLOSED";
+        data.shopOpen !== false;
 
-      updateShopStatusUI();
+
+      offerText =
+        data.offer ||
+        "Homemade food with love ❤️";
+
     }
+
+
+    updateShopUI();
+
 
   }catch(error){
 
-    console.error(error);
+    console.log(error);
+
   }
+
 }
 
-function updateShopStatusUI(){
+
+function updateShopUI(){
 
   const status =
     $("shopStatus");
 
+
   if(!status) return;
+
 
   if(shopOpen){
 
     status.textContent="OPEN";
 
-    status.style.color="#198754";
-    status.style.borderColor="#198754";
+    status.classList.remove("closed");
 
   }else{
 
     status.textContent="CLOSED";
 
-    status.style.color="#c62828";
-    status.style.borderColor="#c62828";
+    status.classList.add("closed");
+
   }
+
+
+  const offer =
+    $("homeOffer");
+
+  if(offer){
+
+    offer.textContent =
+      offerText;
+
+  }
+
 }
 
 
-/* ================= SAVE SHOP STATUS ================= */
+window.setShopStatus =
+async function(open){
 
-window.saveShopStatus =
-async function(){
+  if(currentRole!=="admin")
+    return;
 
-  const value =
-    $("adminShopStatus").value;
 
-  try{
+  shopOpen=open;
 
-    await setDoc(
-      doc(db,"settings","business"),
-      {
-        shopStatus:value
-      },
-      {
-        merge:true
-      }
-    );
 
-    shopOpen =
-      value === "OPEN";
+  await setDoc(
+    doc(db,"settings","business"),
+    {
+      shopOpen:open,
+      offer:offerText
+    },
+    {
+      merge:true
+    }
+  );
 
-    updateShopStatusUI();
 
-    alert(
-      "Shop status updated."
-    );
+  updateShopUI();
 
-  }catch(error){
-
-    console.error(error);
-    alert("Shop status update failed.");
-  }
 };
 
 
-/* ================= NAV ACTIVE STATE ================= */
+/* =========================================================
+   OFFER
+========================================================= */
 
-document.querySelectorAll(".nav-btn")
-.forEach(btn=>{
+window.saveOffer =
+async function(){
 
-  btn.addEventListener("click",()=>{
-
-    document.querySelectorAll(".nav-btn")
-      .forEach(x=>x.classList.remove("active"));
-
-    btn.classList.add("active");
-
-  });
-
-});
+  if(currentRole!=="admin")
+    return;
 
 
-/* ================= START ================= */
+  const value =
+    $("offerText").value.trim();
 
-loadShopStatus();
+
+  if(!value){
+
+    alert(
+      "Offer text डालें."
+    );
+
+    return;
+  }
+
+
+  offerText=value;
+
+
+  await setDoc(
+    doc(db,"settings","business"),
+    {
+      offer:offerText,
+      shopOpen:shopOpen
+    },
+    {
+      merge:true
+    }
+  );
+
+
+  $("homeOffer").textContent =
+    offerText;
+
+
+  alert(
+    "Offer saved."
+  );
+
+};
+
+
+/* =========================================================
+   STARTUP
+========================================================= */
 
 renderCart();
 
