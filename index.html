@@ -1170,13 +1170,221 @@ Delete
 
 function addFood(){
 
-const name=document.getElementById("foodName").value.trim();
+  const name = document.getElementById("foodName").value.trim();
 
-const price=Number(
-document.getElementById("foodPrice").value
-);
+  const price = Number(
+    document.getElementById("foodPrice").value
+  );
 
-const image=document.getElementById("foodImage").value.trim()
-||"https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600";
+  const image =
+    document.getElementById("foodImage").value.trim()
+    || "https://images.unsplash.com/photo-1547592180-85f173990554?w=600";
 
-c
+  if(!name || !price){
+    alert("Food name aur price bharo.");
+    return;
+  }
+
+  foods.push({
+    id: Date.now(),
+    name: name,
+    price: price,
+    image: image
+  });
+
+  saveData();
+
+  document.getElementById("foodName").value = "";
+  document.getElementById("foodPrice").value = "";
+  document.getElementById("foodImage").value = "";
+
+  renderMenu();
+  renderAdmin();
+
+  alert("Food successfully add ho gaya.");
+}
+
+
+function deleteFood(id){
+
+  if(!confirm("Kya aap ye food delete karna chahte hain?")){
+    return;
+  }
+
+  foods = foods.filter(food => food.id !== id);
+
+  saveData();
+
+  renderMenu();
+  renderAdmin();
+
+  alert("Food delete ho gaya.");
+}
+
+
+function updateShopStatus(){
+
+  settings.shop =
+    document.getElementById("adminShopStatus").value;
+
+  saveData();
+
+  document.getElementById("shopStatus").innerText =
+    settings.shop;
+
+  alert("Shop status update ho gaya.");
+}
+
+
+function saveOffer(){
+
+  settings.offer =
+    document.getElementById("adminOffer").value.trim();
+
+  saveData();
+
+  alert("Offer save ho gaya.");
+}
+
+
+function saveSettings(){
+
+  settings.delivery =
+    Number(document.getElementById("deliveryCharge").value) || 0;
+
+  settings.minOrder =
+    Number(document.getElementById("minOrder").value) || 0;
+
+  saveData();
+
+  alert("Settings save ho gayi.");
+}
+
+
+function renderAdminOrders(){
+
+  const box =
+    document.getElementById("adminOrders");
+
+  if(!box) return;
+
+  box.innerHTML = "";
+
+  if(orders.length === 0){
+
+    box.innerHTML =
+      '<div class="empty">Abhi koi order nahi hai.</div>';
+
+    return;
+  }
+
+  orders.forEach(order => {
+
+    box.innerHTML += `
+      <div class="order">
+
+        <h3>Order #${order.id}</h3>
+
+        <p><b>Customer:</b> ${order.customer.name || ""}</p>
+
+        <p><b>Mobile:</b> ${order.customer.phone || ""}</p>
+
+        <p><b>Address:</b> ${order.customer.address || ""}</p>
+
+        <p><b>Date:</b> ${order.date}</p>
+
+        <p><b>Items:</b>
+          ${order.items.map(item =>
+            `${item.name} x ${item.qty}`
+          ).join(", ")}
+        </p>
+
+        <p><b>Payment:</b> ${order.payment}</p>
+
+        <p><b>Total:</b> ₹${order.total}</p>
+
+        <p class="status">
+          ${order.status}
+        </p>
+
+        <select
+          onchange="updateOrderStatus(${order.id}, this.value)">
+          <option value="Order Received"
+            ${order.status === "Order Received" ? "selected" : ""}>
+            Order Received
+          </option>
+
+          <option value="Preparing"
+            ${order.status === "Preparing" ? "selected" : ""}>
+            Preparing
+          </option>
+
+          <option value="Out for Delivery"
+            ${order.status === "Out for Delivery" ? "selected" : ""}>
+            Out for Delivery
+          </option>
+
+          <option value="Delivered"
+            ${order.status === "Delivered" ? "selected" : ""}>
+            Delivered
+          </option>
+
+          <option value="Cancelled"
+            ${order.status === "Cancelled" ? "selected" : ""}>
+            Cancelled
+          </option>
+        </select>
+
+      </div>
+    `;
+
+  });
+}
+
+
+function updateOrderStatus(id, status){
+
+  const order =
+    orders.find(order => order.id === id);
+
+  if(!order) return;
+
+  order.status = status;
+
+  saveData();
+
+  renderOrders();
+  renderAdminOrders();
+
+  alert("Order status update ho gaya.");
+}
+
+
+/* ================================
+   APP START
+================================ */
+
+document.addEventListener("DOMContentLoaded", function(){
+
+  updateCartBadge();
+
+  renderMenu();
+
+  renderOrders();
+
+  loadProfile();
+
+  const shopStatus =
+    document.getElementById("shopStatus");
+
+  if(shopStatus){
+    shopStatus.innerText = settings.shop;
+  }
+
+});
+
+
+</script>
+
+</body>
+</html>
