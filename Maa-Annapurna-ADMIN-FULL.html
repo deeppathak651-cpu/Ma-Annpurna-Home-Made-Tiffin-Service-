@@ -1,0 +1,4328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#0b2b45">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Maa Annapurna - Home Made Tiffin Service</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#fff8f0;
+  color:#333;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+button,
+input,
+select,
+textarea{
+  font-family:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.page{
+  display:none;
+  min-height:calc(100vh - 80px);
+}
+
+.page.active{
+  display:block;
+}
+
+.container{
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+  padding:12px;
+}
+
+/* ================= HEADER ================= */
+
+header#mainHeader{
+  width:100%;
+  min-height:165px;
+  padding:18px 12px 20px;
+  background:#e65100;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  position:relative;
+}
+
+.header-row{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:9px;
+}
+
+.header-brand{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.logo{
+  display:block;
+  width:max-content;
+  max-width:95%;
+  margin:auto;
+  padding:9px 20px;
+  background:#fff;
+  color:#b53b12;
+  border:4px double #6d260f;
+  border-radius:16px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:1.2px;
+  line-height:1.15;
+  text-align:center;
+  box-shadow:0 3px 0 #6d260f,0 5px 14px rgba(0,0,0,.22);
+}
+
+.header-brand .small{
+  margin-top:6px;
+  color:#fff;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.shop-box{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#shopStatus{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:112px;
+  height:40px;
+  background:#fff;
+  color:#198754;
+  border:4px double #198754;
+  border-radius:13px;
+  font-size:16px;
+  font-weight:900;
+  letter-spacing:1px;
+  box-shadow:0 3px 0 #126b43;
+}
+
+#shopStatus.closed{
+  color:#c62828;
+  border-color:#c62828;
+  box-shadow:0 3px 0 #8e1c1c;
+}
+
+/* ================= LOCATION ================= */
+
+.location-banner{
+  width:calc(100% - 24px);
+  max-width:1050px;
+  margin:12px auto 0;
+  padding:12px;
+  background:#fff;
+  border:3px solid #e65100;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  text-align:center;
+  box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.location-icon{
+  font-size:28px;
+}
+
+.location-title{
+  color:#e65100;
+  font-size:12px;
+  font-weight:bold;
+  text-transform:uppercase;
+}
+
+.location-text{
+  font-size:19px;
+  color:#444;
+}
+
+/* ================= CARDS ================= */
+
+.banner,
+.card{
+  background:#fff;
+  border:1px solid #efd5c2;
+  border-radius:18px;
+  box-shadow:0 3px 15px rgba(0,0,0,.07);
+  padding:18px;
+  margin-bottom:14px;
+}
+
+h1,h2,h3{
+  color:#d84315;
+}
+
+h2{
+  margin:8px 0 12px;
+}
+
+h3{
+  margin:8px 0;
+}
+
+.section-title{
+  text-align:center;
+  color:#d84315;
+}
+
+/* ================= AUTH ================= */
+
+.auth-card{
+  max-width:760px!important;
+  margin:12px auto!important;
+  padding:15px!important;
+}
+
+.auth-logo{
+  width:100%;
+  text-align:center;
+  margin:0 auto 9px;
+}
+
+.auth-logo-box{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:8px 16px;
+  background:#fff;
+  border:4px double #6d260f;
+  border-radius:15px;
+  color:#b53b12;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:21px;
+  font-weight:900;
+  letter-spacing:1px;
+  box-shadow:0 3px 0 #6d260f;
+}
+
+.auth-logo-sub{
+  text-align:center;
+  color:#e65100;
+  font-size:11px;
+  font-weight:bold;
+  margin-top:4px;
+}
+
+.auth-icon{
+  font-size:30px;
+  text-align:center;
+  margin:0;
+}
+
+.auth-title{
+  font-size:27px!important;
+  margin:3px 0 4px!important;
+  text-align:center;
+  color:#d84315;
+}
+
+.auth-subtitle{
+  font-size:13px!important;
+  margin:3px 0 11px!important;
+  text-align:center;
+  color:#777;
+}
+
+.auth-tabs{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-bottom:12px;
+}
+
+.auth-tab{
+  min-height:52px;
+  padding:6px 3px!important;
+  margin:0!important;
+  font-size:12px!important;
+  font-weight:bold;
+  color:#c64b1b;
+  background:#fff8f0;
+  border:3px solid #efc7ad;
+  border-radius:11px;
+}
+
+.auth-tab.active{
+  background:#e65100!important;
+  color:#fff!important;
+  border-color:#e65100!important;
+}
+
+.auth-form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 10px;
+}
+
+.auth-field{
+  min-width:0;
+}
+
+.auth-field input,
+.auth-field select,
+.auth-field textarea{
+  width:100%;
+  height:48px;
+  margin:0;
+  padding:9px 11px;
+  border:2px solid #d8d8d8;
+  border-radius:13px;
+  font-size:15px;
+  outline:none;
+  background:#fff;
+}
+
+.auth-field textarea{
+  height:80px;
+  resize:vertical;
+}
+
+.auth-field input:focus,
+.auth-field select:focus,
+.auth-field textarea:focus{
+  border-color:#e65100;
+}
+
+.auth-full{
+  grid-column:1/-1;
+}
+
+/* ================= BUTTONS ================= */
+
+button.full{
+  width:100%;
+}
+
+button{
+  border:0;
+  border-radius:11px;
+  padding:11px 15px;
+  background:#e65100;
+  color:#fff;
+  font-weight:bold;
+  font-size:14px;
+}
+
+button:hover{
+  opacity:.93;
+}
+
+button.secondary{
+  background:#fff3e8;
+  color:#d84315;
+  border:2px solid #efc7ad;
+}
+
+button.success{
+  background:#198754;
+}
+
+button.danger{
+  background:#c62828;
+}
+
+button.dark{
+  background:#424242;
+}
+
+button.small-btn{
+  padding:7px 10px;
+  font-size:12px;
+}
+
+/* ================= NAV ================= */
+
+#mainNav{
+  position:sticky;
+  bottom:0;
+  z-index:100;
+  width:100%;
+  background:#fff;
+  border-top:1px solid #ddd;
+  box-shadow:0 -2px 10px rgba(0,0,0,.1);
+  display:flex;
+  justify-content:center;
+}
+
+.nav-inner{
+  width:100%;
+  max-width:700px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+}
+
+.nav-btn{
+  background:#fff;
+  color:#555;
+  border-radius:0;
+  padding:8px 2px;
+  font-size:11px;
+  border-top:3px solid transparent;
+}
+
+.nav-btn.active{
+  color:#e65100;
+  border-top-color:#e65100;
+}
+
+/* ================= GRID ================= */
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.two-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.menu-card{
+  background:#fff;
+  border:1px solid #efd5c2;
+  border-radius:16px;
+  padding:14px;
+  text-align:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.menu-emoji{
+  font-size:42px;
+}
+
+.price{
+  color:#e65100;
+  font-weight:900;
+  font-size:20px;
+}
+
+.qty-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:8px;
+}
+
+.qty{
+  min-width:30px;
+  text-align:center;
+  font-weight:bold;
+}
+
+/* ================= TABLE ================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+}
+
+th,td{
+  padding:9px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+  font-size:13px;
+}
+
+th{
+  background:#fff3e8;
+  color:#c64b1b;
+}
+
+/* ================= STATUS ================= */
+
+.status{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  background:#eee;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.status.pending{
+  background:#fff3cd;
+  color:#856404;
+}
+
+.status.approved,
+.status.delivered{
+  background:#d1e7dd;
+  color:#0f5132;
+}
+
+.status.disabled,
+.status.cancelled{
+  background:#f8d7da;
+  color:#842029;
+}
+
+.status.preparing{
+  background:#cfe2ff;
+  color:#084298;
+}
+
+/* ================= STATS ================= */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.stat{
+  background:#fff;
+  border:1px solid #efd5c2;
+  border-radius:14px;
+  padding:13px 7px;
+  text-align:center;
+}
+
+.stat b{
+  display:block;
+  color:#e65100;
+  font-size:22px;
+}
+
+.stat span{
+  font-size:11px;
+  color:#666;
+}
+
+/* ================= MESSAGE ================= */
+
+.message{
+  padding:9px 11px;
+  border-radius:10px;
+  margin:8px 0;
+  display:none;
+  font-size:13px;
+}
+
+.message.show{
+  display:block;
+}
+
+.message.success{
+  background:#d1e7dd;
+  color:#0f5132;
+}
+
+.message.error{
+  background:#f8d7da;
+  color:#842029;
+}
+
+.message.info{
+  background:#cfe2ff;
+  color:#084298;
+}
+
+/* ================= HOME ================= */
+
+.hero{
+  text-align:center;
+  padding:20px 10px;
+}
+
+.hero-icon{
+  font-size:55px;
+}
+
+.hero h1{
+  font-size:28px;
+  margin:6px 0;
+}
+
+.hero p{
+  color:#666;
+}
+
+.home-action{
+  padding:16px;
+  border-radius:16px;
+  background:#fff;
+  border:1px solid #efd5c2;
+  margin-bottom:10px;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:500;
+  background:rgba(0,0,0,.5);
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:18px;
+  padding:18px;
+}
+
+/* ================= STAFF ================= */
+
+.permission-box{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin:8px 0;
+}
+
+.permission-box label{
+  background:#fff8f0;
+  border:1px solid #efd5c2;
+  padding:7px;
+  border-radius:8px;
+  font-size:12px;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:700px){
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .logo{
+    font-size:21px;
+  }
+
+  .location-text{
+    font-size:16px;
+  }
+}
+
+@media(max-width:520px){
+
+  header#mainHeader{
+    min-height:145px;
+    padding-top:15px;
+  }
+
+  .auth-card{
+    margin:8px auto!important;
+    padding:11px!important;
+  }
+
+  .auth-logo-box{
+    font-size:18px;
+    padding:7px 12px;
+  }
+
+  .auth-title{
+    font-size:22px!important;
+  }
+
+  .auth-subtitle{
+    font-size:11px!important;
+  }
+
+  .auth-tabs{
+    gap:4px;
+  }
+
+  .auth-tab{
+    min-height:47px;
+    font-size:10px!important;
+  }
+
+  .auth-form-grid{
+    gap:7px;
+  }
+
+  .auth-field input,
+  .auth-field select{
+    height:44px;
+    font-size:13px;
+  }
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .two-grid{
+    grid-template-columns:1fr;
+  }
+
+  .container{
+    padding:8px;
+  }
+
+  .banner,
+  .card{
+    padding:13px;
+  }
+
+  th,td{
+    padding:7px;
+    font-size:11px;
+  }
+}
+
+/* ================= ANNAPURNA MULTI-COLOR THEME ================= */
+html,body{
+  background:linear-gradient(135deg,#071b2f 0%,#0d2b45 48%,#123b59 100%) !important;
+  color:#f6d98b !important;
+}
+body{color:#f6d98b !important;}
+.page{background:transparent !important;}
+.container{color:#f6d98b !important;}
+.banner,.card,.menu-card,.home-action,.stat,.modal-box,.auth-card{
+  background:linear-gradient(145deg,#12324d,#17415e) !important;
+  border:1px solid #2c6685 !important;
+  color:#f6d98b !important;
+  box-shadow:0 5px 18px rgba(0,0,0,.28) !important;
+}
+h1,h2,h3,.section-title,.hero h1{color:#65d7ff !important;}
+p,span,label,b,strong,li{color:inherit;}
+.hero p,.stat span,.auth-subtitle{color:#c6d8e5 !important;}
+.logo,.auth-logo-box{
+  background:#163b57 !important;
+  color:#ffd166 !important;
+  border-color:#65d7ff !important;
+  box-shadow:0 3px 0 #0a8fb7,0 5px 14px rgba(0,0,0,.28) !important;
+}
+.header-brand .small{color:#bfeeff !important;}
+header#mainHeader{
+  background:linear-gradient(135deg,#06223a,#075b78,#0aa6c7) !important;
+}
+#shopStatus{
+  background:#163b57 !important;
+  color:#62e6a7 !important;
+  border-color:#62e6a7 !important;
+  box-shadow:0 3px 0 #167a55 !important;
+}
+#shopStatus.closed{color:#ff8c8c !important;border-color:#ff8c8c !important;}
+.location-banner{
+  background:#153b57 !important;
+  border-color:#65d7ff !important;
+  color:#f6d98b !important;
+}
+.location-title{color:#65d7ff !important;}
+.location-text{color:#f6d98b !important;}
+button{
+  background:linear-gradient(135deg,#08a6c8,#087ca8) !important;
+  color:#071b2f !important;
+  border:1px solid #65d7ff !important;
+}
+button.secondary{
+  background:#214b66 !important;
+  color:#ffd166 !important;
+  border-color:#4d88a5 !important;
+}
+button.success{background:linear-gradient(135deg,#16a66a,#087f58) !important;color:#071b2f !important;border-color:#62e6a7 !important;}
+button.danger{background:linear-gradient(135deg,#c84b55,#8e2834) !important;color:#fff0c2 !important;border-color:#ff8c8c !important;}
+button.dark{background:#253b4b !important;color:#cfe7f5 !important;border-color:#52768b !important;}
+input,select,textarea{
+  background:#0b263b !important;
+  color:#f6d98b !important;
+  border:2px solid #3d6e88 !important;
+}
+input::placeholder,textarea::placeholder{color:#8eafbf !important;}
+input:focus,select:focus,textarea:focus{border-color:#65d7ff !important;box-shadow:0 0 0 2px rgba(101,215,255,.12);}
+.auth-tab{background:#163b57 !important;color:#ffd166 !important;border-color:#3d6e88 !important;}
+.auth-tab.active{background:#08a6c8 !important;color:#071b2f !important;border-color:#65d7ff !important;}
+#mainNav{
+  background:#0a2236 !important;
+  border-top:1px solid #2d6682 !important;
+}
+.nav-btn{background:#0a2236 !important;color:#9fc0d1 !important;}
+.nav-btn.active{color:#65d7ff !important;border-top-color:#65d7ff !important;}
+table{background:#12324d !important;color:#f6d98b !important;}
+th{background:#1b4965 !important;color:#65d7ff !important;}
+th,td{border-bottom-color:#2c6685 !important;}
+.status{background:#25495f !important;color:#f6d98b !important;}
+.status.pending{background:#5d4a21 !important;color:#ffd166 !important;}
+.status.approved,.status.delivered{background:#18583f !important;color:#79efb5 !important;}
+.status.disabled,.status.cancelled{background:#5b2932 !important;color:#ff9a9a !important;}
+.status.preparing{background:#164d67 !important;color:#76dcff !important;}
+.message.info{background:#164d67 !important;color:#76dcff !important;}
+.message.success{background:#18583f !important;color:#79efb5 !important;}
+.message.error{background:#5b2932 !important;color:#ff9a9a !important;}
+.permission-box label{background:#0d2b45 !important;border-color:#2c6685 !important;color:#f6d98b !important;}
+.price,.menu-emoji{color:#ffd166 !important;}
+.admin-quick-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 14px;}
+.admin-quick-nav button{min-height:44px;}
+.admin-control-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media(max-width:520px){.admin-quick-nav{grid-template-columns:1fr 1fr}.admin-control-grid{grid-template-columns:1fr}}
+
+
+/* ================= FULL ADMIN CONTROL CENTER ================= */
+.admin-head{position:sticky;top:0;z-index:20}
+.admin-menu-grid{grid-template-columns:repeat(4,1fr)!important}
+.admin-section{scroll-margin-top:12px}
+.admin-section .banner{margin-top:12px}
+.admin-control-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.admin-control-grid input,.admin-control-grid select{width:100%;height:44px;padding:8px;border-radius:10px}
+.admin-item-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.admin-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.admin-thumb{width:60px;height:60px;object-fit:cover;border-radius:10px;vertical-align:middle;margin-right:8px}
+@media(max-width:700px){.admin-menu-grid{grid-template-columns:repeat(2,1fr)!important}.admin-control-grid{grid-template-columns:1fr}.admin-head{position:relative}}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header id="mainHeader">
+
+  <div class="header-row">
+
+    <div class="header-brand">
+
+      <div class="logo">
+        🍱 Maa Annapurna
+      </div>
+
+      <div class="small">
+        Home Made Tiffin Service
+      </div>
+
+    </div>
+
+    <div class="shop-box">
+
+      <span id="shopStatus">
+        OPEN
+      </span>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+<!-- ================= LOCATION ================= -->
+
+<div class="location-banner">
+
+  <div class="location-icon">
+    📍
+  </div>
+
+  <div>
+
+    <div class="location-title">
+      Service Area
+    </div>
+
+    <div class="location-text">
+      Serving Only in <b>Haldwani</b>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- AUTH -->
+<!-- ========================================================= -->
+
+<div id="auth" class="page active">
+
+  <div class="container">
+
+    <div class="banner auth-card">
+
+      <div class="auth-logo">
+
+        <div class="auth-logo-box">
+          🍱 Maa Annapurna
+        </div>
+
+        <div class="auth-logo-sub">
+          HOME MADE TIFFIN SERVICE
+        </div>
+
+      </div>
+
+      <div class="auth-icon">
+        🔐
+      </div>
+
+      <h2 class="auth-title">
+        Maa Annapurna Login
+      </h2>
+
+      <p class="auth-subtitle">
+        Apne account ke according login ya signup karein.
+      </p>
+
+
+      <!-- ROLE TABS -->
+
+      <div class="auth-tabs">
+
+        <button
+          id="customerTab"
+          class="auth-tab active"
+          onclick="selectAuthRole('customer')">
+          👤<br>Customer
+        </button>
+
+        <button
+          id="restaurantTab"
+          class="auth-tab"
+          onclick="selectAuthRole('restaurant')">
+          🍳<br>Restaurant
+        </button>
+
+        <button
+          id="deliveryTab"
+          class="auth-tab"
+          onclick="selectAuthRole('delivery')">
+          🛵<br>Delivery
+        </button>
+
+        <button
+          id="adminTab"
+          class="auth-tab"
+          onclick="selectAuthRole('admin')">
+          👑<br>Admin
+        </button>
+
+      </div>
+
+
+      <div id="authMessage"
+           class="message">
+      </div>
+
+
+      <!-- LOGIN -->
+
+      <div id="loginBox">
+
+        <h3 id="loginTitle"
+            class="section-title">
+          👤 Customer Sign In
+        </h3>
+
+        <div class="auth-form-grid">
+
+          <div class="auth-field auth-full">
+
+            <input
+              id="authLogin"
+              type="text"
+              placeholder="📱 Mobile Number या 📧 Email Address">
+
+          </div>
+
+          <div class="auth-field auth-full">
+
+            <input
+              id="authPassword"
+              type="password"
+              placeholder="🔒 Password">
+
+          </div>
+
+          <div class="auth-field auth-full">
+
+            <button
+              class="full"
+              onclick="loginUser()">
+              🔐 Sign In
+            </button>
+
+          </div>
+
+          <div
+            id="customerSignupButton"
+            class="auth-field auth-full">
+
+            <button
+              class="secondary full"
+              onclick="showSignupBox()">
+              ✨ Create Account / Sign Up
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- SIGNUP -->
+
+      <div id="signupBox"
+           style="display:none;">
+
+        <h3 id="signupTitle"
+            class="section-title">
+          ✨ Customer Sign Up
+        </h3>
+
+        <div
+          id="staffSignupNote"
+          class="message info show"
+          style="display:none;">
+          Restaurant/Delivery signup ke baad Admin approval required hoga.
+        </div>
+
+        <div class="auth-form-grid">
+
+          <div class="auth-field">
+
+            <input
+              id="authFirstName"
+              type="text"
+              placeholder="👤 First Name">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authLastName"
+              type="text"
+              placeholder="👤 Last Name">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authPhone"
+              type="tel"
+              inputmode="numeric"
+              maxlength="10"
+              placeholder="📱 Mobile Number">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authEmail"
+              type="email"
+              placeholder="📧 Email Address">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authAddress"
+              type="text"
+              placeholder="🏠 Address">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authSignupPassword"
+              type="password"
+              placeholder="🔒 Password">
+
+          </div>
+
+          <div class="auth-field">
+
+            <input
+              id="authConfirmPassword"
+              type="password"
+              placeholder="🔒 Confirm Password">
+
+          </div>
+
+          <div class="auth-field">
+
+            <button
+              class="full"
+              onclick="registerUser()">
+              ✨ Create Account
+            </button>
+
+          </div>
+
+          <div class="auth-field auth-full">
+
+            <button
+              class="secondary full"
+              onclick="showLoginBox()">
+              🔐 Already have an account? Sign In
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- CUSTOMER HOME -->
+<!-- ========================================================= -->
+
+<div id="home" class="page">
+
+  <div class="container">
+
+    <div class="hero banner">
+
+      <div class="hero-icon">
+        🍱
+      </div>
+
+      <h1>
+        घर जैसा स्वाद ❤️
+      </h1>
+
+      <p>
+        Fresh • Homemade • Hygienic
+      </p>
+
+      <button onclick="showPage('menu')">
+        🍱 आज का Menu देखें
+      </button>
+
+    </div>
+
+
+    <div class="home-action">
+
+      <h3>
+        🎁 आज की Special Offer
+      </h3>
+
+      <p id="homeOffer">
+        Homemade food with love ❤️
+      </p>
+
+    </div>
+
+
+    <div class="home-action">
+
+      <h3>
+        📍 Service Area
+      </h3>
+
+      <p>
+        Maa Annapurna अभी केवल <b>Haldwani</b> में service देती है।
+      </p>
+
+    </div>
+
+
+    <div class="home-action">
+
+      <h3>
+        ⭐ Popular Tiffin
+      </h3>
+
+      <div id="homePopular"></div>
+
+      <button onclick="showPage('menu')">
+        View Full Menu
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- CUSTOMER MENU -->
+<!-- ========================================================= -->
+
+<div id="menu" class="page">
+
+  <div class="container">
+
+    <div class="banner">
+
+      <h2>
+        🍱 Today's Menu
+      </h2>
+
+      <div id="menuList"
+           class="grid">
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- CART -->
+<!-- ========================================================= -->
+
+<div id="cart" class="page">
+
+  <div class="container">
+
+    <div class="banner">
+
+      <h2>
+        🛒 My Cart
+      </h2>
+
+      <div id="cartList">
+      </div>
+
+      <hr>
+
+      <h3>
+        Total:
+        ₹<span id="cartTotal">0</span>
+      </h3>
+
+      <button
+        class="full"
+        onclick="placeOrder()">
+        🧾 Place Order
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- ORDERS -->
+<!-- ========================================================= -->
+
+<div id="orders" class="page">
+
+  <div class="container">
+
+    <div class="banner">
+
+      <h2>
+        🧾 My Orders
+      </h2>
+
+      <div id="customerOrders">
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- PROFILE -->
+<!-- ========================================================= -->
+
+<div id="profile" class="page">
+
+  <div class="container">
+
+    <div class="banner">
+
+      <h2>
+        👤 My Profile
+      </h2>
+
+      <div id="profileInfo">
+      </div>
+
+      <button
+        class="danger full"
+        onclick="logoutUser()">
+        🚪 Logout
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- RESTAURANT -->
+<!-- ========================================================= -->
+
+<div id="restaurant" class="page">
+
+  <div class="container">
+
+    <div class="banner">
+
+      <h2>
+        🍳 Restaurant Panel
+      </h2>
+
+      <div id="restaurantNotice"></div>
+
+      <div id="restaurantPanel">
+      </div>
+
+      <button
+        class="danger full"
+        onclick="logoutUser()">
+        🚪 Logout
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- DELIVERY -->
+<!-- ========================================================= -->
+
+<div id="delivery" class="page">
+
+  <div class="container">
+
+    <div class="banner">
+
+      <h2>
+        🛵 Delivery Panel
+      </h2>
+
+      <div id="deliveryPanel">
+      </div>
+
+      <button
+        class="danger full"
+        onclick="logoutUser()">
+        🚪 Logout
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- PENDING STAFF -->
+<!-- ========================================================= -->
+
+<div id="staffPending" class="page">
+
+  <div class="container">
+
+    <div class="banner"
+         style="text-align:center">
+
+      <div style="font-size:60px">
+        ⏳
+      </div>
+
+      <h2>
+        Admin Approval Pending
+      </h2>
+
+      <p>
+        Aapka staff account create ho gaya hai.
+      </p>
+
+      <p>
+        Admin approval ke baad aapka panel activate hoga.
+      </p>
+
+      <button
+        class="danger"
+        onclick="logoutUser()">
+        🚪 Logout
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- ADMIN -->
+<!-- ========================================================= -->
+<div id="admin" class="page">
+  <div class="container">
+    <div class="banner admin-head">
+      <h2>👑 Admin Control Center</h2>
+      <p>Yahan se Maa Annapurna ka poora business manage karein.</p>
+      <div class="admin-quick-nav admin-menu-grid">
+        <button onclick="adminSection('dashboard')">📊 Dashboard</button>
+        <button onclick="adminSection('foods')">🍱 Food Items</button>
+        <button onclick="adminSection('categories')">📂 Categories</button>
+        <button onclick="adminSection('orders')">📦 Orders</button>
+        <button onclick="adminSection('customers')">👤 Customers</button>
+        <button onclick="adminSection('payments')">💳 Payments</button>
+        <button onclick="adminSection('delivery')">🛵 Delivery</button>
+        <button onclick="adminSection('coupons')">🎟️ Coupons</button>
+        <button onclick="adminSection('banners')">🖼️ Banners</button>
+        <button onclick="adminSection('reviews')">⭐ Reviews</button>
+        <button onclick="adminSection('staff')">👥 Staff</button>
+        <button onclick="adminSection('settings')">⚙️ Settings</button>
+        <button onclick="adminSection('reports')">📈 Reports</button>
+      </div>
+    </div>
+
+    <div id="adminDashboard" class="admin-section">
+      <div class="banner">
+        <h3>📊 Dashboard</h3>
+        <div class="stats">
+          <div class="stat"><b id="statOrders">0</b><span>Total Orders</span></div>
+          <div class="stat"><b id="statSales">₹0</b><span>Total Sales</span></div>
+          <div class="stat"><b id="statFoods">0</b><span>Food Items</span></div>
+          <div class="stat"><b id="statUsers">0</b><span>Total Users</span></div>
+          <div class="stat"><b id="statCustomers">0</b><span>Customers</span></div>
+          <div class="stat"><b id="statRestaurant">0</b><span>Restaurant</span></div>
+          <div class="stat"><b id="statDelivery">0</b><span>Delivery</span></div>
+          <div class="stat"><b id="statPending">0</b><span>Pending</span></div>
+        </div>
+      </div>
+      <div class="banner">
+        <h3>🏪 Shop Control</h3>
+        <div class="two-grid">
+          <button class="success" onclick="setShopStatus(true)">🟢 OPEN</button>
+          <button class="danger" onclick="setShopStatus(false)">🔴 CLOSED</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="adminFoods" class="admin-section" style="display:none">
+      <div class="banner">
+        <h3>🍱 Unlimited Food Items</h3>
+        <p>Jitne chahein food items add, edit, activate/deactivate ya delete karein.</p>
+        <div class="auth-form-grid">
+          <input id="foodName" placeholder="🍱 Food Name">
+          <input id="foodPrice" type="number" min="0" placeholder="₹ Price">
+          <input id="foodDiscount" type="number" min="0" placeholder="₹ Discount Price (optional)">
+          <input id="foodEmoji" placeholder="🍛 Emoji">
+          <input id="foodImage" placeholder="🖼️ Image URL (optional)">
+          <input id="foodDescription" placeholder="📝 Description">
+          <select id="foodCategory"><option value="">📂 Category</option></select>
+          <select id="foodVeg"><option value="veg">🟢 Veg</option><option value="nonveg">🔴 Non-Veg</option></select>
+          <label class="card"><input id="foodFeatured" type="checkbox"> ⭐ Featured</label>
+          <label class="card"><input id="foodActive" type="checkbox" checked> ✅ Available</label>
+          <button class="full" onclick="adminAddOrUpdateFood()">➕ Add Food Item</button>
+          <button class="secondary full" onclick="cancelFoodEdit()">↩️ Clear / Cancel Edit</button>
+        </div>
+        <div id="adminMenuList"></div>
+      </div>
+    </div>
+
+    <div id="adminCategories" class="admin-section" style="display:none">
+      <div class="banner">
+        <h3>📂 Categories</h3>
+        <div class="two-grid">
+          <input id="categoryName" placeholder="Category Name">
+          <button onclick="adminAddCategory()">➕ Add Category</button>
+        </div>
+        <div id="categoryList"></div>
+      </div>
+    </div>
+
+    <div id="adminOrders" class="admin-section" style="display:none">
+      <div class="banner"><h3>📦 All Orders</h3><div id="adminOrdersList"></div></div>
+    </div>
+
+    <div id="adminCustomers" class="admin-section" style="display:none">
+      <div class="banner"><h3>👤 Customer Management</h3><div id="adminUsers"></div></div>
+    </div>
+
+    <div id="adminPayments" class="admin-section" style="display:none">
+      <div class="banner">
+        <h3>💳 Payment Settings</h3>
+        <div class="admin-control-grid">
+          <input id="upiId" placeholder="UPI ID">
+          <input id="bankName" placeholder="Bank Name">
+          <input id="accountName" placeholder="Account Holder Name">
+          <input id="accountNumber" placeholder="Account Number">
+          <input id="ifscCode" placeholder="IFSC Code">
+          <select id="paymentMode"><option value="both">COD + Online</option><option value="cod">COD Only</option><option value="online">Online Only</option></select>
+        </div>
+        <button class="full" onclick="savePaymentSettings()">💾 Save Payment Settings</button>
+      </div>
+    </div>
+
+    <div id="adminDelivery" class="admin-section" style="display:none">
+      <div class="banner">
+        <h3>🛵 Delivery Settings</h3>
+        <div class="admin-control-grid">
+          <input id="deliveryCharge2" type="number" min="0" placeholder="Delivery Charge ₹">
+          <input id="freeDeliveryAbove" type="number" min="0" placeholder="Free Delivery Above ₹">
+          <input id="deliveryArea" placeholder="Service Areas">
+          <input id="deliveryTime" placeholder="Delivery Time e.g. 45-60 min">
+        </div>
+        <button class="full" onclick="saveDeliverySettings()">💾 Save Delivery Settings</button>
+      </div>
+    </div>
+
+    <div id="adminCoupons" class="admin-section" style="display:none">
+      <div class="banner">
+        <h3>🎟️ Coupons & Offers</h3>
+        <div class="admin-control-grid">
+          <input id="couponCode" placeholder="Coupon Code">
+          <input id="couponDiscount" type="number" min="0" placeholder="Discount %">
+          <input id="couponMinOrder" type="number" min="0" placeholder="Minimum Order ₹">
+          <input id="couponExpiry" type="date">
+        </div>
+        <button class="full" onclick="adminAddCoupon()">➕ Add Coupon</button>
+        <div id="couponList"></div>
+      </div>
+    </div>
+
+    <div id="adminBanners" class="admin-section" style="display:none">
+      <div class="banner">
+        <h3>🖼️ Home Banners / Announcements</h3>
+        <input id="bannerTitle" placeholder="Banner Title">
+        <input id="bannerText" placeholder="Banner Text">
+        <input id="bannerImage" placeholder="Image URL (optional)">
+        <button class="full" onclick="adminAddBanner()">➕ Add Banner</button>
+        <div id="bannerList"></div>
+      </div>
+    </div>
+
+    <div id="adminReviews" class="admin-section" style="display:none">
+      <div class="banner"><h3>⭐ Reviews & Ratings</h3><div id="reviewList"><p>Reviews collection available for future customer reviews.</p></div></div>
+    </div>
+
+    <div id="adminStaff" class="admin-section" style="display:none">
+      <div class="banner"><h3>👥 Staff Control</h3><p>Restaurant aur Delivery staff ko approve, disable aur permissions dein.</p><div id="staffList"></div></div>
+    </div>
+
+    <div id="adminSettings" class="admin-section" style="display:none">
+      <div class="banner">
+        <h3>⚙️ Business Settings</h3>
+        <div class="admin-control-grid">
+          <input id="businessName" placeholder="Business Name" value="Maa Annapurna">
+          <input id="serviceArea" placeholder="Service Area" value="Haldwani Only">
+          <input id="contactNumber" placeholder="Contact Number">
+          <input id="whatsappNumber" placeholder="WhatsApp Number">
+          <input id="deliveryCharge" type="number" placeholder="Delivery Charge ₹">
+          <input id="minOrder" type="number" placeholder="Minimum Order ₹">
+          <input id="businessAddress" placeholder="Business Address">
+          <input id="businessHours" placeholder="Opening Hours">
+        </div>
+        <input id="offerText" placeholder="🎁 Special Offer">
+        <button class="full" onclick="saveBusinessSettings()">💾 Save Business Settings</button>
+      </div>
+      <div class="banner">
+        <h3>🔐 Admin Account</h3>
+        <p>Admin signup public nahi hai. Firebase Authentication se protected admin account use karein.</p>
+      </div>
+    </div>
+
+    <div id="adminReports" class="admin-section" style="display:none">
+      <div class="banner">
+        <h3>📈 Reports</h3>
+        <div id="reportSummary"></div>
+        <button onclick="generateAdminReport()">🔄 Refresh Report</button>
+      </div>
+    </div>
+
+    <button class="danger full" onclick="logoutUser()">🚪 Admin Logout</button>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- NAVIGATION -->
+<!-- ========================================================= -->
+
+<nav id="mainNav"
+     class="hidden">
+
+  <div class="nav-inner">
+
+    <button
+      class="nav-btn"
+      onclick="showPage('home')">
+      🏠<br>Home
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="showPage('menu')">
+      🍱<br>Menu
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="showPage('cart')">
+      🛒<br>Cart
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="showPage('orders')">
+      🧾<br>Orders
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="showPage('profile')">
+      👤<br>Profile
+    </button>
+
+  </div>
+
+</nav>
+
+
+<script type="module">
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  where,
+  getDocs,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+
+  apiKey:
+  "AIzaSyBAro8dYjdUo8B7YRCUPX9WpI7_btf0CAI",
+
+  authDomain:
+  "ma-annpurna-tiffin.firebaseapp.com",
+
+  projectId:
+  "ma-annpurna-tiffin",
+
+  storageBucket:
+  "ma-annpurna-tiffin.firebasestorage.app",
+
+  messagingSenderId:
+  "732257430751",
+
+  appId:
+  "1:732257430751:web:59758d59bdc94e348a0d6a",
+
+  measurementId:
+  "G-9NVW0R94RG"
+
+};
+
+
+const app =
+  initializeApp(firebaseConfig);
+
+const auth =
+  getAuth(app);
+
+const db =
+  getFirestore(app);
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
+let currentUser = null;
+let currentRole = "customer";
+let currentUserData = null;
+let selectedAuthRole = "customer";
+
+let cartItems = [];
+
+let menuItems = [];
+
+let shopOpen = true;
+
+let offerText =
+  "Homemade food with love ❤️";
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+
+function escapeHtml(value){
+
+  if(value === undefined ||
+     value === null) return "";
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+
+function showMessage(text,type="info"){
+
+  const box = $("authMessage");
+
+  if(!box) return;
+
+  box.textContent = text;
+
+  box.className =
+    "message show " + type;
+
+}
+
+
+function hideAuth(){
+
+  $("auth").classList.remove("active");
+
+}
+
+
+window.showPage =
+function showPage(id){
+
+  document
+    .querySelectorAll(".page")
+    .forEach(p=>{
+      p.classList.remove("active");
+    });
+
+  const page = $(id);
+
+  if(page){
+    page.classList.add("active");
+  }
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+/* =========================================================
+   ROLE SELECT
+========================================================= */
+
+window.selectAuthRole =
+function(role){
+
+  selectedAuthRole = role;
+
+  document
+    .querySelectorAll(".auth-tab")
+    .forEach(btn=>{
+      btn.classList.remove("active");
+    });
+
+
+  if(role === "customer"){
+
+    $("customerTab")
+      .classList.add("active");
+
+    $("loginTitle").textContent =
+      "👤 Customer Sign In";
+
+    $("signupTitle").textContent =
+      "✨ Customer Sign Up";
+
+    $("staffSignupNote")
+      .style.display="none";
+
+    $("customerSignupButton")
+      .style.display="block";
+  }
+
+
+  if(role === "restaurant"){
+
+    $("restaurantTab")
+      .classList.add("active");
+
+    $("loginTitle").textContent =
+      "🍳 Restaurant Sign In";
+
+    $("signupTitle").textContent =
+      "🍳 Restaurant Sign Up";
+
+    $("staffSignupNote")
+      .style.display="block";
+
+    $("customerSignupButton")
+      .style.display="block";
+  }
+
+
+  if(role === "delivery"){
+
+    $("deliveryTab")
+      .classList.add("active");
+
+    $("loginTitle").textContent =
+      "🛵 Delivery Sign In";
+
+    $("signupTitle").textContent =
+      "🛵 Delivery Sign Up";
+
+    $("staffSignupNote")
+      .style.display="block";
+
+    $("customerSignupButton")
+      .style.display="block";
+  }
+
+
+  if(role === "admin"){
+
+    $("adminTab")
+      .classList.add("active");
+
+    $("loginTitle").textContent =
+      "👑 Admin Sign In";
+
+    $("customerSignupButton")
+      .style.display="none";
+
+    $("staffSignupNote")
+      .style.display="none";
+
+    $("loginBox")
+      .style.display="block";
+
+    $("signupBox")
+      .style.display="none";
+  }
+
+};
+
+
+/* =========================================================
+   LOGIN / SIGNUP BOX
+========================================================= */
+
+window.showSignupBox =
+function(){
+
+  if(selectedAuthRole === "admin"){
+
+    showMessage(
+      "Admin ke liye public Sign Up allowed nahi hai.",
+      "error"
+    );
+
+    return;
+  }
+
+  $("loginBox")
+    .style.display="none";
+
+  $("signupBox")
+    .style.display="block";
+
+};
+
+
+window.showLoginBox =
+function(){
+
+  $("signupBox")
+    .style.display="none";
+
+  $("loginBox")
+    .style.display="block";
+
+};
+
+
+/* =========================================================
+   REGISTER
+========================================================= */
+
+window.registerUser =
+async function(){
+
+  if(selectedAuthRole === "admin"){
+
+    showMessage(
+      "Admin account ka public Sign Up allowed nahi hai.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  const firstName =
+    $("authFirstName").value.trim();
+
+  const lastName =
+    $("authLastName").value.trim();
+
+  const phone =
+    $("authPhone").value.trim();
+
+  const email =
+    $("authEmail").value.trim();
+
+  const address =
+    $("authAddress").value.trim();
+
+  const password =
+    $("authSignupPassword").value;
+
+  const confirmPassword =
+    $("authConfirmPassword").value;
+
+
+  if(
+    !firstName ||
+    !lastName ||
+    !phone ||
+    !email ||
+    !password ||
+    !confirmPassword
+  ){
+
+    showMessage(
+      "Sabhi required fields bharein.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  if(password !== confirmPassword){
+
+    showMessage(
+      "Password aur Confirm Password same nahi hain.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  if(phone.length !== 10){
+
+    showMessage(
+      "Valid 10 digit mobile number डालें.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  try{
+
+    const phoneQuery =
+      query(
+        collection(db,"users"),
+        where("phone","==",phone)
+      );
+
+    const phoneResult =
+      await getDocs(phoneQuery);
+
+    if(!phoneResult.empty){
+
+      showMessage(
+        "Ye mobile number already registered hai.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    const credential =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+
+    const uid =
+      credential.user.uid;
+
+
+    await updateProfile(
+      credential.user,
+      {
+        displayName:
+        firstName + " " + lastName
+      }
+    );
+
+
+    const role =
+      selectedAuthRole;
+
+
+    const status =
+      role === "customer"
+      ? "approved"
+      : "pending";
+
+
+    await setDoc(
+      doc(db,"users",uid),
+      {
+
+        uid:uid,
+
+        firstName:firstName,
+
+        lastName:lastName,
+
+        name:
+          firstName + " " + lastName,
+
+        phone:phone,
+
+        email:email,
+
+        address:address,
+
+        role:role,
+
+        status:status,
+
+        permissions:{
+          menu:false,
+          orders:false,
+          delivery:false
+        },
+
+        createdAt:
+          serverTimestamp()
+
+      }
+    );
+
+
+    if(role === "customer"){
+
+      showMessage(
+        "Account successfully create ho gaya.",
+        "success"
+      );
+
+    }else{
+
+      showMessage(
+        "Account create ho gaya. Admin approval ke baad panel activate hoga.",
+        "success"
+      );
+
+    }
+
+
+  }catch(error){
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
+  }
+
+};
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+window.loginUser =
+async function(){
+
+  const loginValue =
+    $("authLogin").value.trim();
+
+  const password =
+    $("authPassword").value;
+
+
+  if(!loginValue || !password){
+
+    showMessage(
+      "Email/Mobile aur Password डालें.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  try{
+
+    let email =
+      loginValue;
+
+
+    /* MOBILE LOGIN */
+
+    if(!loginValue.includes("@")){
+
+      const phoneQuery =
+        query(
+          collection(db,"users"),
+          where("phone","==",loginValue)
+        );
+
+      const result =
+        await getDocs(phoneQuery);
+
+
+      if(result.empty){
+
+        showMessage(
+          "Is mobile number ka account nahi mila.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      email =
+        result.docs[0].data().email;
+
+    }
+
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+
+  }catch(error){
+
+    showMessage(
+      "Login failed: " + error.message,
+      "error"
+    );
+
+  }
+
+};
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+onAuthStateChanged(
+  auth,
+  async user=>{
+
+    if(!user){
+
+      currentUser=null;
+      currentUserData=null;
+      currentRole="customer";
+
+      $("mainNav")
+        .classList.add("hidden");
+
+      showPage("auth");
+
+      return;
+    }
+
+
+    currentUser =
+      user;
+
+
+    try{
+
+      const snap =
+        await getDoc(
+          doc(db,"users",user.uid)
+        );
+
+
+      if(!snap.exists()){
+
+        await signOut(auth);
+
+        showPage("auth");
+
+        showMessage(
+          "User profile nahi mila.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      currentUserData =
+        snap.data();
+
+
+      currentRole =
+        currentUserData.role ||
+        "customer";
+
+
+      /*
+       * IMPORTANT:
+       * Login karne wale user ko
+       * sirf uska apna panel milega.
+       */
+
+      openRolePanel();
+
+
+    }catch(error){
+
+      console.error(error);
+
+      showMessage(
+        "Profile load nahi ho paya.",
+        "error"
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   ROLE ROUTING
+========================================================= */
+
+function openRolePanel(){
+
+  /*
+   * Sab pages hide
+   */
+
+  document
+    .querySelectorAll(".page")
+    .forEach(page=>{
+      page.classList.remove("active");
+    });
+
+
+  /*
+   * Customer navigation default hidden
+   */
+
+  $("mainNav")
+    .classList.add("hidden");
+
+
+  /* ================= ADMIN ================= */
+
+  if(currentRole === "admin"){
+
+    showPage("admin");
+
+    loadAdmin();
+
+    return;
+  }
+
+
+  /* ================= RESTAURANT ================= */
+
+  if(currentRole === "restaurant"){
+
+    if(currentUserData.status !== "approved"){
+
+      showPage("staffPending");
+
+      return;
+    }
+
+    showPage("restaurant");
+
+    loadRestaurant();
+
+    return;
+  }
+
+
+  /* ================= DELIVERY ================= */
+
+  if(currentRole === "delivery"){
+
+    if(currentUserData.status !== "approved"){
+
+      showPage("staffPending");
+
+      return;
+    }
+
+    showPage("delivery");
+
+    loadDelivery();
+
+    return;
+  }
+
+
+  /* ================= CUSTOMER ================= */
+
+  currentRole="customer";
+
+  $("mainNav")
+    .classList.remove("hidden");
+
+  showPage("home");
+
+  loadCustomer();
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+window.logoutUser =
+async function(){
+
+  await signOut(auth);
+
+  location.reload();
+
+};
+
+
+/* =========================================================
+   CUSTOMER
+========================================================= */
+
+async function loadCustomer(){
+
+  loadMenu();
+
+  loadCustomerOrders();
+
+  loadProfile();
+
+  $("homeOffer").textContent =
+    offerText;
+
+}
+
+
+/* =========================================================
+   MENU LOAD
+========================================================= */
+
+function loadMenu(){
+
+  onSnapshot(
+    collection(db,"foods"),
+    snapshot=>{
+
+      menuItems =
+        snapshot.docs.map(d=>({
+          id:d.id,
+          ...d.data()
+        }));
+
+
+      renderMenu();
+
+      renderAdminMenu();
+
+      $("statFoods").textContent =
+        menuItems.length;
+
+    },
+    error=>{
+      console.error(error);
+    }
+  );
+
+}
+
+
+/* =========================================================
+   RENDER MENU
+========================================================= */
+
+function renderMenu(){
+
+  const box =
+    $("menuList");
+
+  if(!box) return;
+
+
+  if(menuItems.length === 0){
+
+    box.innerHTML =
+      "<p>No menu items available.</p>";
+
+    return;
+  }
+
+
+  box.innerHTML =
+    menuItems.map(item=>`
+
+      <div class="menu-card">
+
+        <div class="menu-emoji">
+          ${escapeHtml(item.emoji || "🍱")}
+        </div>
+
+        <h3>
+          ${escapeHtml(item.name)}
+        </h3>
+
+        <div class="price">
+          ₹${Number(item.price || 0)}
+        </div>
+
+        <button
+          onclick="addToCart('${item.id}')">
+          🛒 Add
+        </button>
+
+      </div>
+
+    `).join("");
+
+
+  $("homePopular").innerHTML =
+    menuItems.slice(0,3)
+    .map(item=>`
+
+      <div class="home-action">
+
+        <b>
+          ${escapeHtml(item.emoji || "🍱")}
+          ${escapeHtml(item.name)}
+        </b>
+
+        — ₹${Number(item.price || 0)}
+
+      </div>
+
+    `).join("");
+
+}
+
+
+/* =========================================================
+   CART
+========================================================= */
+
+window.addToCart =
+function(id){
+
+  const item =
+    menuItems.find(x=>x.id===id);
+
+  if(!item) return;
+
+
+  const existing =
+    cartItems.find(x=>x.id===id);
+
+
+  if(existing){
+
+    existing.qty++;
+
+  }else{
+
+    cartItems.push({
+      ...item,
+      qty:1
+    });
+
+  }
+
+
+  renderCart();
+
+  showPage("cart");
+
+};
+
+
+function renderCart(){
+
+  const box =
+    $("cartList");
+
+  if(!box) return;
+
+
+  if(cartItems.length===0){
+
+    box.innerHTML =
+      "<p>🛒 Cart empty hai.</p>";
+
+    $("cartTotal").textContent="0";
+
+    return;
+  }
+
+
+  let total=0;
+
+
+  box.innerHTML =
+    cartItems.map((item,index)=>{
+
+      const line =
+        Number(item.price || 0) *
+        item.qty;
+
+      total += line;
+
+
+      return `
+
+        <div class="card">
+
+          <b>
+            ${escapeHtml(item.emoji || "🍱")}
+            ${escapeHtml(item.name)}
+          </b>
+
+          <p>
+            ₹${item.price} × ${item.qty}
+            = ₹${line}
+          </p>
+
+          <div class="qty-row">
+
+            <button
+              class="small-btn"
+              onclick="changeQty(${index},-1)">
+              −
+            </button>
+
+            <span class="qty">
+              ${item.qty}
+            </span>
+
+            <button
+              class="small-btn"
+              onclick="changeQty(${index},1)">
+              +
+            </button>
+
+            <button
+              class="danger small-btn"
+              onclick="removeCart(${index})">
+              Remove
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+
+  $("cartTotal").textContent =
+    total;
+
+}
+
+
+window.changeQty =
+function(index,change){
+
+  cartItems[index].qty += change;
+
+  if(cartItems[index].qty<=0){
+
+    cartItems.splice(index,1);
+
+  }
+
+  renderCart();
+
+};
+
+
+window.removeCart =
+function(index){
+
+  cartItems.splice(index,1);
+
+  renderCart();
+
+};
+
+
+/* =========================================================
+   PLACE ORDER
+========================================================= */
+
+window.placeOrder =
+async function(){
+
+  if(!currentUser){
+
+    return;
+  }
+
+
+  if(cartItems.length===0){
+
+    alert("Cart empty hai.");
+
+    return;
+  }
+
+
+  if(!shopOpen){
+
+    alert("Shop abhi CLOSED hai.");
+
+    return;
+  }
+
+
+  const address =
+    currentUserData.address || "";
+
+
+  const total =
+    cartItems.reduce(
+      (sum,item)=>
+        sum +
+        Number(item.price||0)*item.qty,
+      0
+    );
+
+
+  try{
+
+    await addDoc(
+      collection(db,"orders"),
+      {
+
+        userId:
+          currentUser.uid,
+
+        customerName:
+          currentUserData.name || "",
+
+        customerPhone:
+          currentUserData.phone || "",
+
+        address:address,
+
+        items:
+          cartItems.map(item=>({
+            id:item.id,
+            name:item.name,
+            price:item.price,
+            qty:item.qty
+          })),
+
+        total:total,
+
+        status:
+          "Order Received",
+
+        deliveryId:"",
+
+        createdAt:
+          serverTimestamp()
+
+      }
+    );
+
+
+    cartItems=[];
+
+    renderCart();
+
+    alert(
+      "Order successfully place ho gaya."
+    );
+
+    showPage("orders");
+
+    loadCustomerOrders();
+
+
+  }catch(error){
+
+    alert(error.message);
+
+  }
+
+};
+
+
+/* =========================================================
+   CUSTOMER ORDERS
+========================================================= */
+
+function loadCustomerOrders(){
+
+  if(!currentUser) return;
+
+
+  const q =
+    query(
+      collection(db,"orders"),
+      where("userId","==",currentUser.uid)
+    );
+
+
+  onSnapshot(
+    q,
+    snapshot=>{
+
+      const box =
+        $("customerOrders");
+
+      if(!box) return;
+
+
+      if(snapshot.empty){
+
+        box.innerHTML =
+          "<p>Abhi koi order nahi hai.</p>";
+
+        return;
+      }
+
+
+      box.innerHTML =
+        snapshot.docs.map(d=>{
+
+          const o =
+            d.data();
+
+
+          return `
+
+            <div class="card">
+
+              <b>
+                🧾 Order
+              </b>
+
+              <p>
+                Total: ₹${Number(o.total||0)}
+              </p>
+
+              <span class="status">
+                ${escapeHtml(o.status || "")}
+              </span>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+function loadProfile(){
+
+  const box =
+    $("profileInfo");
+
+  if(!box || !currentUserData)
+    return;
+
+
+  box.innerHTML = `
+
+    <div class="card">
+
+      <p>
+        <b>Name:</b>
+        ${escapeHtml(currentUserData.name)}
+      </p>
+
+      <p>
+        <b>Mobile:</b>
+        ${escapeHtml(currentUserData.phone)}
+      </p>
+
+      <p>
+        <b>Email:</b>
+        ${escapeHtml(currentUserData.email)}
+      </p>
+
+      <p>
+        <b>Address:</b>
+        ${escapeHtml(currentUserData.address || "Not added")}
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   RESTAURANT PANEL
+========================================================= */
+
+function loadRestaurant(){
+
+  const p =
+    currentUserData.permissions || {};
+
+
+  let html="";
+
+
+  if(p.menu){
+
+    html += `
+
+      <div class="card">
+
+        <h3>
+          🍱 Menu Management
+        </h3>
+
+        <p>
+          Admin ne menu permission di hai.
+        </p>
+
+        <div id="restaurantMenu"></div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  if(p.orders){
+
+    html += `
+
+      <div class="card">
+
+        <h3>
+          🧾 Incoming Orders
+        </h3>
+
+        <div id="restaurantOrders">
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  if(!p.menu && !p.orders){
+
+    html += `
+
+      <div class="message info show">
+
+        Admin ne abhi koi Restaurant permission
+        enable nahi ki hai.
+
+      </div>
+
+    `;
+
+  }
+
+
+  $("restaurantPanel").innerHTML =
+    html;
+
+
+  loadRestaurantOrders();
+
+}
+
+
+function loadRestaurantOrders(){
+
+  const box =
+    $("restaurantOrders");
+
+  if(!box) return;
+
+
+  onSnapshot(
+    collection(db,"orders"),
+    snapshot=>{
+
+      box.innerHTML =
+        snapshot.docs.map(d=>{
+
+          const o =
+            d.data();
+
+
+          return `
+
+            <div class="card">
+
+              <b>
+                ${escapeHtml(o.customerName || "Customer")}
+              </b>
+
+              <p>
+                📱 ${escapeHtml(o.customerPhone || "")}
+              </p>
+
+              <p>
+                ₹${Number(o.total||0)}
+              </p>
+
+              <span class="status">
+                ${escapeHtml(o.status || "")}
+              </span>
+
+              <br><br>
+
+              <button
+                class="small-btn"
+                onclick="restaurantUpdateOrder('${d.id}','Preparing')">
+                👨‍🍳 Preparing
+              </button>
+
+              <button
+                class="success small-btn"
+                onclick="restaurantUpdateOrder('${d.id}','Ready for Pickup')">
+                ✅ Ready
+              </button>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+  );
+
+}
+
+
+window.restaurantUpdateOrder =
+async function(id,status){
+
+  if(currentRole!=="restaurant")
+    return;
+
+  await updateDoc(
+    doc(db,"orders",id),
+    {
+      status:status
+    }
+  );
+
+};
+
+
+/* =========================================================
+   DELIVERY PANEL
+========================================================= */
+
+function loadDelivery(){
+
+  const box =
+    $("deliveryPanel");
+
+  onSnapshot(
+    query(
+      collection(db,"orders"),
+      where("deliveryId","==",currentUser.uid)
+    ),
+    snapshot=>{
+
+      if(snapshot.empty){
+
+        box.innerHTML =
+          "<p>Admin ne abhi koi delivery assign nahi ki hai.</p>";
+
+        return;
+      }
+
+
+      box.innerHTML =
+        snapshot.docs.map(d=>{
+
+          const o =
+            d.data();
+
+
+          return `
+
+            <div class="card">
+
+              <h3>
+                🧾 Delivery Order
+              </h3>
+
+              <p>
+                <b>Customer:</b>
+                ${escapeHtml(o.customerName || "")}
+              </p>
+
+              <p>
+                📱 ${escapeHtml(o.customerPhone || "")}
+              </p>
+
+              <p>
+                🏠 ${escapeHtml(o.address || "")}
+              </p>
+
+              <p>
+                💰 ₹${Number(o.total||0)}
+              </p>
+
+              <span class="status">
+                ${escapeHtml(o.status || "")}
+              </span>
+
+              <br><br>
+
+              <button
+                class="small-btn"
+                onclick="deliveryStatus('${d.id}','Out for Delivery')">
+                🛵 Out for Delivery
+              </button>
+
+              <button
+                class="success small-btn"
+                onclick="deliveryStatus('${d.id}','Delivered')">
+                ✅ Delivered
+              </button>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+  );
+
+}
+
+
+window.deliveryStatus =
+async function(id,status){
+
+  if(currentRole!=="delivery")
+    return;
+
+
+  await updateDoc(
+    doc(db,"orders",id),
+    {
+      status:status
+    }
+  );
+
+};
+
+
+/* =========================================================
+   ADMIN LOAD
+========================================================= */
+
+function loadAdmin(){
+
+  loadAdminStats();
+
+  loadAdminStaff();
+
+  loadAdminUsers();
+
+  loadAdminOrders();
+
+  loadMenu();
+
+  loadShopSettings();
+
+}
+
+
+/* =========================================================
+   ADMIN STATS
+========================================================= */
+
+function loadAdminStats(){
+
+  onSnapshot(
+    collection(db,"orders"),
+    snapshot=>{
+
+      $("statOrders").textContent =
+        snapshot.size;
+
+
+      let sales=0;
+
+      snapshot.docs.forEach(d=>{
+
+        const o=d.data();
+
+        sales +=
+          Number(o.total||0);
+
+      });
+
+
+      $("statSales").textContent =
+        "₹"+sales;
+
+    }
+  );
+
+
+  onSnapshot(
+    collection(db,"users"),
+    snapshot=>{
+
+      $("statUsers").textContent =
+        snapshot.size;
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   ADMIN STAFF
+========================================================= */
+
+function loadAdminStaff(){
+
+  onSnapshot(
+    collection(db,"users"),
+    snapshot=>{
+
+      const box =
+        $("staffList");
+
+      const staff =
+        snapshot.docs
+        .map(d=>({
+          id:d.id,
+          ...d.data()
+        }))
+        .filter(u=>
+          u.role==="restaurant" ||
+          u.role==="delivery"
+        );
+
+
+      if(staff.length===0){
+
+        box.innerHTML =
+          "<p>No restaurant/delivery staff.</p>";
+
+        return;
+      }
+
+
+      box.innerHTML =
+        staff.map(u=>{
+
+          const p =
+            u.permissions || {};
+
+
+          return `
+
+            <div class="card">
+
+              <h3>
+                ${u.role==="restaurant" ? "🍳" : "🛵"}
+                ${escapeHtml(u.name || "")}
+              </h3>
+
+              <p>
+                📱 ${escapeHtml(u.phone || "")}
+              </p>
+
+              <p>
+                📧 ${escapeHtml(u.email || "")}
+              </p>
+
+              <p>
+                Status:
+                <span class="status ${u.status}">
+                  ${escapeHtml(u.status || "")}
+                </span>
+              </p>
+
+
+              <div class="permission-box">
+
+                <label>
+                  <input
+                    type="checkbox"
+                    ${p.menu ? "checked":""}
+                    onchange="changePermission('${u.id}','menu',this.checked)">
+                  Menu
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    ${p.orders ? "checked":""}
+                    onchange="changePermission('${u.id}','orders',this.checked)">
+                  Orders
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    ${p.delivery ? "checked":""}
+                    onchange="changePermission('${u.id}','delivery',this.checked)">
+                  Delivery
+                </label>
+
+              </div>
+
+
+              <button
+                class="success small-btn"
+                onclick="approveStaff('${u.id}')">
+                ✅ Approve
+              </button>
+
+              <button
+                class="danger small-btn"
+                onclick="disableStaff('${u.id}')">
+                🚫 Disable
+              </button>
+
+              <button
+                class="dark small-btn"
+                onclick="changeRole('${u.id}')">
+                🔄 Role
+              </button>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   APPROVE STAFF
+========================================================= */
+
+window.approveStaff =
+async function(uid){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  await updateDoc(
+    doc(db,"users",uid),
+    {
+      status:"approved"
+    }
+  );
+
+};
+
+
+/* =========================================================
+   DISABLE STAFF
+========================================================= */
+
+window.disableStaff =
+async function(uid){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  await updateDoc(
+    doc(db,"users",uid),
+    {
+      status:"disabled"
+    }
+  );
+
+};
+
+
+/* =========================================================
+   PERMISSION
+========================================================= */
+
+window.changePermission =
+async function(uid,permission,value){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  const snap =
+    await getDoc(
+      doc(db,"users",uid)
+    );
+
+
+  if(!snap.exists()) return;
+
+
+  const data =
+    snap.data();
+
+
+  const permissions =
+    data.permissions || {};
+
+
+  permissions[permission] =
+    value;
+
+
+  await updateDoc(
+    doc(db,"users",uid),
+    {
+      permissions:permissions
+    }
+  );
+
+};
+
+
+/* =========================================================
+   CHANGE ROLE
+========================================================= */
+
+window.changeRole =
+async function(uid){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  const role =
+    prompt(
+      "New role: customer / restaurant / delivery / admin"
+    );
+
+
+  if(
+    !role ||
+    ![
+      "customer",
+      "restaurant",
+      "delivery",
+      "admin"
+    ].includes(role)
+  ){
+
+    return;
+  }
+
+
+  await updateDoc(
+    doc(db,"users",uid),
+    {
+      role:role
+    }
+  );
+
+};
+
+
+/* =========================================================
+   ADMIN USERS
+========================================================= */
+
+function loadAdminUsers(){
+
+  onSnapshot(
+    collection(db,"users"),
+    snapshot=>{
+
+      const box=$("adminUsers");
+      if(!box) return;
+
+      const users=snapshot.docs.map(d=>({
+        id:d.id,
+        ...d.data()
+      }));
+
+      box.innerHTML=users.map(u=>{
+
+        const role=u.role||"customer";
+        const disabled=u.status==="disabled";
+
+        return `
+          <div class="card">
+            <b>👤 ${escapeHtml(u.name||"User")}</b>
+            <p>📱 ${escapeHtml(u.phone||"")}</p>
+            <p>📧 ${escapeHtml(u.email||"")}</p>
+            <p>Role: <span class="status">${escapeHtml(role)}</span>
+              ${disabled?'<span class="status disabled">DISABLED</span>':''}
+            </p>
+            <div class="two-grid">
+              <button class="${disabled?'success':'danger'} small-btn"
+                onclick="setCustomerStatus('${u.id}','${disabled?'active':'disabled'}')">
+                ${disabled?'✅ Enable':'🚫 Disable'}
+              </button>
+              <button class="dark small-btn"
+                onclick="adminChangeUserRole('${u.id}')">
+                🔄 Change Role
+              </button>
+            </div>
+          </div>
+        `;
+
+      }).join("") || "<p>No users found.</p>";
+
+      const customers=users.filter(u=>(u.role||"customer")==="customer").length;
+      const restaurants=users.filter(u=>u.role==="restaurant").length;
+      const deliveries=users.filter(u=>u.role==="delivery").length;
+      const pending=users.filter(u=>(u.role==="restaurant"||u.role==="delivery") && u.status!=="approved").length;
+
+      if($("statUsers")) $("statUsers").textContent=users.length;
+      if($("statCustomers")) $("statCustomers").textContent=customers;
+      if($("statRestaurant")) $("statRestaurant").textContent=restaurants;
+      if($("statDelivery")) $("statDelivery").textContent=deliveries;
+      if($("statPending")) $("statPending").textContent=pending;
+    }
+  );
+
+}
+
+/* =========================================================
+   ADMIN ORDERS
+========================================================= */
+
+function loadAdminOrders(){
+
+  onSnapshot(
+    collection(db,"orders"),
+    async snapshot=>{
+
+      const box =
+        $("adminOrders");
+
+
+      const deliveryUsers =
+        await getDeliveryUsers();
+
+
+      box.innerHTML =
+        snapshot.docs.map(d=>{
+
+          const o =
+            d.data();
+
+
+          const options =
+            deliveryUsers.map(u=>`
+
+              <option
+                value="${u.id}"
+                ${o.deliveryId===u.id ? "selected":""}>
+                ${escapeHtml(u.name)}
+              </option>
+
+            `).join("");
+
+
+          return `
+
+            <div class="card">
+
+              <b>
+                🧾 ${escapeHtml(o.customerName || "")}
+              </b>
+
+              <p>
+                📱 ${escapeHtml(o.customerPhone || "")}
+              </p>
+
+              <p>
+                🏠 ${escapeHtml(o.address || "")}
+              </p>
+
+              <p>
+                💰 ₹${Number(o.total||0)}
+              </p>
+
+              <p>
+                Status:
+                <span class="status">
+                  ${escapeHtml(o.status || "")}
+                </span>
+              </p>
+
+
+              <select
+                onchange="assignDelivery('${d.id}',this.value)">
+
+                <option value="">
+                  🛵 Assign Delivery
+                </option>
+
+                ${options}
+
+              </select>
+
+
+              <br><br>
+
+
+              <button
+                class="small-btn"
+                onclick="adminOrderStatus('${d.id}','Order Received')">
+                Received
+              </button>
+
+              <button
+                class="small-btn"
+                onclick="adminOrderStatus('${d.id}','Preparing')">
+                Preparing
+              </button>
+
+              <button
+                class="success small-btn"
+                onclick="adminOrderStatus('${d.id}','Ready for Pickup')">
+                Ready
+              </button>
+
+              <button
+                class="danger small-btn"
+                onclick="adminOrderStatus('${d.id}','Cancelled')">
+                Cancel
+              </button>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   DELIVERY USERS
+========================================================= */
+
+async function getDeliveryUsers(){
+
+  const q =
+    query(
+      collection(db,"users"),
+      where("role","==","delivery"),
+      where("status","==","approved")
+    );
+
+
+  const result =
+    await getDocs(q);
+
+
+  return result.docs.map(d=>({
+    id:d.id,
+    ...d.data()
+  }));
+
+}
+
+
+/* =========================================================
+   ASSIGN DELIVERY
+========================================================= */
+
+window.assignDelivery =
+async function(orderId,deliveryId){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  await updateDoc(
+    doc(db,"orders",orderId),
+    {
+      deliveryId:deliveryId
+    }
+  );
+
+};
+
+
+/* =========================================================
+   ADMIN ORDER STATUS
+========================================================= */
+
+window.adminOrderStatus =
+async function(orderId,status){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  await updateDoc(
+    doc(db,"orders",orderId),
+    {
+      status:status
+    }
+  );
+
+};
+
+
+/* =========================================================
+   ADMIN ADD FOOD
+========================================================= */
+
+window.adminAddFood =
+async function(){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  const name =
+    $("foodName").value.trim();
+
+  const price =
+    Number($("foodPrice").value);
+
+  const emoji =
+    $("foodEmoji").value.trim() ||
+    "🍱";
+
+
+  if(!name || !price){
+
+    alert(
+      "Food name aur price डालें."
+    );
+
+    return;
+  }
+
+
+  await addDoc(
+    collection(db,"foods"),
+    {
+
+      name:name,
+
+      price:price,
+
+      emoji:emoji,
+
+      active:true,
+
+      createdAt:
+        serverTimestamp()
+
+    }
+  );
+
+
+  $("foodName").value="";
+  $("foodPrice").value="";
+  $("foodEmoji").value="";
+
+};
+
+
+/* =========================================================
+   ADMIN MENU
+========================================================= */
+
+function renderAdminMenu(){
+
+  const box =
+    $("adminMenuList");
+
+  if(!box) return;
+
+
+  box.innerHTML =
+    menuItems.map(item=>`
+
+      <div class="card">
+
+        <b>
+          ${escapeHtml(item.emoji || "🍱")}
+          ${escapeHtml(item.name)}
+        </b>
+
+        — ₹${Number(item.price||0)}
+
+        <button
+          class="danger small-btn"
+          onclick="deleteFood('${item.id}')">
+          Delete
+        </button>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+window.deleteFood =
+async function(id){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  if(!confirm(
+    "Is food item ko delete karna hai?"
+  )) return;
+
+
+  await deleteDoc(
+    doc(db,"foods",id)
+  );
+
+};
+
+
+/* =========================================================
+   SHOP SETTINGS
+========================================================= */
+
+async function loadShopSettings(){
+
+  try{
+
+    const snap =
+      await getDoc(
+        doc(db,"settings","business")
+      );
+
+
+    if(snap.exists()){
+
+      const data =
+        snap.data();
+
+
+      shopOpen =
+        data.shopOpen !== false;
+
+
+      offerText =
+        data.offer ||
+        "Homemade food with love ❤️";
+
+    }
+
+
+    updateShopUI();
+
+
+  }catch(error){
+
+    console.log(error);
+
+  }
+
+}
+
+
+function updateShopUI(){
+
+  const status =
+    $("shopStatus");
+
+
+  if(!status) return;
+
+
+  if(shopOpen){
+
+    status.textContent="OPEN";
+
+    status.classList.remove("closed");
+
+  }else{
+
+    status.textContent="CLOSED";
+
+    status.classList.add("closed");
+
+  }
+
+
+  const offer =
+    $("homeOffer");
+
+  if(offer){
+
+    offer.textContent =
+      offerText;
+
+  }
+
+}
+
+
+window.setShopStatus =
+async function(open){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  shopOpen=open;
+
+
+  await setDoc(
+    doc(db,"settings","business"),
+    {
+      shopOpen:open,
+      offer:offerText
+    },
+    {
+      merge:true
+    }
+  );
+
+
+  updateShopUI();
+
+};
+
+
+/* =========================================================
+   OFFER
+========================================================= */
+
+window.saveOffer =
+async function(){
+
+  if(currentRole!=="admin")
+    return;
+
+
+  const value =
+    $("offerText").value.trim();
+
+
+  if(!value){
+
+    alert(
+      "Offer text डालें."
+    );
+
+    return;
+  }
+
+
+  offerText=value;
+
+
+  await setDoc(
+    doc(db,"settings","business"),
+    {
+      offer:offerText,
+      shopOpen:shopOpen
+    },
+    {
+      merge:true
+    }
+  );
+
+
+  $("homeOffer").textContent =
+    offerText;
+
+
+  alert(
+    "Offer saved."
+  );
+
+};
+
+
+
+/* =========================================================
+   ADMIN MASTER CONTROLS
+========================================================= */
+
+window.adminGo=function(id){
+  if(currentRole!=="admin") return;
+  const el=$(id);
+  if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+};
+
+window.saveBusinessSettings=async function(){
+
+  if(currentRole!=="admin") return;
+
+  try{
+
+    await setDoc(
+      doc(db,"settings","business"),
+      {
+        businessName:($("businessName")?.value||"Maa Annapurna").trim(),
+        serviceArea:($("serviceArea")?.value||"Haldwani Only").trim(),
+        contactNumber:($("contactNumber")?.value||"").trim(),
+        whatsappNumber:($("whatsappNumber")?.value||"").trim(),
+        deliveryCharge:Number($("deliveryCharge")?.value||0),
+        minOrder:Number($("minOrder")?.value||0),
+        shopOpen:shopOpen,
+        offer:offerText
+      },
+      {merge:true}
+    );
+
+    alert("Business settings save ho gayi.");
+
+  }catch(e){
+    alert("Settings save failed: "+e.message);
+  }
+};
+
+window.setCustomerStatus=async function(uid,status){
+
+  if(currentRole!=="admin") return;
+
+  try{
+    await updateDoc(
+      doc(db,"users",uid),
+      {status:status}
+    );
+  }catch(e){
+    alert("User status update failed: "+e.message);
+  }
+};
+
+window.adminChangeUserRole=async function(uid){
+
+  if(currentRole!=="admin") return;
+
+  const role=prompt(
+    "Role चुनें: customer / restaurant / delivery / admin"
+  );
+
+  if(!["customer","restaurant","delivery","admin"].includes(role||"")){
+    return;
+  }
+
+  try{
+    await updateDoc(
+      doc(db,"users",uid),
+      {role:role}
+    );
+  }catch(e){
+    alert("Role update failed: "+e.message);
+  }
+};
+
+/* Restaurant panel: menu controls */
+function renderRestaurantMenu(){
+
+  const box=$("restaurantMenu");
+  if(!box || currentRole!=="restaurant") return;
+
+  const allowed=(currentUserData?.permissions||{}).menu;
+  if(!allowed){
+    box.innerHTML="";
+    return;
+  }
+
+  box.innerHTML=`
+    <div class="card">
+      <h3>🍱 Menu Control</h3>
+      <input id="restFoodName" placeholder="Food Name">
+      <input id="restFoodPrice" type="number" placeholder="Price ₹">
+      <input id="restFoodEmoji" placeholder="Emoji 🍱">
+      <button class="full" onclick="restaurantAddFood()">➕ Add Food</button>
+    </div>
+    ${menuItems.map(item=>`
+      <div class="card">
+        <b>${escapeHtml(item.emoji||"🍱")} ${escapeHtml(item.name)}</b>
+        <p>₹${Number(item.price||0)}</p>
+        <button class="danger small-btn" onclick="restaurantDeleteFood('${item.id}')">🗑️ Delete</button>
+      </div>
+    `).join("")}
+  `;
+}
+
+window.restaurantAddFood=async function(){
+
+  if(currentRole!=="restaurant" || !currentUserData?.permissions?.menu) return;
+
+  const name=($("restFoodName")?.value||"").trim();
+  const price=Number($("restFoodPrice")?.value||0);
+  const emoji=($("restFoodEmoji")?.value||"🍱").trim();
+
+  if(!name || !price){
+    alert("Food name aur price डालें.");
+    return;
+  }
+
+  try{
+    await addDoc(collection(db,"foods"),{
+      name,price,emoji,active:true,createdAt:serverTimestamp()
+    });
+    renderRestaurantMenu();
+  }catch(e){
+    alert("Food add failed: "+e.message);
+  }
+};
+
+window.restaurantDeleteFood=async function(id){
+
+  if(currentRole!=="restaurant" || !currentUserData?.permissions?.menu) return;
+
+  if(!confirm("Food delete karna hai?")) return;
+
+  try{
+    await deleteDoc(doc(db,"foods",id));
+  }catch(e){
+    alert("Delete failed: "+e.message);
+  }
+};
+
+/* Make auth routing stop disabled accounts before opening any panel */
+const originalOpenRolePanel = openRolePanel;
+openRolePanel = function(){
+  if(currentUserData?.status==="disabled"){
+    alert("Ye account Admin ne disabled kiya hai.");
+    signOut(auth);
+    return;
+  }
+  return originalOpenRolePanel();
+};
+
+/* Ensure restaurant menu renders whenever menu data changes */
+const originalRenderMenu = renderMenu;
+renderMenu = function(){
+  originalRenderMenu();
+  if(currentRole==="restaurant") renderRestaurantMenu();
+};
+
+
+/* =========================================================
+   FULL ADMIN CONTROL CENTER EXTENSION
+========================================================= */
+let adminFoodEditId=null;
+
+window.adminSection=function(name){
+  if(currentRole!=="admin") return;
+  document.querySelectorAll(".admin-section").forEach(x=>x.style.display="none");
+  const map={dashboard:"adminDashboard",foods:"adminFoods",categories:"adminCategories",orders:"adminOrders",customers:"adminCustomers",payments:"adminPayments",delivery:"adminDelivery",coupons:"adminCoupons",banners:"adminBanners",reviews:"adminReviews",staff:"adminStaff",settings:"adminSettings",reports:"adminReports"};
+  const el=$(map[name]||"adminDashboard");
+  if(el) el.style.display="block";
+  if(name==="categories") loadAdminCategories();
+  if(name==="foods"){loadAdminCategories();loadMenu();}
+  if(name==="orders") loadAdminOrders();
+  if(name==="payments") loadPaymentSettings();
+  if(name==="delivery") loadDeliverySettings();
+  if(name==="coupons") loadCoupons();
+  if(name==="banners") loadBanners();
+  if(name==="reports") generateAdminReport();
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+
+window.adminAddOrUpdateFood=async function(){
+  if(currentRole!=="admin") return;
+  const data={
+    name:($("foodName")?.value||"").trim(),
+    price:Number($("foodPrice")?.value||0),
+    discountPrice:Number($("foodDiscount")?.value||0),
+    emoji:($("foodEmoji")?.value||"🍱").trim(),
+    image:($("foodImage")?.value||"").trim(),
+    description:($("foodDescription")?.value||"").trim(),
+    category:($("foodCategory")?.value||"").trim(),
+    foodType:$("foodVeg")?.value||"veg",
+    featured:!!$("foodFeatured")?.checked,
+    active:$("foodActive")?.checked!==false,
+    updatedAt:serverTimestamp()
+  };
+  if(!data.name || data.price<0){alert("Food name aur valid price डालें.");return;}
+  try{
+    if(adminFoodEditId) await updateDoc(doc(db,"foods",adminFoodEditId),data);
+    else await addDoc(collection(db,"foods"),{...data,createdAt:serverTimestamp()});
+    cancelFoodEdit(); loadMenu();
+    alert(adminFoodEditId?"Food item updated.":"Food item added.");
+  }catch(e){alert("Food save failed: "+e.message);}
+};
+window.editAdminFood=function(id){
+  const item=menuItems.find(x=>x.id===id); if(!item)return;
+  adminFoodEditId=id;
+  $("foodName").value=item.name||"";$("foodPrice").value=item.price||0;$("foodDiscount").value=item.discountPrice||0;
+  $("foodEmoji").value=item.emoji||"🍱";$("foodImage").value=item.image||"";$("foodDescription").value=item.description||"";
+  $("foodCategory").value=item.category||"";$("foodVeg").value=item.foodType||"veg";$("foodFeatured").checked=!!item.featured;$("foodActive").checked=item.active!==false;
+  adminSection("foods"); $("foodName").focus();
+};
+window.cancelFoodEdit=function(){
+  adminFoodEditId=null;
+  ["foodName","foodPrice","foodDiscount","foodEmoji","foodImage","foodDescription"].forEach(id=>{if($(id))$(id).value=""});
+  if($("foodFeatured"))$("foodFeatured").checked=false;if($("foodActive"))$("foodActive").checked=true;
+};
+window.toggleAdminFood=async function(id,active){
+  if(currentRole!=="admin")return; await updateDoc(doc(db,"foods",id),{active:active}); loadMenu();
+};
+window.deleteAdminFood=async function(id){
+  if(currentRole!=="admin"||!confirm("Food item permanently delete karna hai?"))return;
+  await deleteDoc(doc(db,"foods",id)); loadMenu();
+};
+
+window.adminAddCategory=async function(){
+  if(currentRole!=="admin")return;
+  const name=($("categoryName")?.value||"").trim(); if(!name){alert("Category name डालें.");return;}
+  await addDoc(collection(db,"categories"),{name,active:true,createdAt:serverTimestamp()});
+  $("categoryName").value="";loadAdminCategories();
+};
+async function loadAdminCategories(){
+  const box=$("categoryList"), sel=$("foodCategory"); if(!box)return;
+  onSnapshot(collection(db,"categories"),snap=>{
+    const cats=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(sel)sel.innerHTML='<option value="">📂 Category</option>'+cats.filter(c=>c.active!==false).map(c=>`<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join("");
+    box.innerHTML=cats.map(c=>`<div class="card admin-item-row"><b>📂 ${escapeHtml(c.name)}</b><div class="admin-actions"><button class="small-btn ${c.active===false?'success':'danger'}" onclick="toggleCategory('${c.id}',${c.active===false})">${c.active===false?'Enable':'Disable'}</button><button class="danger small-btn" onclick="deleteCategory('${c.id}')">Delete</button></div></div>`).join("")||"<p>No categories.</p>";
+  });
+}
+window.toggleCategory=async(id,a)=>{if(currentRole==="admin")await updateDoc(doc(db,"categories",id),{active:a});};
+window.deleteCategory=async id=>{if(currentRole==="admin"&&confirm("Category delete karna hai?"))await deleteDoc(doc(db,"categories",id));};
+
+function renderAdminMenu(){
+ const box=$("adminMenuList"); if(!box)return;
+ box.innerHTML=menuItems.map(item=>`<div class="card">
+   <div><span class="menu-emoji">${escapeHtml(item.emoji||"🍱")}</span><b>${escapeHtml(item.name)}</b></div>
+   <p>${escapeHtml(item.description||"")}</p>
+   <p><b>₹${Number(item.price||0)}</b>${item.discountPrice?` &nbsp; Offer ₹${Number(item.discountPrice)}`:""} · ${escapeHtml(item.category||"No Category")} · ${item.active===false?"Unavailable":"Available"}</p>
+   <div class="admin-actions">
+    <button class="small-btn" onclick="editAdminFood('${item.id}')">✏️ Edit</button>
+    <button class="small-btn ${item.active===false?'success':'secondary'}" onclick="toggleAdminFood('${item.id}',${item.active===false})">${item.active===false?'✅ Enable':'⏸️ Disable'}</button>
+    <button class="danger small-btn" onclick="deleteAdminFood('${item.id}')">🗑️ Delete</button>
+   </div></div>`).join("")||"<p>No food items yet.</p>";
+}
+
+async function savePaymentSettings(){
+ if(currentRole!=="admin")return;
+ await setDoc(doc(db,"settings","payments"),{upiId:$("upiId").value.trim(),bankName:$("bankName").value.trim(),accountName:$("accountName").value.trim(),accountNumber:$("accountNumber").value.trim(),ifscCode:$("ifscCode").value.trim(),paymentMode:$("paymentMode").value},{merge:true});
+ alert("Payment settings saved.");
+}
+async function loadPaymentSettings(){const s=await getDoc(doc(db,"settings","payments"));if(!s.exists())return;const d=s.data();["upiId","bankName","accountName","accountNumber","ifscCode","paymentMode"].forEach(k=>{if($(k)&&d[k]!=null)$(k).value=d[k]});}
+
+async function saveDeliverySettings(){
+ if(currentRole!=="admin")return;
+ await setDoc(doc(db,"settings","delivery"),{deliveryCharge:Number($("deliveryCharge2").value||0),freeDeliveryAbove:Number($("freeDeliveryAbove").value||0),deliveryArea:$("deliveryArea").value.trim(),deliveryTime:$("deliveryTime").value.trim()},{merge:true});alert("Delivery settings saved.");
+}
+async function loadDeliverySettings(){const s=await getDoc(doc(db,"settings","delivery"));if(!s.exists())return;const d=s.data();["deliveryCharge2","freeDeliveryAbove","deliveryArea","deliveryTime"].forEach(k=>{const field=$(k);if(field&&d[k]!=null)field.value=d[k]});}
+
+async function adminAddCoupon(){
+ if(currentRole!=="admin")return;
+ const code=$("couponCode").value.trim().toUpperCase(); if(!code){alert("Coupon code डालें.");return;}
+ await addDoc(collection(db,"coupons"),{code,discountPercent:Number($("couponDiscount").value||0),minOrder:Number($("couponMinOrder").value||0),expiry:$("couponExpiry").value,active:true,createdAt:serverTimestamp()});
+ ["couponCode","couponDiscount","couponMinOrder","couponExpiry"].forEach(id=>$(id).value="");loadCoupons();
+}
+function loadCoupons(){const box=$("couponList");if(!box)return;onSnapshot(collection(db,"coupons"),snap=>{box.innerHTML=snap.docs.map(d=>{const c=d.data();return `<div class="card"><b>🎟️ ${escapeHtml(c.code)}</b><p>${Number(c.discountPercent||0)}% off · Min ₹${Number(c.minOrder||0)} · ${escapeHtml(c.expiry||"No expiry")}</p><button class="danger small-btn" onclick="deleteCoupon('${d.id}')">Delete</button></div>`}).join("")||"<p>No coupons.</p>";});}
+window.deleteCoupon=async id=>{if(currentRole==="admin"&&confirm("Coupon delete karna hai?"))await deleteDoc(doc(db,"coupons",id));};
+
+async function adminAddBanner(){
+ if(currentRole!=="admin")return;
+ const title=$("bannerTitle").value.trim(),text=$("bannerText").value.trim();if(!title&&!text){alert("Banner details डालें.");return;}
+ await addDoc(collection(db,"banners"),{title,text,image:$("bannerImage").value.trim(),active:true,createdAt:serverTimestamp()});
+ $("bannerTitle").value="";$("bannerText").value="";$("bannerImage").value="";loadBanners();
+}
+function loadBanners(){const box=$("bannerList");if(!box)return;onSnapshot(collection(db,"banners"),snap=>{box.innerHTML=snap.docs.map(d=>{const b=d.data();return `<div class="card"><h3>${escapeHtml(b.title||"")}</h3><p>${escapeHtml(b.text||"")}</p>${b.image?`<img class="admin-thumb" src="${escapeHtml(b.image)}" onerror="this.style.display='none'">`:""}<button class="danger small-btn" onclick="deleteBanner('${d.id}')">Delete</button></div>`}).join("")||"<p>No banners.</p>";});}
+window.deleteBanner=async id=>{if(currentRole==="admin"&&confirm("Banner delete karna hai?"))await deleteDoc(doc(db,"banners",id));};
+
+async function generateAdminReport(){
+ const box=$("reportSummary");if(!box)return;
+ const [o,u,f]=await Promise.all([getDocs(collection(db,"orders")),getDocs(collection(db,"users")),getDocs(collection(db,"foods"))]);
+ let sales=0,delivered=0,pending=0;
+ o.forEach(x=>{const d=x.data();sales+=Number(d.total||0);if(d.status==="Delivered")delivered++;if(!["Delivered","Cancelled"].includes(d.status||""))pending++;});
+ box.innerHTML=`<div class="stats"><div class="stat"><b>${o.size}</b><span>Orders</span></div><div class="stat"><b>₹${sales}</b><span>Sales</span></div><div class="stat"><b>${delivered}</b><span>Delivered</span></div><div class="stat"><b>${pending}</b><span>Open Orders</span></div><div class="stat"><b>${u.size}</b><span>Users</span></div><div class="stat"><b>${f.size}</b><span>Foods</span></div></div>`;
+}
+
+function loadAdminOrders(){
+ onSnapshot(collection(db,"orders"),async snap=>{
+  const box=$("adminOrdersList");if(!box)return;
+  const deliveryUsers=await getDeliveryUsers();
+  box.innerHTML=snap.docs.map(d=>{const o=d.data();const opts=deliveryUsers.map(u=>`<option value="${u.id}" ${o.deliveryId===u.id?"selected":""}>${escapeHtml(u.name||u.phone||"Delivery")}</option>`).join("");
+   return `<div class="card"><b>🧾 ${escapeHtml(o.customerName||"Customer")}</b><p>📱 ${escapeHtml(o.customerPhone||"")} · 🏠 ${escapeHtml(o.address||"")}</p><p>💰 ₹${Number(o.total||0)} · <span class="status">${escapeHtml(o.status||"")}</span></p><select onchange="assignDelivery('${d.id}',this.value)"><option value="">🛵 Assign Delivery</option>${opts}</select><div class="admin-actions"><button class="small-btn" onclick="adminOrderStatus('${d.id}','Order Received')">Received</button><button class="small-btn" onclick="adminOrderStatus('${d.id}','Preparing')">Preparing</button><button class="success small-btn" onclick="adminOrderStatus('${d.id}','Ready for Pickup')">Ready</button><button class="small-btn" onclick="adminOrderStatus('${d.id}','Out for Delivery')">Out for Delivery</button><button class="success small-btn" onclick="adminOrderStatus('${d.id}','Delivered')">Delivered</button><button class="danger small-btn" onclick="adminOrderStatus('${d.id}','Cancelled')">Cancel</button></div></div>`;
+  }).join("")||"<p>No orders.</p>";
+ });
+}
+
+/* Keep existing admin staff/user loaders but make the first admin screen the new dashboard. */
+const _oldLoadAdmin = loadAdmin;
+loadAdmin = function(){
+  _oldLoadAdmin();
+  adminSection("dashboard");
+  loadAdminCategories();
+  loadPaymentSettings();
+  loadDeliverySettings();
+  loadCoupons();
+  loadBanners();
+};
+
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+renderCart();
+
+</script>
+
+</body>
+</html>
