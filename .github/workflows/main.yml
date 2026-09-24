@@ -1,50 +1,118 @@
-      - name: Sync Capacitor
+name: Build Annapurna APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install dependencies
         run: |
-          npx cap sync android
+          if [ -f package-lock.json ]; then
+            npm ci
+          elif [ -f package.json ]; then
+            npm install
+          else
+            npm init -y
+          fi
+
+      - name: Install Capacitor
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android
+
+      - name: Prepare web files
+        run: |
+          rm -rf www
+          mkdir -p www
+
+          if [ -d "dist" ]; then
+            cp -r dist/. www/
+          elif [ -d "build" ]; then
+            cp -r build/. www/
+          elif [ -f "index.html" ]; then
+            cp index.html www/
+            if [ -d "assets" ]; then
+              cp -r assets www/
+            fi
+          else
+            echo "index.html not found"
+            exit 1
+          fi
+
+      - name: Create Capacitor configuration
+        run: |
+          if [ ! -f capacitor.config.json ]; then
+            npx cap init "Maa Annapurna" "com.annapurna.tiffin" --web-dir www
+          fi
+
+      - name: Add Android platform
+        run: |
+          if [ ! -d android ]; then
+            npx cap add android
+          fi
+
+      - name: Copy Firebase configuration
+        run: |
+          if [ -f google-services.json ]; then
+            cp google-services.json android/app/google-services.json
+          fi
+
+      - name: Sync Capacitor
+        run: npx cap sync android
 
       - name: Add Android location permissions
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
 
-          manifest = Path("android/app/src/main/AndroidManifest.xml")
+          sed -i '/<manifest /a\
+          <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\
+          <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />' "$MANIFEST"
 
-          if not manifest.exists():
-              raise SystemExit("AndroidManifest.xml not found")
+          echo "Location permissions:"
+          grep "ACCESS_.*LOCATION" "$MANIFEST"
 
-          text = manifest.read_text()
-
-          manifest_start = text.find("<manifest")
-          if manifest_start == -1:
-              raise SystemExit("Opening <manifest> tag not found")
-
-          manifest_end = text.find(">", manifest_start)
-          if manifest_end == -1:
-              raise SystemExit("Closing > of <manifest> not found")
-
-          insert_at = manifest_end + 1
-
-          permissions = """
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-"""
-
-          if "android.permission.ACCESS_COARSE_LOCATION" not in text:
-              text = text[:insert_at] + permissions + text[insert_at:]
-
-          manifest.write_text(text)
-
-          print("Location permissions added successfully.")
-          print(manifest.read_text())
-          PY
-
-      - name: Verify Android location permissions
+      - name: Fix Kotlin dependency conflict
         run: |
-          echo "Checking AndroidManifest.xml..."
-          grep -n "ACCESS_.*LOCATION" android/app/src/main/AndroidManifest.xml || true
+          python3 -c "from pathlib import Path; p=Path('android/build.gradle'); t=p.read_text(); f='''
+
+          allprojects {
+              configurations.configureEach {
+                  resolutionStrategy.eachDependency { details ->
+                      if (details.requested.group == 'org.jetbrains.kotlin') {
+                          details.useVersion('1.8.22')
+                      }
+                  }
+              }
+          }
+          '''
+          ; p.write_text(t + f if 'resolutionStrategy.eachDependency' not in t else t)"
 
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Annapurna-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
