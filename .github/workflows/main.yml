@@ -1,4 +1,4 @@
-    name: Build Annapurna APK
+name: Build Annapurna APK
 
 on:
   workflow_dispatch:
@@ -12,38 +12,31 @@ jobs:
 
     steps:
 
-      # 1. Checkout
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      # 2. Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      # 3. Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
 
-      # 4. Install dependencies
       - name: Install dependencies
         run: |
           npm install
           npm install @capacitor/core @capacitor/cli @capacitor/android
 
-      # 5. Prepare web files
       - name: Prepare web files
         run: |
           rm -rf www
           mkdir -p www
           cp index.html www/index.html
 
-      # 6. Create Capacitor configuration
       - name: Create Capacitor configuration
         run: |
           cat > capacitor.config.json <<'EOF'
@@ -55,118 +48,63 @@ jobs:
           }
           EOF
 
-      # 7. Add Android
       - name: Add Android platform
         run: |
           rm -rf android
           npx cap add android
 
-      # 8. Copy Firebase configuration
       - name: Copy Firebase configuration
         run: |
           if [ -f google-services.json ]; then
             cp google-services.json android/app/google-services.json
           else
-            echo "google-services.json not found"
+            echo "ERROR: google-services.json not found"
             exit 1
           fi
 
-      # 9. Add Android location permissions
       - name: Add Android location permissions
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
 
-          p = Path("android/app/src/main/AndroidManifest.xml")
-          text = p.read_text()
+          sed -i 's#<manifest#<manifest#' "$MANIFEST"
 
-          permissions = [
-              '<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
-              '<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />'
-          ]
+          if ! grep -q "android.permission.ACCESS_FINE_LOCATION" "$MANIFEST"; then
+            sed -i '/<manifest[^>]*>/a\
+              <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\
+              <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' "$MANIFEST"
+          fi
 
-          for permission in permissions:
-              if permission not in text:
-                  text = text.replace(
-                      '<manifest',
-                      '<manifest',
-                      1
-                  )
-                  marker = '>'
-                  pos = text.find(marker, text.find('<manifest'))
-                  text = text[:pos+1] + '\n    ' + permission + text[pos+1:]
-
-          p.write_text(text)
-          PY
-
-      # 10. Fix Kotlin duplicate dependency
-      - name: Fix Kotlin dependency conflict
+      - name: Fix Kotlin duplicate classes
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
+          cat >> android/build.gradle <<'EOF'
 
-          p = Path("android/app/build.gradle")
-          text = p.read_text()
-
-          fix = r'''
-
-          // Maa Annapurna Kotlin dependency compatibility fix
-          configurations.configureEach {
-              exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk7"
-              exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk8"
-          }
-
-          '''
-
-          if "Maa Annapurna Kotlin dependency compatibility fix" not in text:
-              text += fix
-
-          p.write_text(text)
-          PY
-
-      # 11. Fix project Kotlin dependencies globally
-      - name: Fix Kotlin dependencies globally
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path("android/build.gradle")
-          text = p.read_text()
-
-          fix = r'''
-
-          // Maa Annapurna Kotlin dependency compatibility
+          // Maa Annapurna Kotlin compatibility fix
           allprojects {
               configurations.configureEach {
                   exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk7"
                   exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk8"
               }
           }
+          EOF
 
-          '''
-
-          if "Maa Annapurna Kotlin dependency compatibility" not in text:
-              text += fix
-
-          p.write_text(text)
-          PY
-
-      # 12. Sync Capacitor
       - name: Sync Capacitor
         run: |
           npx cap sync android
 
-      # 13. Build APK
-      - name: Build APK
+      - name: Verify Android project
         working-directory: android
         run: |
           chmod +x gradlew
+          ./gradlew --version
+
+      - name: Build APK
+        working-directory: android
+        run: |
           ./gradlew clean assembleDebug --stacktrace
 
-      # 14. Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Maa-Annapurna-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error      path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
