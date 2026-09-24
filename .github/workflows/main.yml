@@ -11,25 +11,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: '21'
 
-            - name: Install dependencies
+      - name: Create package.json
         run: |
           npm init -y
+
+      - name: Install dependencies
+        run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
+
       - name: Prepare web files
         run: |
           rm -rf www
@@ -64,8 +67,6 @@ jobs:
       - name: Add Android location permissions
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
-
-          sed -i 's#<manifest#<manifest#' "$MANIFEST"
 
           if ! grep -q "android.permission.ACCESS_FINE_LOCATION" "$MANIFEST"; then
             sed -i '/<manifest[^>]*>/a\
