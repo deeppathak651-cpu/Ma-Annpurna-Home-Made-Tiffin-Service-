@@ -36,7 +36,8 @@ jobs:
           fi
 
       - name: Install Capacitor
-        run: npm install @capacitor/core @capacitor/cli @capacitor/android
+        run: |
+          npm install @capacitor/core @capacitor/cli @capacitor/android
 
       - name: Prepare web files
         run: |
@@ -49,6 +50,7 @@ jobs:
             cp -r build/. www/
           elif [ -f "index.html" ]; then
             cp index.html www/
+
             if [ -d "assets" ]; then
               cp -r assets www/
             fi
@@ -76,7 +78,8 @@ jobs:
           fi
 
       - name: Sync Capacitor
-        run: npx cap sync android
+        run: |
+          npx cap sync android
 
       - name: Add Android location permissions
         run: |
@@ -86,24 +89,8 @@ jobs:
           <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\
           <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />' "$MANIFEST"
 
-          echo "Location permissions:"
+          echo "Location permissions added:"
           grep "ACCESS_.*LOCATION" "$MANIFEST"
-
-      - name: Fix Kotlin dependency conflict
-        run: |
-          python3 -c "from pathlib import Path; p=Path('android/build.gradle'); t=p.read_text(); f='''
-
-          allprojects {
-              configurations.configureEach {
-                  resolutionStrategy.eachDependency { details ->
-                      if (details.requested.group == 'org.jetbrains.kotlin') {
-                          details.useVersion('1.8.22')
-                      }
-                  }
-              }
-          }
-          '''
-          ; p.write_text(t + f if 'resolutionStrategy.eachDependency' not in t else t)"
 
       - name: Build APK
         run: |
