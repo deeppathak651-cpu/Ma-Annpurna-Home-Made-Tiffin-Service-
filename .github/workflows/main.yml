@@ -1,74 +1,6 @@
-name: Build Annapurna APK
-
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-
-      - name: Install dependencies
+      - name: Sync Capacitor
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          elif [ -f package.json ]; then
-            npm install
-          else
-            npm init -y
-          fi
-
-      - name: Install Capacitor
-        run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android
-
-      - name: Prepare web files
-        run: |
-          rm -rf www
-          mkdir -p www
-
-          if [ -d "dist" ]; then
-            cp -r dist/. www/
-          elif [ -d "build" ]; then
-            cp -r build/. www/
-          elif [ -f "index.html" ]; then
-            cp index.html www/
-            if [ -d "assets" ]; then
-              cp -r assets www/
-            fi
-          else
-            echo "index.html not found"
-            exit 1
-          fi
-
-      - name: Create Capacitor configuration
-        run: |
-          if [ ! -f capacitor.config.json ]; then
-            npx cap init "Maa Annapurna" "com.annapurna.tiffin" --web-dir www
-          fi
-
-      - name: Add Android platform
-        run: |
-          if [ ! -d android ]; then
-            npx cap add android
-          fi
+          npx cap sync android
 
       - name: Add Android location permissions
         run: |
@@ -82,90 +14,29 @@ jobs:
 
           text = manifest.read_text()
 
-          permissions = [
-              '    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />',
-              '    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />'
-          ]
+          manifest_start = text.find("<manifest")
+          if manifest_start == -1:
+              raise SystemExit("Opening <manifest> tag not found")
 
-          for permission in permissions:
-              permission_name = permission.split('"')[1]
+          manifest_end = text.find(">", manifest_start)
+          if manifest_end == -1:
+              raise SystemExit("Closing > of <manifest> not found")
 
-              if permission_name not in text:
-                  text = text.replace(
-                      '<manifest',
-                      '<manifest',
-                      1
-                  )
+          insert_at = manifest_end + 1
 
-                  first_close = text.find('>')
+          permissions = """
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+"""
 
-                  if first_close == -1:
-                      raise SystemExit("Invalid AndroidManifest.xml")
-
-                  text = (
-                      text[:first_close + 1]
-                      + "\n"
-                      + permission
-                      + "\n"
-                      + text[first_close + 1:]
-                  )
-
-          gps_feature = (
-              '    <uses-feature '
-              'android:name="android.hardware.location.gps" '
-              'android:required="false" />'
-          )
-
-          if "android.hardware.location.gps" not in text:
-              first_close = text.find('>')
-
-              text = (
-                  text[:first_close + 1]
-                  + "\n"
-                  + gps_feature
-                  + "\n"
-                  + text[first_close + 1:]
-              )
+          if "android.permission.ACCESS_COARSE_LOCATION" not in text:
+              text = text[:insert_at] + permissions + text[insert_at:]
 
           manifest.write_text(text)
 
           print("Location permissions added successfully.")
           print(manifest.read_text())
           PY
-
-      - name: Fix Kotlin dependency conflict
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path("android/build.gradle")
-          text = p.read_text()
-
-          fix = r'''
-          allprojects {
-              configurations.configureEach {
-                  resolutionStrategy.eachDependency { details ->
-                      if (details.requested.group == "org.jetbrains.kotlin") {
-                          details.useVersion("1.8.22")
-                      }
-                  }
-              }
-          }
-          '''
-
-          if "resolutionStrategy.eachDependency" not in text:
-              p.write_text(text + "\n" + fix)
-          PY
-
-      - name: Copy Firebase configuration
-        run: |
-          if [ -f "google-services.json" ]; then
-            cp google-services.json android/app/google-services.json
-          fi
-
-      - name: Sync Capacitor
-        run: |
-          npx cap sync android
 
       - name: Verify Android location permissions
         run: |
@@ -177,9 +48,3 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Annapurna-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
