@@ -1,4 +1,4 @@
-name: Build Annapurna APK
+    name: Build Annapurna APK
 
 on:
   workflow_dispatch:
@@ -11,95 +11,162 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # 1. Checkout
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      # 2. Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
+      # 3. Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: '21'
 
+      # 4. Install dependencies
       - name: Install dependencies
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          elif [ -f package.json ]; then
-            npm install
-          else
-            npm init -y
-          fi
-
-      - name: Install Capacitor
-        run: |
+          npm install
           npm install @capacitor/core @capacitor/cli @capacitor/android
 
+      # 5. Prepare web files
       - name: Prepare web files
         run: |
           rm -rf www
           mkdir -p www
+          cp index.html www/index.html
 
-          if [ -d "dist" ]; then
-            cp -r dist/. www/
-          elif [ -d "build" ]; then
-            cp -r build/. www/
-          elif [ -f "index.html" ]; then
-            cp index.html www/
-
-            if [ -d "assets" ]; then
-              cp -r assets www/
-            fi
-          else
-            echo "index.html not found"
-            exit 1
-          fi
-
+      # 6. Create Capacitor configuration
       - name: Create Capacitor configuration
         run: |
-          if [ ! -f capacitor.config.json ]; then
-            npx cap init "Maa Annapurna" "com.annapurna.tiffin" --web-dir www
-          fi
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.maaannapurna.tiffin",
+            "appName": "Maa Annapurna",
+            "webDir": "www",
+            "bundledWebRuntime": false
+          }
+          EOF
 
+      # 7. Add Android
       - name: Add Android platform
         run: |
-          if [ ! -d android ]; then
-            npx cap add android
-          fi
+          rm -rf android
+          npx cap add android
 
+      # 8. Copy Firebase configuration
       - name: Copy Firebase configuration
         run: |
           if [ -f google-services.json ]; then
             cp google-services.json android/app/google-services.json
+          else
+            echo "google-services.json not found"
+            exit 1
           fi
 
+      # 9. Add Android location permissions
+      - name: Add Android location permissions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/app/src/main/AndroidManifest.xml")
+          text = p.read_text()
+
+          permissions = [
+              '<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
+              '<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />'
+          ]
+
+          for permission in permissions:
+              if permission not in text:
+                  text = text.replace(
+                      '<manifest',
+                      '<manifest',
+                      1
+                  )
+                  marker = '>'
+                  pos = text.find(marker, text.find('<manifest'))
+                  text = text[:pos+1] + '\n    ' + permission + text[pos+1:]
+
+          p.write_text(text)
+          PY
+
+      # 10. Fix Kotlin duplicate dependency
+      - name: Fix Kotlin dependency conflict
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/app/build.gradle")
+          text = p.read_text()
+
+          fix = r'''
+
+          // Maa Annapurna Kotlin dependency compatibility fix
+          configurations.configureEach {
+              exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk7"
+              exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk8"
+          }
+
+          '''
+
+          if "Maa Annapurna Kotlin dependency compatibility fix" not in text:
+              text += fix
+
+          p.write_text(text)
+          PY
+
+      # 11. Fix project Kotlin dependencies globally
+      - name: Fix Kotlin dependencies globally
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/build.gradle")
+          text = p.read_text()
+
+          fix = r'''
+
+          // Maa Annapurna Kotlin dependency compatibility
+          allprojects {
+              configurations.configureEach {
+                  exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk7"
+                  exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk8"
+              }
+          }
+
+          '''
+
+          if "Maa Annapurna Kotlin dependency compatibility" not in text:
+              text += fix
+
+          p.write_text(text)
+          PY
+
+      # 12. Sync Capacitor
       - name: Sync Capacitor
         run: |
           npx cap sync android
 
-      - name: Add Android location permissions
-        run: |
-          MANIFEST="android/app/src/main/AndroidManifest.xml"
-
-          sed -i '/<manifest /a\
-          <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\
-          <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />' "$MANIFEST"
-
-          echo "Location permissions added:"
-          grep "ACCESS_.*LOCATION" "$MANIFEST"
-
+      # 13. Build APK
       - name: Build APK
+        working-directory: android
         run: |
-          cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew clean assembleDebug --stacktrace
 
+      # 14. Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Annapurna-APK
+          name: Maa-Annapurna-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error      path: android/app/build/outputs/apk/debug/app-debug.apk
