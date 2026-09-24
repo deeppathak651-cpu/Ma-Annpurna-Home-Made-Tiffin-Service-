@@ -43,7 +43,7 @@ jobs:
         run: |
           cat > capacitor.config.json <<'EOF'
           {
-            "appId": "com.maaannapurna.tiffin",
+            "appId": "com.annapurna.tiffin",
             "appName": "Maa Annapurna",
             "webDir": "www",
             "bundledWebRuntime": false
