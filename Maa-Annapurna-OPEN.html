@@ -3815,7 +3815,7 @@ onAuthStateChanged(
         );
 
 
-      if(!snap.exists){
+      if(!snap.exists()){
 
         await signOut(auth);
 
@@ -4929,7 +4929,7 @@ async function(uid,permission,value){
     );
 
 
-  if(!snap.exists) return;
+  if(!snap.exists()) return;
 
 
   const data =
@@ -5340,7 +5340,7 @@ async function loadShopSettings(){
       );
 
 
-    if(snap.exists){
+    if(snap.exists()){
 
       const data =
         snap.data();
@@ -5825,10 +5825,186 @@ renderCart();
 </script>
 
 <script>
-function syncAddressFields(){const a=[document.getElementById("authAddressLine1")?.value,document.getElementById("authAddressLine2")?.value,document.getElementById("authAddressLine3")?.value].filter(Boolean);const h=document.getElementById("authAddress");if(h)h.value=a.join(", ");return h?.value||"";}
-function useCurrentLocation(){const st=document.getElementById("locationStatus");if(!navigator.geolocation){if(st)st.textContent="Location is not supported on this device";return;}if(st)st.textContent="Getting current location…";navigator.geolocation.getCurrentPosition(p=>{document.getElementById("authLatitude").value=p.coords.latitude;document.getElementById("authLongitude").value=p.coords.longitude;if(st)st.textContent="Current location selected ✓";},e=>{if(st)st.textContent=e.code===1?"Location permission denied":"Could not get location"},{enableHighAccuracy:true,timeout:10000,maximumAge:0});}
-const _registerUserOriginal=window.registerUser;window.registerUser=function(){syncAddressFields();return _registerUserOriginal.apply(this,arguments);};
+/* Final address/PIN helpers: keep the main geolocation implementation active. */
+function syncAddressFields(){
+  if(typeof window.syncSignupAddress === "function") return window.syncSignupAddress();
+  const a=[document.getElementById("authAddressLine1")?.value,document.getElementById("authAddressLine2")?.value,document.getElementById("authAddressLine3")?.value].filter(Boolean);
+  const pin=document.getElementById("authPincode")?.value.trim();
+  if(pin) a.push("PIN " + pin);
+  const h=document.getElementById("authAddress");
+  if(h) h.value=a.join(", ");
+  return h?.value||"";
+}
+
+/* PIN code lookup: validates the 6-digit Indian PIN and fills locality/state. */
+window.lookupPincode = async function(){
+  const el=document.getElementById("authPincode");
+  const status=document.getElementById("locationStatus");
+  if(!el) return;
+  const pin=(el.value||"").replace(/\D/g,"").slice(0,6);
+  el.value=pin;
+  if(pin.length!==6){
+    if(status) status.textContent="6 digit PIN code enter karein.";
+    return;
+  }
+  if(status) status.textContent="PIN code verify ho raha hai…";
+  try{
+    const response=await fetch("https://api.postalpincode.in/pincode/"+encodeURIComponent(pin),{cache:"no-store"});
+    if(!response.ok) throw new Error("PIN service unavailable");
+    const data=await response.json();
+    const result=data && data[0];
+    if(!result || result.Status!=="Success" || !Array.isArray(result.PostOffice) || !result.PostOffice.length){
+      if(status) status.textContent="PIN code nahi mila. 6 digit PIN check karein.";
+      return;
+    }
+    const po=result.PostOffice[0];
+    const setIfEmpty=(id,value)=>{const x=document.getElementById(id);if(x && value && !x.value.trim()) x.value=value;};
+    setIfEmpty("authAddressLine2",[po.Name,po.Block].filter(Boolean).join(", "));
+    setIfEmpty("authAddressLine3",[po.District,po.State].filter(Boolean).join(", "));
+    if(typeof window.syncSignupAddress === "function") window.syncSignupAddress();
+    if(status) status.textContent="✓ PIN verified: "+[po.District,po.State].filter(Boolean).join(", ");
+  }catch(err){
+    if(status) status.textContent="PIN verify service unavailable. PIN manually continue karein.";
+  }
+};
+
+document.addEventListener("input",function(e){
+  if(e.target && e.target.id==="authPincode"){
+    e.target.value=e.target.value.replace(/\D/g,"").slice(0,6);
+    if(e.target.value.length===6) window.lookupPincode();
+  }
+});
+
+const _registerUserOriginal=window.registerUser;
+window.registerUser=function(){
+  syncAddressFields();
+  return _registerUserOriginal.apply(this,arguments);
+};
 </script>
+
+
+<style>
+/* =========================================================
+   CENTRAL ENGLISH ERROR POPUP
+========================================================= */
+#maErrorModal{
+  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+  padding:20px;box-sizing:border-box;background:rgba(0,0,0,.62);
+  z-index:999999;
+}
+#maErrorModal.open{display:flex;}
+#maErrorModal .ma-error-card{
+  width:min(440px,calc(100vw - 36px));box-sizing:border-box;
+  background:#071823;color:#fff;border:2px solid #ff5b5b;border-radius:22px;
+  padding:24px 20px 20px;text-align:center;box-shadow:0 20px 70px rgba(0,0,0,.65);
+  animation:maErrorIn .18s ease-out;
+}
+#maErrorModal .ma-error-icon{font-size:42px;line-height:1;margin-bottom:10px;}
+#maErrorModal h3{margin:0 0 10px;font-size:25px;color:#ff7777;}
+#maErrorModal p{margin:0;line-height:1.5;font-size:16px;color:#eef7fb;word-break:break-word;}
+#maErrorModal button{
+  margin-top:20px;min-width:130px;min-height:48px;border:0;border-radius:14px;
+  background:#ff5b5b;color:#fff;font-size:17px;font-weight:800;cursor:pointer;
+}
+#maErrorModal button:active{transform:scale(.98);}
+@keyframes maErrorIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+</style>
+
+<div id="maErrorModal" role="alertdialog" aria-modal="true" aria-labelledby="maErrorTitle">
+  <div class="ma-error-card" onclick="event.stopPropagation()">
+    <div class="ma-error-icon">⚠️</div>
+    <h3 id="maErrorTitle">Error</h3>
+    <p id="maErrorText">Something went wrong. Please try again.</p>
+    <button type="button" onclick="closeMaErrorPopup()">OK</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const originalShowMessage = window.showMessage;
+
+  function englishError(message){
+    let m=String(message ?? "Something went wrong. Please try again.").trim();
+    const lower=m.toLowerCase();
+
+    const exact={
+      "sabhi required fields bharein.":"Please fill in all required fields.",
+      "email/mobile aur password डालें.":"Please enter your email/mobile number and password.",
+      "email/mobile aur password daalen.":"Please enter your email/mobile number and password.",
+      "is mobile number ka account nahi mila.":"No account was found for this mobile number.",
+      "ye mobile number already registered hai.":"This mobile number is already registered.",
+      "password aur confirm password same nahi hain.":"Password and Confirm Password do not match.",
+      "valid 10 digit mobile number डालें.":"Please enter a valid 10-digit mobile number.",
+      "admin account ka public sign up allowed nahi hai.":"Public Admin sign up is not allowed.",
+      "admin ke liye public sign up allowed nahi hai.":"Public Admin sign up is not allowed.",
+      "user profile nahi mila.":"User profile was not found.",
+      "profile load nahi ho paya.":"The user profile could not be loaded.",
+      "location permission allow karein.":"Please allow location permission and try again.",
+      "location detect nahi ho saki. gps on karke dobara try karein.":"Unable to detect your location. Turn on GPS and try again.",
+      "pehle apne email inbox se verification link par click karein. phir sign in karein.":"Please verify your email from your inbox, then sign in again."
+    };
+    if(exact[lower]) return exact[lower];
+
+    if(lower.includes("auth/invalid-credential") || lower.includes("invalid-credential")) return "Invalid email/mobile number or password.";
+    if(lower.includes("auth/wrong-password")) return "Incorrect password. Please try again.";
+    if(lower.includes("auth/user-not-found")) return "No account was found with these login details.";
+    if(lower.includes("auth/email-already-in-use")) return "This email address is already registered.";
+    if(lower.includes("auth/invalid-email")) return "Please enter a valid email address.";
+    if(lower.includes("auth/too-many-requests")) return "Too many attempts. Please wait a while and try again.";
+    if(lower.includes("auth/network-request-failed")) return "Network error. Check your internet connection and try again.";
+    if(lower.includes("auth/operation-not-allowed")) return "This sign-in method is not enabled. Please contact the administrator.";
+    if(lower.includes("auth/user-disabled")) return "This account has been disabled. Please contact the administrator.";
+    if(lower.includes("permission-denied")) return "You do not have permission to perform this action.";
+    if(lower.startsWith("login failed:")) return m.replace(/^login failed:\s*/i,"");
+    if(lower.startsWith("password reset failed:")) return m.replace(/^password reset failed:\s*/i,"");
+    if(lower.includes("error occurred")) return "An error occurred. Please try again.";
+
+    return m;
+  }
+
+  window.closeMaErrorPopup=function(){
+    const modal=document.getElementById("maErrorModal");
+    if(modal) modal.classList.remove("open");
+  };
+
+  window.showCentralError=function(message){
+    const modal=document.getElementById("maErrorModal");
+    const text=document.getElementById("maErrorText");
+    if(!modal || !text) return;
+    text.textContent=englishError(message);
+    modal.classList.add("open");
+  };
+
+  /* Replace the existing auth message handler so all errors are centered. */
+  window.showMessage=function(text,type="info"){
+    if(type==="error"){
+      window.showCentralError(text);
+      return;
+    }
+    const box=document.getElementById("authMessage");
+    if(!box) return;
+    box.textContent=text;
+    box.className="message show "+type;
+  };
+
+  /* Convert all native alert() popups to the same central English error UI. */
+  window.alert=function(message){
+    window.showCentralError(message);
+  };
+
+  const modal=document.getElementById("maErrorModal");
+  if(modal){
+    modal.addEventListener("click",function(e){
+      if(e.target===modal) window.closeMaErrorPopup();
+    });
+  }
+
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape") window.closeMaErrorPopup();
+  });
+})();
+</script>
+
 </body>
 </html>
 
