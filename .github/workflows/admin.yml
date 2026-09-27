@@ -42,6 +42,14 @@ jobs:
       - name: Install Capacitor
         run: |
           npm install
+                - name: Install Capacitor Assets
+        run: npm install @capacitor/assets --save-dev
+
+      - name: Set Admin Panel App Icon
+        run: |
+          mkdir -p resources
+          cp admin-icon.png resources/icon.png
+          npx capacitor-assets generate --android
 
       - name: Prepare Admin HTML
         run: |
