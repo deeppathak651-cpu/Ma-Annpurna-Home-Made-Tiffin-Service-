@@ -50,17 +50,24 @@ jobs:
           rm -rf www
           mkdir -p www
 
-FILE=$(find . -maxdepth 1 -type f -name 'Kumaoni-Potli-RESTAURANT*.html' | head -n 1)
+          echo "Searching for Restaurant HTML..."
+
+          FILE=$(find . -maxdepth 1 -type f -name 'Kumaoni-Potli-RESTAURANT*.html' | head -n 1)
+
           if [ -z "$FILE" ]; then
             echo "ERROR: Restaurant HTML file not found"
+            echo ""
             echo "Available HTML files:"
             find . -maxdepth 1 -type f -name '*.html' -print
             exit 1
           fi
 
-          echo "Using Restaurant app: $FILE"
+          echo "Using Restaurant HTML:"
+          echo "$FILE"
+
           cp "$FILE" www/index.html
 
+          echo ""
           echo "Restaurant web files:"
           ls -lh www
 
@@ -85,6 +92,7 @@ FILE=$(find . -maxdepth 1 -type f -name 'Kumaoni-Potli-RESTAURANT*.html' | head 
           if [ -f "google-services.json" ]; then
             mkdir -p android/app
             cp google-services.json android/app/google-services.json
+            echo "Firebase configuration copied successfully."
           else
             echo "ERROR: google-services.json not found"
             exit 1
@@ -95,13 +103,15 @@ FILE=$(find . -maxdepth 1 -type f -name 'Kumaoni-Potli-RESTAURANT*.html' | head 
           echo "Firebase Android packages found:"
           grep -n '"package_name"' google-services.json || true
 
-          if ! grep -q '"package_name": "com.annapurna.restaurant"' google-services.json; then
+          if grep -q '"package_name": "com.annapurna.restaurant"' google-services.json; then
+            echo "Restaurant Firebase package found."
+          else
             echo ""
-            echo "IMPORTANT:"
-            echo "Firebase does not currently contain com.annapurna.restaurant"
+            echo "ERROR: com.annapurna.restaurant is not registered in google-services.json"
             echo ""
-            echo "Add this Android app in the SAME Firebase project:"
-            echo "Package name: com.annapurna.restaurant"
+            echo "The Restaurant Android app must be added to the SAME Firebase project."
+            echo "Required package name:"
+            echo "com.annapurna.restaurant"
             echo ""
             exit 1
           fi
@@ -143,6 +153,7 @@ FILE=$(find . -maxdepth 1 -type f -name 'Kumaoni-Potli-RESTAURANT*.html' | head 
 
       - name: Verify APK
         run: |
+          echo "Checking APK..."
           ls -lh android/app/build/outputs/apk/debug/
           test -f android/app/build/outputs/apk/debug/app-debug.apk
 
