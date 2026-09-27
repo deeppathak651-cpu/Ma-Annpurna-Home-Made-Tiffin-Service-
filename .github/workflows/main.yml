@@ -1,29 +1,30 @@
 name: Build Kumaoni Potli Customer APK
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
-          java-version: "21"
+          distribution: 'temurin'
+          java-version: '21'
 
       - name: Create package.json
         run: |
@@ -31,61 +32,43 @@ jobs:
           {
             "name": "kumaoni-potli-customer",
             "version": "1.0.0",
-            "private": true
+            "private": true,
+            "dependencies": {
+              "@capacitor/core": "^7.4.3",
+              "@capacitor/cli": "^7.4.3",
+              "@capacitor/android": "^7.4.3"
+            }
           }
           EOF
 
       - name: Install Capacitor
         run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npm install
 
       - name: Prepare customer web files
         run: |
-          set -e
-
           rm -rf www
           mkdir -p www
 
-          echo "Searching for Customer HTML..."
-
-          FILE=""
-
-          if [ -f "Kumaoni-Potli-Customer-App.html" ]; then
-            FILE="Kumaoni-Potli-Customer-App.html"
-          elif [ -f "Kumaoni-Potli-Customer-App-2.html" ]; then
-            FILE="Kumaoni-Potli-Customer-App-2.html"
-          else
-            FILE=$(find . -type f \
-              \( -iname "*Kumaoni*Potli*Customer*.html" -o -iname "*Customer*.html" \) \
-              ! -path "./node_modules/*" \
-              ! -path "./www/*" \
-              ! -name "index.html" \
-              ! -name "index.html*" \
-              | sort | head -n 1)
-          fi
+          FILE=$(find . -maxdepth 1 -type f -name 'Kumaoni-Potli-Customer*.html' | head -n 1)
 
           if [ -z "$FILE" ]; then
-            echo "ERROR: Customer HTML file not found."
-            echo "Available HTML files:"
-            find . -type f -name "*.html" \
-              ! -path "./node_modules/*" \
-              ! -name "index.html*" \
-              | sort
+            echo "ERROR: Customer HTML file not found"
+            ls -la
             exit 1
           fi
 
-          echo "Using Customer HTML: $FILE"
-
+          echo "Using customer app: $FILE"
           cp "$FILE" www/index.html
 
-          echo "Customer web file created:"
-          ls -lh www/index.html
+          echo "Customer web files:"
+          ls -lh www
 
       - name: Create Capacitor configuration
         run: |
           cat > capacitor.config.json <<'EOF'
           {
-            "appId": "com.kumaonipotli.customer",
+            "appId": "com.annapurna.tiffin",
             "appName": "Kumaoni Potli Customer",
             "webDir": "www",
             "bundledWebRuntime": false
@@ -100,11 +83,21 @@ jobs:
       - name: Copy Firebase configuration
         run: |
           if [ -f "google-services.json" ]; then
+            mkdir -p android/app
             cp google-services.json android/app/google-services.json
-            echo "Firebase configuration copied."
           else
-            echo "google-services.json not found."
-            echo "Continuing because Firebase may already be configured inside the HTML."
+            echo "ERROR: google-services.json not found"
+            exit 1
+          fi
+
+      - name: Verify Firebase package
+        run: |
+          echo "Checking Firebase package..."
+          grep -n '"package_name"' google-services.json || true
+
+          if ! grep -q '"package_name": "com.annapurna.tiffin"' google-services.json; then
+            echo "ERROR: google-services.json does not contain com.annapurna.tiffin"
+            exit 1
           fi
 
       - name: Add Android location permissions
@@ -112,20 +105,16 @@ jobs:
           MANIFEST="android/app/src/main/AndroidManifest.xml"
 
           if ! grep -q "android.permission.ACCESS_FINE_LOCATION" "$MANIFEST"; then
-            sed -i '/<manifest[^>]*>/a\
-            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\
-            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' "$MANIFEST"
+            sed -i 's#</manifest>#<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n</manifest>#' "$MANIFEST"
           fi
 
       - name: Fix Kotlin duplicate classes
         run: |
           cat >> android/build.gradle <<'EOF'
 
-          // Kumaoni Potli Kotlin compatibility fix
-          allprojects {
-              configurations.configureEach {
-                  exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk7"
-                  exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk8"
+          configurations.all {
+              resolutionStrategy {
+                  force 'org.jetbrains.kotlin:kotlin-stdlib:2.0.21'
               }
           }
           EOF
@@ -145,6 +134,11 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew clean assembleDebug --stacktrace
+
+      - name: Verify APK
+        run: |
+          ls -lh android/app/build/outputs/apk/debug/
+          test -f android/app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload Customer APK
         uses: actions/upload-artifact@v4
