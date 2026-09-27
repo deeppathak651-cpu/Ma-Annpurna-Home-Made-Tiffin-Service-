@@ -81,23 +81,25 @@ jobs:
           rm -rf android
           npx cap add android
 
-      - name: Copy Firebase configuration
+      - name: Copy Restaurant Firebase configuration
         run: |
-          if [ -f "google-services.json" ]; then
+          if [ -f "google-services-restaurant.json" ]; then
             mkdir -p android/app
-            cp google-services.json android/app/google-services.json
+            cp google-services-restaurant.json android/app/google-services.json
           else
-            echo "ERROR: google-services.json not found"
+            echo "ERROR: google-services-restaurant.json not found"
+            echo "Available Firebase files:"
+            find . -maxdepth 1 -type f -name "google-services*.json" -print
             exit 1
           fi
 
-      - name: Verify Firebase configuration
+      - name: Verify Restaurant Firebase configuration
         run: |
           echo "Firebase Android packages found:"
-          grep -n '"package_name"' google-services.json || true
+          grep -n '"package_name"' google-services-restaurant.json || true
 
-          if ! grep -q '"package_name": "com.annapurna.restaurant"' google-services.json; then
-            echo "ERROR: com.annapurna.restaurant is not registered in google-services.json"
+          if ! grep -q '"package_name": "com.annapurna.restaurant"' google-services-restaurant.json; then
+            echo "ERROR: com.annapurna.restaurant is not registered in google-services-restaurant.json"
             exit 1
           fi
 
