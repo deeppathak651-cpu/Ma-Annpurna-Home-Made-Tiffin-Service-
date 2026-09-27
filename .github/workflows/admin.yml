@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout source code
         uses: actions/checkout@v4
 
@@ -35,6 +34,9 @@ jobs:
               "@capacitor/core": "^7.4.3",
               "@capacitor/cli": "^7.4.3",
               "@capacitor/android": "^7.4.3"
+            },
+            "devDependencies": {
+              "@capacitor/assets": "^3.0.5"
             }
           }
           EOF
@@ -42,10 +44,7 @@ jobs:
       - name: Install Capacitor
         run: |
           npm install
-                - name: Install Capacitor Assets
-        run: npm install @capacitor/assets --save-dev
-
-      
+          npm install @capacitor/assets --save-dev
 
       - name: Prepare Admin HTML
         run: |
@@ -83,7 +82,8 @@ jobs:
         run: |
           rm -rf android
           npx cap add android
-                - name: Set Admin Panel App Icon
+
+      - name: Set Admin Panel App Icon
         run: |
           mkdir -p resources
           cp admin-icon.png resources/icon.png
@@ -102,7 +102,7 @@ jobs:
       - name: Verify Admin Firebase package
         run: |
           echo "Firebase Android packages:"
-          grep -n '"package_name"' google-services.json || true
+          grep -n "package_name" google-services.json || true
 
           if ! grep -q '"package_name": "com.annapurna.admin"' google-services.json; then
             echo "ERROR: com.annapurna.admin is missing from google-services.json"
