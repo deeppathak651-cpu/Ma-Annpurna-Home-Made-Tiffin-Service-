@@ -5,6 +5,7 @@ on:
 
 jobs:
   build:
+    name: Build Admin APK
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +21,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: '21'
 
       - name: Create package.json
@@ -39,9 +40,10 @@ jobs:
           EOF
 
       - name: Install Capacitor
-        run: npm install
+        run: |
+          npm install
 
-      - name: Prepare Admin web files
+      - name: Prepare Admin HTML
         run: |
           rm -rf www
           mkdir -p www
@@ -50,13 +52,16 @@ jobs:
 
           if [ ! -f "$FILE" ]; then
             echo "ERROR: Admin HTML file not found"
+            echo "Available HTML files:"
             find . -maxdepth 1 -type f -name '*.html' -print
             exit 1
           fi
 
+          echo "Using Admin file:"
+          echo "$FILE"
+
           cp "$FILE" www/index.html
 
-          echo "Admin HTML selected:"
           ls -lh www/index.html
 
       - name: Create Capacitor configuration
@@ -87,7 +92,7 @@ jobs:
 
       - name: Verify Admin Firebase package
         run: |
-          echo "Firebase packages:"
+          echo "Firebase Android packages:"
           grep -n '"package_name"' google-services.json || true
 
           if ! grep -q '"package_name": "com.annapurna.admin"' google-services.json; then
@@ -95,21 +100,7 @@ jobs:
             exit 1
           fi
 
-          echo "Admin Firebase package verified."
-
-      - name: Add Firebase Google Services plugin
-        run: |
-          sed -i '/plugins {/a\    id '\''com.google.gms.google-services'\'' version '\''4.4.2'\'' apply false' android/settings.gradle
-
-          sed -i '/plugins {/a\    id '\''com.google.gms.google-services'\''' android/app/build.gradle
-
-      - name: Add Android location permissions
-        run: |
-          MANIFEST="android/app/src/main/AndroidManifest.xml"
-
-          if ! grep -q "android.permission.ACCESS_FINE_LOCATION" "$MANIFEST"; then
-            sed -i 's#</manifest>#<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n</manifest>#' "$MANIFEST"
-          fi
+          echo "Admin Firebase package verified successfully."
 
       - name: Fix Kotlin duplicate classes
         run: |
@@ -126,24 +117,30 @@ jobs:
         run: |
           npx cap sync android
 
-      - name: Verify Android project
+      - name: Verify Admin Android project
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew --version
 
-      - name: Build Admin APK
+      - name: Build Kumaoni Potli Admin APK
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew clean assembleDebug --stacktrace
 
-      - name: Verify APK
+      - name: Verify Admin APK
         run: |
-          ls -lh android/app/build/outputs/apk/debug/
-          test -f android/app/build/outputs/apk/debug/app-debug.apk
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
 
-      - name: Upload Admin APK
+          if [ ! -f "$APK" ]; then
+            echo "ERROR: Admin APK was not created"
+            exit 1
+          fi
+
+          ls -lh "$APK"
+
+      - name: Upload Kumaoni Potli Admin APK
         uses: actions/upload-artifact@v4
         with:
           name: Kumaoni-Potli-Admin-APK
