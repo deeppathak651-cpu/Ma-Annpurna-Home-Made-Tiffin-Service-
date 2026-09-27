@@ -45,11 +45,7 @@ jobs:
                 - name: Install Capacitor Assets
         run: npm install @capacitor/assets --save-dev
 
-      - name: Set Admin Panel App Icon
-        run: |
-          mkdir -p resources
-          cp admin-icon.png resources/icon.png
-          npx capacitor-assets generate --android
+      
 
       - name: Prepare Admin HTML
         run: |
@@ -87,6 +83,11 @@ jobs:
         run: |
           rm -rf android
           npx cap add android
+                - name: Set Admin Panel App Icon
+        run: |
+          mkdir -p resources
+          cp admin-icon.png resources/icon.png
+          npx capacitor-assets generate --android
 
       - name: Copy Firebase configuration
         run: |
