@@ -33,11 +33,21 @@ jobs:
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
 
-      - name: Prepare web files
+            - name: Prepare web files
         run: |
           rm -rf www
           mkdir -p www
-          cp index.html www/index.html
+
+          FILE=$(find . -maxdepth 1 -type f -iname 'Kumaoni-Potli-Customer-App*.html' | head -n 1)
+
+          if [ -z "$FILE" ]; then
+            echo "ERROR: Customer HTML file not found"
+            ls -la
+            exit 1
+          fi
+
+          echo "Using customer app: $FILE"
+          cp "$FILE" www/index.html
 
       - name: Create Capacitor configuration
         run: |
