@@ -33,7 +33,7 @@ jobs:
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
 
-            - name: Prepare web files
+                  - name: Prepare web files
         run: |
           rm -rf www
           mkdir -p www
