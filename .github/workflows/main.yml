@@ -83,11 +83,11 @@ jobs:
 
       - name: Copy Restaurant Firebase configuration
         run: |
-          if [ -f "google-services-restaurant.json" ]; then
+          if [ -f "google-services (1).json" ]; then
             mkdir -p android/app
-            cp google-services-restaurant.json android/app/google-services.json
+            cp "google-services (1).json" android/app/google-services.json
           else
-            echo "ERROR: google-services-restaurant.json not found"
+            echo "ERROR: google-services (1).json not found"
             echo "Available Firebase files:"
             find . -maxdepth 1 -type f -name "google-services*.json" -print
             exit 1
@@ -96,10 +96,10 @@ jobs:
       - name: Verify Restaurant Firebase configuration
         run: |
           echo "Firebase Android packages found:"
-          grep -n '"package_name"' google-services-restaurant.json || true
+          grep -n '"package_name"' "google-services (1).json" || true
 
-          if ! grep -q '"package_name": "com.annapurna.restaurant"' google-services-restaurant.json; then
-            echo "ERROR: com.annapurna.restaurant is not registered in google-services-restaurant.json"
+          if ! grep -q '"package_name": "com.annapurna.restaurant"' "google-services (1).json"; then
+            echo "ERROR: com.annapurna.restaurant is not registered in google-services (1).json"
             exit 1
           fi
 
