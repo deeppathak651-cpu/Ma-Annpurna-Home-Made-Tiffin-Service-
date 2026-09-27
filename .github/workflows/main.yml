@@ -50,8 +50,7 @@ jobs:
           rm -rf www
           mkdir -p www
 
-          FILE=$(find . -maxdepth 1 -type f -name 'Kumaoni-Potli-RESTAURANT-DROPDOWN-FULL.html' | head -n 1)
-
+FILE=$(find . -maxdepth 1 -type f -name 'Kumaoni-Potli-RESTAURANT*.html' | head -n 1)
           if [ -z "$FILE" ]; then
             echo "ERROR: Restaurant HTML file not found"
             echo "Available HTML files:"
