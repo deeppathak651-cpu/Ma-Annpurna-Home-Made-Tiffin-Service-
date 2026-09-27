@@ -49,12 +49,12 @@ jobs:
           echo "Using customer app: $FILE"
           cp "$FILE" www/index.html
 
-      - name: Create Capacitor configuration
+            - name: Create Capacitor configuration
         run: |
           cat > capacitor.config.json <<'EOF'
           {
-            "appId": "com.annapurna.tiffin",
-            "appName": "Maa Annapurna",
+            "appId": "com.kumaonipotli.customer",
+            "appName": "Kumaoni Potli Customer",
             "webDir": "www",
             "bundledWebRuntime": false
           }
