@@ -1,4 +1,4 @@
-name: Build Annapurna APK
+name: Build Kumaoni Potli Customer APK
 
 on:
   workflow_dispatch:
@@ -17,78 +17,67 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: "temurin"
+          java-version: "21"
 
       - name: Create package.json
-        run: |
-          npm init -y
+        run: npm init -y
 
-      - name: Install dependencies
+      - name: Install Capacitor
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
 
-                          - name: Prepare web files
-          run: |
-            rm -rf www
-            mkdir -p www
+      - name: Prepare web files
+        run: |
+          rm -rf www
+          mkdir -p www
 
-            FILE=$(find . -maxdepth 1 -type f -iname 'Kumaoni-Potli-Customer-App*.html' | head -n 1)
+          FILE=$(find . -maxdepth 1 -type f -iname 'Kumaoni-Potli-Customer-App*.html' | head -n 1)
 
-            if [ -z "$FILE" ]; then
-              echo "ERROR: Customer HTML file not found"
-              ls -la
-              exit 1
-            fi
+          if [ -z "$FILE" ]; then
+            echo "ERROR: Kumaoni Potli Customer HTML file not found"
+            echo "Files in repository:"
+            ls -la
+            exit 1
+          fi
 
-            echo "Using customer app: $FILE"
-            cp "$FILE" www/index.html
+          echo "Using customer app: $FILE"
+          cp "$FILE" www/index.html
 
-        - name: Create Capacitor configuration
-          run: |
-            cat > capacitor.config.json <<'EOF'
-            {
-              "appId": "com.kumaonipotli.customer",
-              "appName": "Kumaoni Potli Customer",
-              "webDir": "www",
-              "bundledWebRuntime": false
-            }
-            EOF
+      - name: Create Capacitor configuration
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.kumaonipotli.customer",
+            "appName": "Kumaoni Potli Customer",
+            "webDir": "www",
+            "bundledWebRuntime": false
+          }
+          EOF
 
       - name: Add Android platform
         run: |
           rm -rf android
           npx cap add android
 
-      - name: Copy Firebase configuration
-        run: |
-          if [ -f google-services.json ]; then
-            cp google-services.json android/app/google-services.json
-          else
-            echo "ERROR: google-services.json not found"
-            exit 1
-          fi
-
       - name: Add Android location permissions
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
 
-          if ! grep -q "android.permission.ACCESS_FINE_LOCATION" "$MANIFEST"; then
-            sed -i '/<manifest[^>]*>/a\
-              <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\
-              <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' "$MANIFEST"
-          fi
+          sed -i '/<manifest/a\
+          <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\
+          <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' "$MANIFEST"
 
       - name: Fix Kotlin duplicate classes
         run: |
           cat >> android/build.gradle <<'EOF'
 
-          // Maa Annapurna Kotlin compatibility fix
+          // Kumaoni Potli Kotlin compatibility
           allprojects {
               configurations.configureEach {
                   exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk7"
@@ -98,8 +87,7 @@ jobs:
           EOF
 
       - name: Sync Capacitor
-        run: |
-          npx cap sync android
+        run: npx cap sync android
 
       - name: Verify Android project
         working-directory: android
@@ -107,14 +95,13 @@ jobs:
           chmod +x gradlew
           ./gradlew --version
 
-      - name: Build APK
+      - name: Build Customer APK
         working-directory: android
-        run: |
-          ./gradlew clean assembleDebug --stacktrace
+        run: ./gradlew clean assembleDebug --stacktrace
 
-      - name: Upload APK
+      - name: Upload Customer APK
         uses: actions/upload-artifact@v4
         with:
-          name: Maa-Annapurna-APK
+          name: Kumaoni-Potli-Customer-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
