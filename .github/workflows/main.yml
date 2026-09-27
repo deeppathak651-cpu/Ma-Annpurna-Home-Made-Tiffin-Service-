@@ -81,25 +81,37 @@ jobs:
           rm -rf android
           npx cap add android
 
-      - name: Copy Restaurant Firebase configuration
+      - name: Find Restaurant Firebase configuration
         run: |
-          if [ -f "google-services (1).json" ]; then
-            mkdir -p android/app
-            cp "google-services (1).json" android/app/google-services.json
-          else
-            echo "ERROR: google-services (1).json not found"
+          FIREBASE_FILE=""
+
+          while IFS= read -r -d '' FILE; do
+            if grep -q '"package_name"[[:space:]]*:[[:space:]]*"com.annapurna.restaurant"' "$FILE"; then
+              FIREBASE_FILE="$FILE"
+              break
+            fi
+          done < <(find . -maxdepth 1 -type f -name "google-services*.json" -print0)
+
+          if [ -z "$FIREBASE_FILE" ]; then
+            echo "ERROR: Firebase JSON for com.annapurna.restaurant was not found."
             echo "Available Firebase files:"
             find . -maxdepth 1 -type f -name "google-services*.json" -print
             exit 1
           fi
 
+          echo "Restaurant Firebase file found:"
+          echo "$FIREBASE_FILE"
+
+          mkdir -p android/app
+          cp "$FIREBASE_FILE" android/app/google-services.json
+
       - name: Verify Restaurant Firebase configuration
         run: |
           echo "Firebase Android packages found:"
-          grep -n '"package_name"' "google-services (1).json" || true
+          grep -n '"package_name"' android/app/google-services.json || true
 
-          if ! grep -q '"package_name": "com.annapurna.restaurant"' "google-services (1).json"; then
-            echo "ERROR: com.annapurna.restaurant is not registered in google-services (1).json"
+          if ! grep -q '"package_name"[[:space:]]*:[[:space:]]*"com.annapurna.restaurant"' android/app/google-services.json; then
+            echo "ERROR: com.annapurna.restaurant is not registered in Firebase JSON."
             exit 1
           fi
 
