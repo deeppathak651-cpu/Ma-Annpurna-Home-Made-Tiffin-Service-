@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:732257430751:android:f851bfcb9c2f34168a0d6a",
+        "android_client_info": {
+          "package_name": "com.annapurna.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA58erk7C6rCUI-EFNlocERVw-qraAkElc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:732257430751:android:6c0fbf900583480d8a0d6a",
         "android_client_info": {
           "package_name": "com.annapurna.delivery"
