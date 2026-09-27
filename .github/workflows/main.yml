@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout source code
@@ -26,28 +26,60 @@ jobs:
           java-version: "21"
 
       - name: Create package.json
-        run: npm init -y
+        run: |
+          cat > package.json <<'EOF'
+          {
+            "name": "kumaoni-potli-customer",
+            "version": "1.0.0",
+            "private": true
+          }
+          EOF
 
       - name: Install Capacitor
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
 
-      - name: Prepare web files
+      - name: Prepare customer web files
         run: |
+          set -e
+
           rm -rf www
           mkdir -p www
 
-          FILE=$(find . -maxdepth 1 -type f -iname 'Kumaoni-Potli-Customer-App*.html' | head -n 1)
+          echo "Searching for Customer HTML..."
+
+          FILE=""
+
+          if [ -f "Kumaoni-Potli-Customer-App.html" ]; then
+            FILE="Kumaoni-Potli-Customer-App.html"
+          elif [ -f "Kumaoni-Potli-Customer-App-2.html" ]; then
+            FILE="Kumaoni-Potli-Customer-App-2.html"
+          else
+            FILE=$(find . -type f \
+              \( -iname "*Kumaoni*Potli*Customer*.html" -o -iname "*Customer*.html" \) \
+              ! -path "./node_modules/*" \
+              ! -path "./www/*" \
+              ! -name "index.html" \
+              ! -name "index.html*" \
+              | sort | head -n 1)
+          fi
 
           if [ -z "$FILE" ]; then
-            echo "ERROR: Kumaoni Potli Customer HTML file not found"
-            echo "Files in repository:"
-            ls -la
+            echo "ERROR: Customer HTML file not found."
+            echo "Available HTML files:"
+            find . -type f -name "*.html" \
+              ! -path "./node_modules/*" \
+              ! -name "index.html*" \
+              | sort
             exit 1
           fi
 
-          echo "Using customer app: $FILE"
+          echo "Using Customer HTML: $FILE"
+
           cp "$FILE" www/index.html
+
+          echo "Customer web file created:"
+          ls -lh www/index.html
 
       - name: Create Capacitor configuration
         run: |
@@ -65,19 +97,31 @@ jobs:
           rm -rf android
           npx cap add android
 
+      - name: Copy Firebase configuration
+        run: |
+          if [ -f "google-services.json" ]; then
+            cp google-services.json android/app/google-services.json
+            echo "Firebase configuration copied."
+          else
+            echo "google-services.json not found."
+            echo "Continuing because Firebase may already be configured inside the HTML."
+          fi
+
       - name: Add Android location permissions
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
 
-          sed -i '/<manifest/a\
-          <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\
-          <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' "$MANIFEST"
+          if ! grep -q "android.permission.ACCESS_FINE_LOCATION" "$MANIFEST"; then
+            sed -i '/<manifest[^>]*>/a\
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' "$MANIFEST"
+          fi
 
       - name: Fix Kotlin duplicate classes
         run: |
           cat >> android/build.gradle <<'EOF'
 
-          // Kumaoni Potli Kotlin compatibility
+          // Kumaoni Potli Kotlin compatibility fix
           allprojects {
               configurations.configureEach {
                   exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk7"
@@ -87,7 +131,8 @@ jobs:
           EOF
 
       - name: Sync Capacitor
-        run: npx cap sync android
+        run: |
+          npx cap sync android
 
       - name: Verify Android project
         working-directory: android
@@ -97,7 +142,9 @@ jobs:
 
       - name: Build Customer APK
         working-directory: android
-        run: ./gradlew clean assembleDebug --stacktrace
+        run: |
+          chmod +x gradlew
+          ./gradlew clean assembleDebug --stacktrace
 
       - name: Upload Customer APK
         uses: actions/upload-artifact@v4
