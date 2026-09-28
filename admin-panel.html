@@ -2883,7 +2883,19 @@ html,body{background:#07131f!important;color:#eef7ff!important;overflow-x:hidden
 
 
   <div class="container">
-    <div class="admin-premium-top">
+    <div id="centralRoleSwitcher" class="central-panel-switcher" aria-label="Select Panel">
+  <label for="centralRoleSelect">Select Panel</label>
+  <select id="centralRoleSelect" onchange="window.switchFromAdminPanel(this.value)">
+    <option value="">Select Panel</option>
+    <option value="customer">👤 Customer Panel</option>
+    <option value="restaurant">🍽️ Restaurant Panel</option>
+    <option value="delivery">🚚 Delivery Panel</option>
+    <option value="admin">🛡️ Admin Panel</option>
+  </select>
+  <div id="panelLaunchStatus" style="display:none;margin-top:9px;text-align:center;font-size:13px;font-weight:700;"></div>
+</div>
+
+<div class="admin-premium-top">
       <div class="kp-app-icon">🍱</div>
       <h2>👑 Kumaoni Potli Admin</h2>
       <p>Complete business management from one secure admin app.</p>
@@ -6665,6 +6677,88 @@ window.addEventListener("unhandledrejection", function(e){
   console.error("Kumaoni Potli promise error:", e.reason);
 });
 </script>
+
+<style id="central-panel-switcher-style">
+.central-panel-switcher{width:100%;max-width:760px;margin:0 auto 12px;padding:14px 16px;background:#fff;border:1px solid #e3e8f0;border-radius:18px;box-shadow:0 6px 20px rgba(22,35,55,.06);box-sizing:border-box}
+.central-panel-switcher label{display:block;text-align:center;font-size:16px;font-weight:900;margin-bottom:8px;color:#182230!important}
+.central-panel-switcher select{display:block;width:100%;height:48px;padding:0 14px;border:1px solid #d7dde7;border-radius:13px;background:#f8fafc;color:#182230!important;font-size:15px;font-weight:800;outline:none}
+.central-panel-switcher select:focus{border-color:#1769e0;box-shadow:0 0 0 3px rgba(23,105,224,.10)}
+#admin .central-panel-switcher{position:relative;z-index:1001}
+@media(max-width:520px){.central-panel-switcher{padding:12px}.central-panel-switcher label{font-size:15px}.central-panel-switcher select{height:46px;font-size:14px}}
+</style>
+
+<script id="central-panel-switcher-logic">
+(function(){
+  function resetSelector(value){
+    var s=document.getElementById("centralRoleSelect");
+    if(s) s.value=value||"";
+  }
+  window.switchFromAdminPanel=function(role){
+    if(!role) return;
+
+    var status=document.getElementById("panelLaunchStatus");
+    var select=document.getElementById("centralRoleSelect");
+    var packages={
+      customer:"com.annapurna.customer",
+      restaurant:"com.annapurna.restaurant",
+      delivery:"com.annapurna.delivery"
+    };
+
+    if(role==="admin"){
+      if(typeof currentRole!=="undefined") currentRole="admin";
+      if(window.showPage) window.showPage("admin");
+      if(typeof window.loadAdmin==="function") window.loadAdmin();
+      if(select) select.value="admin";
+      window.scrollTo(0,0);
+      return;
+    }
+
+    var pkg=packages[role];
+    if(!pkg) return;
+
+    if(status){
+      status.style.display="block";
+      status.textContent="Opening " + (role==="customer"?"Customer":role==="restaurant"?"Restaurant":"Delivery") + " Panel…";
+    }
+
+    /* Android intent: opens the separately installed APK by its package ID. */
+    var intent="intent://launch#Intent;scheme=kumaonipotli;package="+pkg+";action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;end";
+    try{
+      window.location.href=intent;
+    }catch(e){
+      if(status) status.textContent="Panel app is not installed on this phone.";
+    }
+
+    setTimeout(function(){
+      if(status) status.textContent="If the app did not open, install that panel APK first.";
+      if(select) select.value="";
+    },1800);
+  };
+
+  function sync(){
+    var sw=document.getElementById("centralRoleSwitcher");
+    if(!sw) return;
+    var active=document.querySelector(".page.active");
+    if(active && active.id==="admin") resetSelector("admin");
+    else if(active && active.id==="restaurant") resetSelector("restaurant");
+    else if(active && active.id==="delivery") resetSelector("delivery");
+    else if(active && (active.id==="home"||active.id==="menu"||active.id==="cart"||active.id==="orders"||active.id==="profile")) resetSelector("customer");
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    sync();
+    var observer=new MutationObserver(sync);
+    observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:["class"]});
+  });
+})();
+</script>
+
+<style id="panel-launcher-final-fix">
+#admin #centralRoleSwitcher{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:99999!important;}
+#admin #centralRoleSwitcher label{display:block!important;color:#fff!important;text-align:center!important;}
+#admin #centralRoleSwitcher select{display:block!important;visibility:visible!important;opacity:1!important;width:100%!important;min-height:48px!important;color:#111827!important;background:#fff!important;}
+#panelLaunchStatus{color:#9fe8ff!important;}
+</style>
 </body>
 </html>
 
