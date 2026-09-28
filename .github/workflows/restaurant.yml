@@ -127,9 +127,13 @@ jobs:
           ls -lh android/app/build/outputs/apk/debug/
           test -f android/app/build/outputs/apk/debug/app-debug.apk
 
+            - name: Rename Restaurant APK
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk Kumaoni-Potli-Restaurant.apk
+
       - name: Upload Restaurant APK
         uses: actions/upload-artifact@v4
         with:
           name: Kumaoni-Potli-Restaurant-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: Kumaoni-Potli-Restaurant.apk
           if-no-files-found: error
