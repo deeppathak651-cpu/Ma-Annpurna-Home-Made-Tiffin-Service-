@@ -1,21 +1,18 @@
-name: Build Kumaoni Potli Restaurant APK
+name: Build Kumaoni Potli Restaurant Panel APK
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
-    paths:
-      - '**/*restaurant*.html'
-      - 'restaurant-icon.png'
-      - '.github/workflows/restaurant.yml'
+  workflow_dispatch:
 
 jobs:
   build:
-    name: Build Restaurant APK
+    name: Build Restaurant Panel APK
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout source code
         uses: actions/checkout@v4
 
@@ -27,7 +24,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: '21'
 
       - name: Create package.json
@@ -55,8 +52,11 @@ jobs:
         run: |
           if [ ! -f "restaurant-icon.png" ]; then
             echo "ERROR: restaurant-icon.png not found"
+            echo "Available PNG files:"
+            find . -maxdepth 1 -type f -iname "*.png" -print
             exit 1
           fi
+
           echo "Restaurant icon found:"
           ls -lh restaurant-icon.png
 
@@ -69,14 +69,17 @@ jobs:
 
           if [ -z "$FILE" ]; then
             echo "ERROR: Restaurant HTML file not found"
-            find . -maxdepth 1 -type f -name '*.html' -print
+            echo "Available HTML files:"
+            find . -maxdepth 1 -type f -iname "*.html" -print
             exit 1
           fi
 
-          echo "Using Restaurant app:"
+          echo "Using Restaurant HTML:"
           echo "$FILE"
 
           cp "$FILE" www/index.html
+
+          echo "Restaurant web file:"
           ls -lh www/index.html
 
       - name: Create Capacitor configuration
@@ -84,7 +87,7 @@ jobs:
           cat > capacitor.config.json <<'EOF'
           {
             "appId": "com.annapurna.restaurant",
-            "appName": "Kumaoni Potli Restaurant",
+            "appName": "Kumaoni Potli Restaurant Panel",
             "webDir": "www",
             "bundledWebRuntime": false
           }
@@ -94,11 +97,43 @@ jobs:
         run: |
           npx cap add android
 
+      - name: Copy Firebase configuration
+        run: |
+          if [ -f "google-services Restaurant.json" ]; then
+            mkdir -p android/app
+            cp "google-services Restaurant.json" android/app/google-services.json
+          elif [ -f "google-services.json" ]; then
+            mkdir -p android/app
+            cp "google-services.json" android/app/google-services.json
+          else
+            echo "ERROR: Firebase google-services file not found"
+            exit 1
+          fi
+
+      - name: Verify Restaurant Firebase package
+        run: |
+          if [ ! -f "android/app/google-services.json" ]; then
+            echo "ERROR: google-services.json missing"
+            exit 1
+          fi
+
+          if grep -q '"package_name": "com.annapurna.restaurant"' android/app/google-services.json; then
+            echo "Restaurant Firebase package verified successfully."
+          else
+            echo "ERROR: com.annapurna.restaurant is not registered in google-services.json"
+            exit 1
+          fi
+
       - name: Set Restaurant App Icon
         run: |
           rm -rf resources
           mkdir -p resources
+
           cp restaurant-icon.png resources/icon.png
+
+          echo "Restaurant icon copied:"
+          ls -lh resources/icon.png
+
           npx capacitor-assets generate --android
 
       - name: Sync Capacitor
@@ -124,16 +159,24 @@ jobs:
 
       - name: Verify APK
         run: |
-          ls -lh android/app/build/outputs/apk/debug/
-          test -f android/app/build/outputs/apk/debug/app-debug.apk
+          if [ ! -f "android/app/build/outputs/apk/debug/app-debug.apk" ]; then
+            echo "ERROR: APK was not generated"
+            exit 1
+          fi
 
-            - name: Rename Restaurant APK
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Rename Restaurant APK
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk Kumaoni-Potli-Restaurant.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk \
+          android/app/build/outputs/apk/debug/Kumaoni-Potli-Restaurant-Panel.apk
+
+          echo "Final APK:"
+          ls -lh android/app/build/outputs/apk/debug/Kumaoni-Potli-Restaurant-Panel.apk
 
       - name: Upload Restaurant APK
         uses: actions/upload-artifact@v4
         with:
-          name: Kumaoni-Potli-Restaurant-APK
-          path: Kumaoni-Potli-Restaurant.apk
+          name: Kumaoni-Potli-Restaurant-Panel
+          path: android/app/build/outputs/apk/debug/Kumaoni-Potli-Restaurant-Panel.apk
           if-no-files-found: error
