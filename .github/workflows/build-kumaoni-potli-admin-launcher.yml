@@ -8,13 +8,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: npm
 
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -29,25 +30,26 @@ jobs:
         shell: bash
         run: |
           set -e
-          mkdir -p cap-admin
+
+          mkdir -p cap-admin/www
+
+          cp input/admin-panel.html cap-admin/www/index.html
+
           cd cap-admin
 
           npm init -y
 
           npm install @capacitor/core@7.4.3 @capacitor/android@7.4.3 @capacitor/cli@7.4.3
 
-          mkdir -p www
-
-          cp ../input/admin-panel.html www/index.html
-
           npx cap init "Kumaoni Potli Admin" com.annapurna.admin --web-dir=www
 
           npx cap add android
 
-      - name: Add Panel Launcher plugin
+      - name: Add native PanelLauncher plugin
         shell: bash
         run: |
           set -e
+
           cd cap-admin
 
           mkdir -p android/app/src/main/java/com/annapurna/admin
@@ -69,36 +71,51 @@ jobs:
               @PluginMethod
               public void launch(PluginCall call) {
 
-                  String packageName = call.getString("packageName", "");
+                  String packageName =
+                          call.getString("packageName", "");
 
-                  if (packageName == null || packageName.trim().isEmpty()) {
+                  if (packageName == null ||
+                      packageName.trim().isEmpty()) {
+
                       call.reject("Missing packageName");
                       return;
                   }
 
                   try {
 
-                      Intent intent = getContext()
+                      Intent intent =
+                              getContext()
                               .getPackageManager()
-                              .getLaunchIntentForPackage(packageName.trim());
+                              .getLaunchIntentForPackage(
+                                      packageName.trim()
+                              );
 
                       if (intent == null) {
+
                           JSObject result = new JSObject();
                           result.put("launched", false);
+
                           call.resolve(result);
                           return;
                       }
 
-                      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                      intent.addFlags(
+                              Intent.FLAG_ACTIVITY_NEW_TASK
+                      );
 
                       getContext().startActivity(intent);
 
                       JSObject result = new JSObject();
                       result.put("launched", true);
+
                       call.resolve(result);
 
                   } catch (Exception e) {
-                      call.reject("Could not launch panel app", e);
+
+                      call.reject(
+                              "Could not launch panel app",
+                              e
+                      );
                   }
               }
           }
@@ -115,16 +132,19 @@ jobs:
 
               @Override
               public void onCreate(Bundle savedInstanceState) {
+
                   registerPlugin(PanelLauncherPlugin.class);
+
                   super.onCreate(savedInstanceState);
               }
           }
           JAVA
 
-      - name: Add panel package visibility
+      - name: Add Android package visibility
         shell: bash
         run: |
           set -e
+
           cd cap-admin
 
           python3 - <<'PY'
@@ -142,7 +162,7 @@ jobs:
           """
 
           if "<queries>" not in s:
-              s = s.replace("</manifest>", queries + "\n</manifest>")
+              s = s.replace("<manifest", "<manifest" + queries, 1)
 
           p.write_text(s)
           PY
@@ -150,18 +170,20 @@ jobs:
       - name: Sync Capacitor
         shell: bash
         run: |
+          set -e
           cd cap-admin
           npx cap sync android
 
-      - name: Build Admin APK 13
+      - name: Build Admin APK
         shell: bash
         run: |
+          set -e
           cd cap-admin/android
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
-      - name: Upload Admin APK 13
+      - name: Upload Admin APK
         uses: actions/upload-artifact@v4
         with:
-          name: Kumaoni-Potli-Admin-APK-13
+          name: Kumaoni-Potli-Admin-Panel-Launcher-APK
           path: cap-admin/android/app/build/outputs/apk/debug/app-debug.apk
