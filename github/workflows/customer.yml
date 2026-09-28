@@ -2,6 +2,11 @@ name: Build Kumaoni Potli Customer APK
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/customer.yml'
+      - '**customer*.html'
+      - 'customer-icon.png'
 
 jobs:
   build:
@@ -9,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout source code
         uses: actions/checkout@v4
 
@@ -47,7 +53,7 @@ jobs:
       - name: Check Customer Icon
         run: |
           if [ ! -f "customer-icon.png" ]; then
-            echo "ERROR: customer-icon.png not found in repository root"
+            echo "ERROR: customer-icon.png not found"
             exit 1
           fi
 
@@ -88,13 +94,13 @@ jobs:
         run: |
           npx cap add android
 
-      - name: Prepare Customer App Icon
+      - name: Prepare Customer Icon Resources
         run: |
           rm -rf resources
           mkdir -p resources
           cp customer-icon.png resources/icon.png
 
-          echo "Customer icon prepared:"
+          echo "Icon prepared:"
           ls -lh resources/icon.png
 
       - name: Generate Customer App Icon
@@ -105,12 +111,12 @@ jobs:
         run: |
           npx cap sync android
 
-      - name: Verify Customer App Icon
+      - name: Verify Android Icon
         run: |
-          echo "Checking generated Android icons..."
+          echo "Generated Android icon files:"
           find android/app/src/main/res -type f \
             \( -iname '*launcher*' -o -iname '*icon*' \) \
-            -print | head -50
+            -print | head -100
 
       - name: Build Kumaoni Potli Customer APK
         working-directory: android
