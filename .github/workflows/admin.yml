@@ -50,8 +50,7 @@ jobs:
         run: |
           rm -rf www
           mkdir -p www
-
-          FILE="Kumaoni-Potli-ADMIN-FINAL-CORRECTED (2)-LOGIN-FIXED.html"
+FILE=Kumaoni-Potli-ADMIN-DARK-MOBILE-BACK-FIXED.html
 
           if [ ! -f "$FILE" ]; then
             echo "ERROR: Admin HTML file not found"
