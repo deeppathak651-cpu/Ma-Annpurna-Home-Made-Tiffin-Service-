@@ -51,7 +51,7 @@ jobs:
           rm -rf www
           mkdir -p www
 
-          FILE="Kumaoni-Potli-ADMIN-FINAL-CORRECTED.html"
+          FILE="Kumaoni-Potli-ADMIN-FINAL-CORRECTED (2)-LOGIN-FIXED.html"
 
           if [ ! -f "$FILE" ]; then
             echo "ERROR: Admin HTML file not found"
@@ -65,6 +65,7 @@ jobs:
 
           cp "$FILE" www/index.html
 
+          echo "Admin index.html:"
           ls -lh www/index.html
 
       - name: Create Capacitor configuration
@@ -86,8 +87,12 @@ jobs:
       - name: Set Admin Panel App Icon
         run: |
           mkdir -p resources
-          cp admin-icon.png resources/icon.png
-          npx capacitor-assets generate --android
+          if [ -f "admin-icon.png" ]; then
+            cp admin-icon.png resources/icon.png
+            npx capacitor-assets generate --android
+          else
+            echo "Admin icon not found, continuing without custom icon."
+          fi
 
       - name: Copy Firebase configuration
         run: |
@@ -104,7 +109,7 @@ jobs:
           echo "Firebase Android packages:"
           grep -n "package_name" google-services.json || true
 
-          if ! grep -q '"package_name": "com.annapurna.admin"' google-services.json; then
+          if ! grep -q '"package_name"[[:space:]]*:[[:space:]]*"com.annapurna.admin"' google-services.json; then
             echo "ERROR: com.annapurna.admin is missing from google-services.json"
             exit 1
           fi
