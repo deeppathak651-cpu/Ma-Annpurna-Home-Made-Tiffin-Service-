@@ -6721,16 +6721,29 @@ window.addEventListener("unhandledrejection", function(e){
       status.textContent="Opening " + (role==="customer"?"Customer":role==="restaurant"?"Restaurant":"Delivery") + " Panel…";
     }
 
-    /* Android intent: opens the separately installed APK by its package ID. */
-    var intent="intent://launch#Intent;scheme=kumaonipotli;package="+pkg+";action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;end";
+    /* Native Capacitor launcher: opens the separately installed APK. */
+    var launched=false;
     try{
-      window.location.href=intent;
+      var cap=window.Capacitor;
+      var launcher=cap && cap.Plugins && cap.Plugins.PanelLauncher;
+      if(launcher && typeof launcher.launch==="function"){
+        launcher.launch({packageName:pkg}).then(function(result){
+          launched=!!(result && result.launched);
+          if(!launched && status) status.textContent="If the app did not open, install that panel APK first.";
+        }).catch(function(){
+          if(status) status.textContent="If the app did not open, install that panel APK first.";
+        });
+      }else{
+        /* Browser/older build fallback. */
+        var intent="intent://launch#Intent;scheme=kumaonipotli;package="+pkg+";action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;end";
+        window.location.href=intent;
+      }
     }catch(e){
-      if(status) status.textContent="Panel app is not installed on this phone.";
+      if(status) status.textContent="If the app did not open, install that panel APK first.";
     }
 
     setTimeout(function(){
-      if(status) status.textContent="If the app did not open, install that panel APK first.";
+      if(status && !launched) status.textContent="If the app did not open, install that panel APK first.";
       if(select) select.value="";
     },1800);
   };
