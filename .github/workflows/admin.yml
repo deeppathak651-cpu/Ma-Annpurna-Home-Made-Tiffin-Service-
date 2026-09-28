@@ -50,15 +50,15 @@ jobs:
         run: |
           rm -rf www
           mkdir -p www
-      - name: Prepare Admin HTML
-        run: |
-          rm -rf www
-          mkdir -p www
 
           FILE="./Kumaoni-Potli-ADMIN-DARK-MOBILE-BACK-FIXED.html"
 
           if [ ! -f "$FILE" ]; then
             echo "ERROR: Admin HTML file not found: $FILE"
+            echo "Current directory:"
+            pwd
+            echo "Repository files:"
+            find . -maxdepth 2 -type f | sort
             echo "Available HTML files:"
             find . -maxdepth 2 -type f -iname "*.html" -print
             exit 1
@@ -66,8 +66,6 @@ jobs:
 
           echo "Using Admin file: $FILE"
           cp "$FILE" www/index.html
-          echo "Admin index.html:"
-          ls -lh www/index.html
 
           echo "Admin index.html:"
           ls -lh www/index.html
@@ -91,6 +89,7 @@ jobs:
       - name: Set Admin Panel App Icon
         run: |
           mkdir -p resources
+
           if [ -f "admin-icon.png" ]; then
             cp admin-icon.png resources/icon.png
             npx capacitor-assets generate --android
@@ -156,6 +155,7 @@ jobs:
             exit 1
           fi
 
+          echo "Admin APK created successfully:"
           ls -lh "$APK"
 
       - name: Upload Kumaoni Potli Admin APK
