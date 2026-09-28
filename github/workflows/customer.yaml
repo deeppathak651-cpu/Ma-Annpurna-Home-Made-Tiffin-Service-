@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - '.github/workflows/customer.yml'
-      - '**customer*.html'
+      - '.github/workflows/customer.yaml'
+      - '**/*customer*.html'
       - 'customer-icon.png'
 
 jobs:
@@ -53,7 +53,7 @@ jobs:
       - name: Check Customer Icon
         run: |
           if [ ! -f "customer-icon.png" ]; then
-            echo "ERROR: customer-icon.png not found"
+            echo "ERROR: customer-icon.png not found in repository root"
             exit 1
           fi
 
@@ -69,7 +69,6 @@ jobs:
 
           if [ -z "$FILE" ]; then
             echo "ERROR: Customer HTML file not found"
-            echo "Available HTML files:"
             find . -maxdepth 1 -type f -iname '*.html' -print
             exit 1
           fi
@@ -94,16 +93,16 @@ jobs:
         run: |
           npx cap add android
 
-      - name: Prepare Customer Icon Resources
+      - name: Prepare Customer Icon
         run: |
           rm -rf resources
           mkdir -p resources
           cp customer-icon.png resources/icon.png
 
-          echo "Icon prepared:"
+          echo "Customer icon ready:"
           ls -lh resources/icon.png
 
-      - name: Generate Customer App Icon
+      - name: Generate Android App Icon
         run: |
           npx capacitor-assets generate --android
 
@@ -113,7 +112,7 @@ jobs:
 
       - name: Verify Android Icon
         run: |
-          echo "Generated Android icon files:"
+          echo "Checking Android icon resources:"
           find android/app/src/main/res -type f \
             \( -iname '*launcher*' -o -iname '*icon*' \) \
             -print | head -100
