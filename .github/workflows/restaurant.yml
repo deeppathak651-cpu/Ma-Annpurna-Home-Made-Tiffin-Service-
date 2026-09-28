@@ -1,0 +1,135 @@
+name: Build Kumaoni Potli Restaurant APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*restaurant*.html'
+      - 'restaurant-icon.png'
+      - '.github/workflows/restaurant.yml'
+
+jobs:
+  build:
+    name: Build Restaurant APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Create package.json
+        run: |
+          cat > package.json <<'EOF'
+          {
+            "name": "kumaoni-potli-restaurant",
+            "version": "1.0.0",
+            "private": true,
+            "dependencies": {
+              "@capacitor/core": "^7.4.3",
+              "@capacitor/cli": "^7.4.3",
+              "@capacitor/android": "^7.4.3",
+              "@capacitor/assets": "^3.0.5"
+            }
+          }
+          EOF
+
+      - name: Install Capacitor
+        run: |
+          npm install
+          npm install @capacitor/assets --save-dev
+
+      - name: Check Restaurant Icon
+        run: |
+          if [ ! -f "restaurant-icon.png" ]; then
+            echo "ERROR: restaurant-icon.png not found"
+            exit 1
+          fi
+          echo "Restaurant icon found:"
+          ls -lh restaurant-icon.png
+
+      - name: Prepare Restaurant HTML
+        run: |
+          rm -rf www
+          mkdir -p www
+
+          FILE=$(find . -maxdepth 1 -type f -iname '*restaurant*.html' | head -n 1)
+
+          if [ -z "$FILE" ]; then
+            echo "ERROR: Restaurant HTML file not found"
+            find . -maxdepth 1 -type f -name '*.html' -print
+            exit 1
+          fi
+
+          echo "Using Restaurant app:"
+          echo "$FILE"
+
+          cp "$FILE" www/index.html
+          ls -lh www/index.html
+
+      - name: Create Capacitor configuration
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.annapurna.restaurant",
+            "appName": "Kumaoni Potli Restaurant",
+            "webDir": "www",
+            "bundledWebRuntime": false
+          }
+          EOF
+
+      - name: Add Android platform
+        run: |
+          npx cap add android
+
+      - name: Set Restaurant App Icon
+        run: |
+          rm -rf resources
+          mkdir -p resources
+          cp restaurant-icon.png resources/icon.png
+          npx capacitor-assets generate --android
+
+      - name: Sync Capacitor
+        run: |
+          npx cap sync android
+
+      - name: Fix Kotlin duplicate classes
+        run: |
+          cat >> android/build.gradle <<'EOF'
+
+          configurations.all {
+              resolutionStrategy {
+                  force 'org.jetbrains.kotlin:kotlin-stdlib:2.0.21'
+              }
+          }
+          EOF
+
+      - name: Build Restaurant APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew clean assembleDebug --stacktrace
+
+      - name: Verify APK
+        run: |
+          ls -lh android/app/build/outputs/apk/debug/
+          test -f android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload Restaurant APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Kumaoni-Potli-Restaurant-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
