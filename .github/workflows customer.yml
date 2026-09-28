@@ -1,0 +1,106 @@
+name: Build Kumaoni Potli Customer APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Customer APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Create package.json
+        run: |
+          cat > package.json <<'EOF'
+          {
+            "name": "kumaoni-potli-customer",
+            "version": "1.0.0",
+            "private": true,
+            "dependencies": {
+              "@capacitor/core": "^7.4.3",
+              "@capacitor/cli": "^7.4.3",
+              "@capacitor/android": "^7.4.3",
+              "@capacitor/assets": "^3.0.5"
+            }
+          }
+          EOF
+
+      - name: Install Capacitor
+        run: |
+          npm install
+          npm install @capacitor/assets --save-dev
+
+      - name: Set Customer App Icon
+        run: |
+          mkdir -p resources
+          cp customer-icon.png resources/icon.png
+          npx capacitor-assets generate --android
+
+      - name: Prepare Customer HTML
+        run: |
+          rm -rf www
+          mkdir -p www
+
+          FILE=$(find . -maxdepth 1 -type f -iname '*customer*.html' | head -n 1)
+
+          if [ -z "$FILE" ]; then
+            echo "ERROR: Customer HTML file not found"
+            find . -maxdepth 1 -type f -name '*.html' -print
+            exit 1
+          fi
+
+          echo "Using Customer file:"
+          echo "$FILE"
+
+          cp "$FILE" www/index.html
+
+      - name: Create Capacitor configuration
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.annapurna.customer",
+            "appName": "Kumaoni Potli",
+            "webDir": "www",
+            "bundledWebRuntime": false
+          }
+          EOF
+
+      - name: Add Android platform
+        run: |
+          npx cap add android
+
+      - name: Generate Customer App Icon
+        run: |
+          mkdir -p android/app/src/main/res
+          npx capacitor-assets generate --android
+
+      - name: Sync Capacitor
+        run: |
+          npx cap sync android
+
+      - name: Build Kumaoni Potli Customer APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew clean assembleDebug --stacktrace
+
+      - name: Upload Kumaoni Potli Customer APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Kumaoni-Potli-Customer-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
