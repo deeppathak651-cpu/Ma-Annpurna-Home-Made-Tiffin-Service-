@@ -50,19 +50,24 @@ jobs:
         run: |
           rm -rf www
           mkdir -p www
-FILE=Kumaoni-Potli-ADMIN-DARK-MOBILE-BACK-FIXED.html
+      - name: Prepare Admin HTML
+        run: |
+          rm -rf www
+          mkdir -p www
+
+          FILE="./Kumaoni-Potli-ADMIN-DARK-MOBILE-BACK-FIXED.html"
 
           if [ ! -f "$FILE" ]; then
-            echo "ERROR: Admin HTML file not found"
+            echo "ERROR: Admin HTML file not found: $FILE"
             echo "Available HTML files:"
-            find . -maxdepth 1 -type f -name '*.html' -print
+            find . -maxdepth 2 -type f -iname "*.html" -print
             exit 1
           fi
 
-          echo "Using Admin file:"
-          echo "$FILE"
-
+          echo "Using Admin file: $FILE"
           cp "$FILE" www/index.html
+          echo "Admin index.html:"
+          ls -lh www/index.html
 
           echo "Admin index.html:"
           ls -lh www/index.html
