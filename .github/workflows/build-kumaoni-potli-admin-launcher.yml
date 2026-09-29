@@ -36,7 +36,6 @@ jobs:
 
           if [ ! -f "admin-panel.html" ]; then
             echo "ERROR: admin-panel.html not found in repository root."
-            echo "Files in repository:"
             ls -la
             exit 1
           fi
@@ -175,20 +174,36 @@ jobs:
           """
 
           if "<queries>" not in s:
-              s = s.replace(
-                  "<manifest",
-                  "<manifest" + queries,
-                  1
-              )
+              s = s.replace("</manifest>", queries + "\n</manifest>")
 
           p.write_text(s)
+          PY
+
+      - name: Verify AndroidManifest.xml
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin
+
+          echo "Checking AndroidManifest.xml..."
+          cat android/app/src/main/AndroidManifest.xml
+
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          ET.parse("android/app/src/main/AndroidManifest.xml")
+
+          print("AndroidManifest.xml is valid XML.")
           PY
 
       - name: Sync Capacitor
         shell: bash
         run: |
           set -e
+
           cd cap-admin
+
           npx cap sync android
 
       - name: Build Admin APK
