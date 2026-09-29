@@ -33,7 +33,7 @@ jobs:
 
           mkdir -p cap-admin/www
 
-          cp input/admin-panel.html cap-admin/www/index.html
+          cp admin-panel.html cap-admin/www/index.html
 
           cd cap-admin
 
