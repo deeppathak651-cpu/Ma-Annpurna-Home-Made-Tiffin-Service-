@@ -179,6 +179,118 @@ jobs:
           p.write_text(s)
           PY
 
+      - name: Set Admin App Name
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/app/src/main/res/values/strings.xml")
+
+          p.parent.mkdir(parents=True, exist_ok=True)
+
+          p.write_text("""<?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="app_name">Kumaoni Potli Admin</string>
+              <string name="title_activity_main">Kumaoni Potli Admin</string>
+              <string name="package_name">com.annapurna.admin</string>
+              <string name="custom_url_scheme">com.annapurna.admin</string>
+          </resources>
+          """)
+          PY
+
+      - name: Create Admin Launcher Icon
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+
+          # Simple valid PNG launcher icon.
+          # This guarantees that the Admin APK has a native launcher icon.
+          png_base64 = """
+          iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABXHk/D
+          AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAAN
+          iVBhcklAAAgAAgAAAAAMAAABGgAABGAAAAAA
+          """
+
+          # Use a generated SVG converted by Android as adaptive foreground.
+          svg = '''<svg xmlns="http://www.w3.org/2000/svg"
+          width="512" height="512" viewBox="0 0 512 512">
+            <rect width="512" height="512" rx="110" fill="#0B2B45"/>
+            <circle cx="256" cy="220" r="120" fill="#F4B942"/>
+            <path d="M150 250 Q256 160 362 250 L340 330 Q256 290 172 330 Z"
+                  fill="#FFFFFF"/>
+            <circle cx="215" cy="220" r="15" fill="#0B2B45"/>
+            <circle cx="297" cy="220" r="15" fill="#0B2B45"/>
+            <path d="M205 270 Q256 300 307 270"
+                  fill="none" stroke="#0B2B45"
+                  stroke-width="14" stroke-linecap="round"/>
+          </svg>'''
+
+          res = Path("android/app/src/main/res")
+
+          for folder in [
+              "drawable",
+              "drawable-v24",
+              "mipmap-hdpi",
+              "mipmap-mdpi",
+              "mipmap-xhdpi",
+              "mipmap-xxhdpi",
+              "mipmap-xxxhdpi"
+          ]:
+              (res / folder).mkdir(parents=True, exist_ok=True)
+
+          (res / "drawable" / "admin_launcher.svg").write_text(svg)
+          PY
+
+          cat > android/app/src/main/res/drawable/admin_launcher.xml <<'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+              <item>
+                  <shape android:shape="rectangle">
+                      <solid android:color="#0B2B45"/>
+                      <corners android:radius="80dp"/>
+                  </shape>
+              </item>
+          </layer-list>
+          XML
+
+      - name: Configure Android Launcher Icon
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/app/src/main/AndroidManifest.xml")
+          s = p.read_text()
+
+          s = s.replace(
+              'android:theme="@style/Theme.App"',
+              'android:theme="@style/Theme.App"'
+          )
+
+          s = s.replace(
+              '<application',
+              '<application android:icon="@drawable/admin_launcher" android:roundIcon="@drawable/admin_launcher"',
+              1
+          )
+
+          p.write_text(s)
+          PY
+
       - name: Verify AndroidManifest.xml
         shell: bash
         run: |
@@ -217,9 +329,28 @@ jobs:
 
           ./gradlew assembleDebug --no-daemon
 
+      - name: Rename Admin APK
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin/android
+
+          if [ ! -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+            echo "ERROR: APK was not generated."
+            exit 1
+          fi
+
+          cp \
+            "app/build/outputs/apk/debug/app-debug.apk" \
+            "app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk"
+
+          echo "Admin APK renamed successfully:"
+          ls -lh "app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk"
+
       - name: Upload Admin APK
         uses: actions/upload-artifact@v4
         with:
-          name: Kumaoni-Potli-Admin-Panel-Launcher-APK
-          path: cap-admin/android/app/build/outputs/apk/debug/app-debug.apk
+          name: Kumaoni-Potli-Admin-APK
+          path: cap-admin/android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
           if-no-files-found: error
