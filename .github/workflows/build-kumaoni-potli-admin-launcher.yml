@@ -27,6 +27,115 @@ jobs:
         with:
           packages: "platform-tools platforms;android-35 build-tools;35.0.0"
 
+      # ============================================================
+      # FIND LATEST ADMIN HTML
+      # ============================================================
+      - name: Find latest Admin HTML
+        shell: bash
+        run: |
+          set -e
+
+          echo "======================================"
+          echo "Searching Admin HTML..."
+          echo "======================================"
+
+          SOURCE_HTML=""
+
+          if [ -f "Kumaoni-Potli-ADMIN-CENTRAL-CONTROL-FINAL.html" ]; then
+            SOURCE_HTML="Kumaoni-Potli-ADMIN-CENTRAL-CONTROL-FINAL.html"
+          elif [ -f "admin-panel.html" ]; then
+            SOURCE_HTML="admin-panel.html"
+          else
+            echo "ERROR: No Admin HTML file found."
+            echo ""
+            echo "Files in repository root:"
+            ls -lah
+            exit 1
+          fi
+
+          echo "Selected Admin HTML:"
+          echo "$SOURCE_HTML"
+
+          echo "ADMIN_SOURCE_HTML=$SOURCE_HTML" >> "$GITHUB_ENV"
+
+          echo ""
+          echo "File information:"
+          ls -lh "$SOURCE_HTML"
+
+      # ============================================================
+      # VERIFY UPDATED ADMIN CODE
+      # ============================================================
+      - name: Verify updated Admin features
+        shell: bash
+        run: |
+          set -e
+
+          echo "======================================"
+          echo "Checking Admin HTML features..."
+          echo "======================================"
+
+          FILE="$ADMIN_SOURCE_HTML"
+
+          echo "Checking:"
+          echo "$FILE"
+          echo ""
+
+          if grep -q "Category Added Successfully" "$FILE"; then
+            echo "OK: Category success popup found."
+          else
+            echo "ERROR: Category success popup NOT found."
+            echo "The repository is still using an old Admin HTML."
+            exit 1
+          fi
+
+          if grep -q "Category Updated Successfully" "$FILE"; then
+            echo "OK: Category edit feature found."
+          else
+            echo "ERROR: Category edit feature NOT found."
+            exit 1
+          fi
+
+          if grep -q "Category Deleted Successfully" "$FILE"; then
+            echo "OK: Category delete feature found."
+          else
+            echo "ERROR: Category delete feature NOT found."
+            exit 1
+          fi
+
+          if grep -q "Category Disabled Successfully" "$FILE"; then
+            echo "OK: Category disable popup found."
+          else
+            echo "ERROR: Category disable feature NOT found."
+            exit 1
+          fi
+
+          if grep -q "Category Enabled Successfully" "$FILE"; then
+            echo "OK: Category enable popup found."
+          else
+            echo "ERROR: Category enable feature NOT found."
+            exit 1
+          fi
+
+          if grep -q "Restaurant Disabled Successfully" "$FILE"; then
+            echo "OK: Restaurant disable feature found."
+          else
+            echo "WARNING: Restaurant disable popup not found."
+          fi
+
+          if grep -q "Restaurant Enabled Successfully" "$FILE"; then
+            echo "OK: Restaurant enable feature found."
+          else
+            echo "WARNING: Restaurant enable popup not found."
+          fi
+
+          echo ""
+          echo "======================================"
+          echo "Admin HTML verification completed."
+          echo "======================================"
+
+      # ============================================================
+      # CREATE CAPACITOR PROJECT
+      # ============================================================
       - name: Create Capacitor Admin project
         shell: bash
         run: |
@@ -34,34 +143,46 @@ jobs:
 
           mkdir -p cap-admin/www
 
-          if [ ! -f "admin-panel.html" ]; then
-            echo "ERROR: admin-panel.html not found in repository root."
-            ls -la
-            exit 1
-          fi
+          echo "Using Admin HTML:"
+          echo "$ADMIN_SOURCE_HTML"
 
-          if [ ! -f "admin-icon.png" ]; then
-            echo "ERROR: admin-icon.png not found in repository root."
-            ls -la
-            exit 1
-          fi
+          cp "$ADMIN_SOURCE_HTML" "cap-admin/www/index.html"
 
-          cp "admin-panel.html" "cap-admin/www/index.html"
+          echo ""
+          echo "Copied Admin HTML to:"
+          echo "cap-admin/www/index.html"
+
+          ls -lh "cap-admin/www/index.html"
 
           cd cap-admin
 
           npm init -y
 
-          npm install @capacitor/core@7.4.3 @capacitor/android@7.4.3 @capacitor/cli@7.4.3
+          npm install \
+            @capacitor/core@7.4.3 \
+            @capacitor/android@7.4.3 \
+            @capacitor/cli@7.4.3
 
-          npx cap init "Kumaoni Potli Admin" "com.annapurna.admin" --web-dir=www
+          npx cap init \
+            "Kumaoni Potli Admin" \
+            "com.annapurna.admin" \
+            --web-dir=www
 
           npx cap add android
 
+      # ============================================================
+      # ADD ADMIN ICON
+      # ============================================================
       - name: Add Admin Launcher Icon
         shell: bash
         run: |
           set -e
+
+          if [ ! -f "admin-icon.png" ]; then
+            echo "ERROR: admin-icon.png not found in repository root."
+            ls -lah
+            exit 1
+          fi
 
           cd cap-admin
 
@@ -75,6 +196,9 @@ jobs:
           ls -lh \
             "android/app/src/main/res/drawable/admin_icon.png"
 
+      # ============================================================
+      # NATIVE PANEL LAUNCHER PLUGIN
+      # ============================================================
       - name: Add native PanelLauncher plugin
         shell: bash
         run: |
@@ -178,6 +302,9 @@ jobs:
           }
           JAVA
 
+      # ============================================================
+      # ANDROID PACKAGE VISIBILITY
+      # ============================================================
       - name: Add Android package visibility
         shell: bash
         run: |
@@ -188,7 +315,10 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
 
-          p = Path("android/app/src/main/AndroidManifest.xml")
+          p = Path(
+              "android/app/src/main/AndroidManifest.xml"
+          )
+
           s = p.read_text()
 
           queries = """
@@ -208,6 +338,9 @@ jobs:
           p.write_text(s)
           PY
 
+      # ============================================================
+      # APP NAME
+      # ============================================================
       - name: Set Admin App Name
         shell: bash
         run: |
@@ -239,6 +372,9 @@ jobs:
           )
           PY
 
+      # ============================================================
+      # LAUNCHER ICON
+      # ============================================================
       - name: Configure Android Launcher Icon
         shell: bash
         run: |
@@ -271,6 +407,7 @@ jobs:
           PY
 
           echo "Launcher icon configured:"
+
           grep -o \
             'android:icon="[^"]*"' \
             android/app/src/main/AndroidManifest.xml || true
@@ -279,6 +416,9 @@ jobs:
             'android:roundIcon="[^"]*"' \
             android/app/src/main/AndroidManifest.xml || true
 
+      # ============================================================
+      # VERIFY MANIFEST
+      # ============================================================
       - name: Verify AndroidManifest.xml
         shell: bash
         run: |
@@ -302,6 +442,9 @@ jobs:
           )
           PY
 
+      # ============================================================
+      # VERIFY ICON
+      # ============================================================
       - name: Verify Admin Icon
         shell: bash
         run: |
@@ -322,6 +465,50 @@ jobs:
           ls -lh \
             "android/app/src/main/res/drawable/admin_icon.png"
 
+      # ============================================================
+      # VERIFY FINAL WEB FILE INSIDE APK PROJECT
+      # ============================================================
+      - name: Verify final Admin web file
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin
+
+          echo "======================================"
+          echo "Final Admin Web File Verification"
+          echo "======================================"
+
+          ls -lh www/index.html
+
+          if grep -q "Category Added Successfully" www/index.html; then
+            echo "OK: Updated category code is inside APK project."
+          else
+            echo "ERROR: Updated category code is NOT inside APK project."
+            exit 1
+          fi
+
+          if grep -q "Category Updated Successfully" www/index.html; then
+            echo "OK: Category edit code is inside APK project."
+          else
+            echo "ERROR: Category edit code is missing."
+            exit 1
+          fi
+
+          if grep -q "Category Deleted Successfully" www/index.html; then
+            echo "OK: Category delete code is inside APK project."
+          else
+            echo "ERROR: Category delete code is missing."
+            exit 1
+          fi
+
+          echo "======================================"
+          echo "Final web verification successful."
+          echo "======================================"
+
+      # ============================================================
+      # SYNC CAPACITOR
+      # ============================================================
       - name: Sync Capacitor
         shell: bash
         run: |
@@ -331,6 +518,9 @@ jobs:
 
           npx cap sync android
 
+      # ============================================================
+      # BUILD APK
+      # ============================================================
       - name: Build Admin APK
         shell: bash
         run: |
@@ -342,6 +532,9 @@ jobs:
 
           ./gradlew assembleDebug --no-daemon
 
+      # ============================================================
+      # RENAME APK
+      # ============================================================
       - name: Rename Admin APK
         shell: bash
         run: |
@@ -366,6 +559,9 @@ jobs:
 
           ls -lh "$FINAL_APK"
 
+      # ============================================================
+      # UPLOAD APK
+      # ============================================================
       - name: Upload Admin APK
         uses: actions/upload-artifact@v4
         with:
