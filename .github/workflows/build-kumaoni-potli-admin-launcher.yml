@@ -1,4 +1,4 @@
-name: Build Kumaoni Potli Admin APK 13 - Panel Launcher
+name: Build Kumaoni Potli Admin APK - Current Admin Panel
 
 on:
   workflow_dispatch:
@@ -8,129 +8,103 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # ============================================================
+      # CHECKOUT
+      # ============================================================
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      # ============================================================
+      # NODE
+      # ============================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
+      # ============================================================
+      # JAVA
+      # ============================================================
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
 
+      # ============================================================
+      # ANDROID SDK
+      # ============================================================
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
           packages: "platform-tools platforms;android-35 build-tools;35.0.0"
 
       # ============================================================
-      # FIND LATEST ADMIN HTML
+      # ALWAYS USE CURRENT ADMIN HTML
       # ============================================================
-      - name: Find latest Admin HTML
+      - name: Select current Admin HTML
         shell: bash
         run: |
           set -e
 
           echo "======================================"
-          echo "Searching Admin HTML..."
+          echo "SELECTING CURRENT ADMIN PANEL"
           echo "======================================"
 
-          SOURCE_HTML=""
-
-          if [ -f "Kumaoni-Potli-ADMIN-CENTRAL-CONTROL-FINAL.html" ]; then
-            SOURCE_HTML="Kumaoni-Potli-ADMIN-CENTRAL-CONTROL-FINAL.html"
-          elif [ -f "admin-panel.html" ]; then
-            SOURCE_HTML="admin-panel.html"
-          else
-            echo "ERROR: No Admin HTML file found."
+          if [ ! -f "admin-panel.html" ]; then
+            echo "ERROR: admin-panel.html was not found."
             echo ""
-            echo "Files in repository root:"
+            echo "Repository root files:"
             ls -lah
             exit 1
           fi
 
-          echo "Selected Admin HTML:"
+          SOURCE_HTML="admin-panel.html"
+
+          echo "Using Admin HTML:"
           echo "$SOURCE_HTML"
 
           echo "ADMIN_SOURCE_HTML=$SOURCE_HTML" >> "$GITHUB_ENV"
 
-          echo ""
-          echo "File information:"
           ls -lh "$SOURCE_HTML"
 
       # ============================================================
-      # VERIFY UPDATED ADMIN CODE
+      # VERIFY CURRENT ADMIN PANEL
       # ============================================================
-      - name: Verify updated Admin features
+      - name: Verify current Admin Panel
         shell: bash
         run: |
           set -e
 
-          echo "======================================"
-          echo "Checking Admin HTML features..."
-          echo "======================================"
-
           FILE="$ADMIN_SOURCE_HTML"
 
-          echo "Checking:"
-          echo "$FILE"
-          echo ""
-
-          if grep -q "Category Added Successfully" "$FILE"; then
-            echo "OK: Category success popup found."
-          else
-            echo "ERROR: Category success popup NOT found."
-            echo "The repository is still using an old Admin HTML."
-            exit 1
-          fi
-
-          if grep -q "Category Updated Successfully" "$FILE"; then
-            echo "OK: Category edit feature found."
-          else
-            echo "ERROR: Category edit feature NOT found."
-            exit 1
-          fi
-
-          if grep -q "Category Deleted Successfully" "$FILE"; then
-            echo "OK: Category delete feature found."
-          else
-            echo "ERROR: Category delete feature NOT found."
-            exit 1
-          fi
-
-          if grep -q "Category Disabled Successfully" "$FILE"; then
-            echo "OK: Category disable popup found."
-          else
-            echo "ERROR: Category disable feature NOT found."
-            exit 1
-          fi
-
-          if grep -q "Category Enabled Successfully" "$FILE"; then
-            echo "OK: Category enable popup found."
-          else
-            echo "ERROR: Category enable feature NOT found."
-            exit 1
-          fi
-
-          if grep -q "Restaurant Disabled Successfully" "$FILE"; then
-            echo "OK: Restaurant disable feature found."
-          else
-            echo "WARNING: Restaurant disable popup not found."
-          fi
-
-          if grep -q "Restaurant Enabled Successfully" "$FILE"; then
-            echo "OK: Restaurant enable feature found."
-          else
-            echo "WARNING: Restaurant enable popup not found."
-          fi
-
-          echo ""
           echo "======================================"
-          echo "Admin HTML verification completed."
+          echo "VERIFYING CURRENT ADMIN PANEL"
+          echo "======================================"
+
+          if ! grep -q "ADMIN CONTROL CENTER" "$FILE"; then
+            echo "ERROR: ADMIN CONTROL CENTER not found."
+            exit 1
+          fi
+
+          if ! grep -q "Customer Panel" "$FILE"; then
+            echo "ERROR: Customer Panel not found."
+            exit 1
+          fi
+
+          if ! grep -q "Restaurant Panel" "$FILE"; then
+            echo "ERROR: Restaurant Panel not found."
+            exit 1
+          fi
+
+          if ! grep -q "Delivery Panel" "$FILE"; then
+            echo "ERROR: Delivery Panel not found."
+            exit 1
+          fi
+
+          echo ""
+          echo "CURRENT ADMIN PANEL VERIFIED."
           echo "======================================"
 
       # ============================================================
@@ -141,18 +115,21 @@ jobs:
         run: |
           set -e
 
+          rm -rf cap-admin
+
           mkdir -p cap-admin/www
 
-          echo "Using Admin HTML:"
-          echo "$ADMIN_SOURCE_HTML"
+          echo "Copying current Admin HTML..."
 
-          cp "$ADMIN_SOURCE_HTML" "cap-admin/www/index.html"
+          cp "$ADMIN_SOURCE_HTML" \
+             "cap-admin/www/index.html"
 
           echo ""
-          echo "Copied Admin HTML to:"
+          echo "Admin HTML copied to:"
           echo "cap-admin/www/index.html"
 
-          ls -lh "cap-admin/www/index.html"
+          ls -lh \
+            "cap-admin/www/index.html"
 
           cd cap-admin
 
@@ -179,25 +156,26 @@ jobs:
           set -e
 
           if [ ! -f "admin-icon.png" ]; then
-            echo "ERROR: admin-icon.png not found in repository root."
+            echo "ERROR: admin-icon.png not found."
             ls -lah
             exit 1
           fi
 
           cd cap-admin
 
-          mkdir -p android/app/src/main/res/drawable
+          mkdir -p \
+            android/app/src/main/res/drawable
 
           cp "../admin-icon.png" \
-             "android/app/src/main/res/drawable/admin_icon.png"
+            "android/app/src/main/res/drawable/admin_icon.png"
 
-          echo "Admin launcher icon copied successfully."
+          echo "Admin icon copied successfully."
 
           ls -lh \
             "android/app/src/main/res/drawable/admin_icon.png"
 
       # ============================================================
-      # NATIVE PANEL LAUNCHER PLUGIN
+      # NATIVE PANEL LAUNCHER
       # ============================================================
       - name: Add native PanelLauncher plugin
         shell: bash
@@ -206,7 +184,8 @@ jobs:
 
           cd cap-admin
 
-          mkdir -p android/app/src/main/java/com/annapurna/admin
+          mkdir -p \
+            android/app/src/main/java/com/annapurna/admin
 
           cat > android/app/src/main/java/com/annapurna/admin/PanelLauncherPlugin.java <<'JAVA'
           package com.annapurna.admin;
@@ -239,17 +218,26 @@ jobs:
 
                       Intent intent =
                           getContext()
-                          .getPackageManager()
-                          .getLaunchIntentForPackage(
-                              packageName.trim()
-                          );
+                              .getPackageManager()
+                              .getLaunchIntentForPackage(
+                                  packageName.trim()
+                              );
 
                       if (intent == null) {
 
-                          JSObject result = new JSObject();
+                          JSObject result =
+                              new JSObject();
 
-                          result.put("launched", false);
-                          result.put("packageName", packageName);
+                          result.put(
+                              "launched",
+                              false
+                          );
+
+                          result.put(
+                              "packageName",
+                              packageName
+                          );
+
                           result.put(
                               "message",
                               "Panel app is not installed"
@@ -265,10 +253,18 @@ jobs:
 
                       getContext().startActivity(intent);
 
-                      JSObject result = new JSObject();
+                      JSObject result =
+                          new JSObject();
 
-                      result.put("launched", true);
-                      result.put("packageName", packageName);
+                      result.put(
+                          "launched",
+                          true
+                      );
+
+                      result.put(
+                          "packageName",
+                          packageName
+                      );
 
                       call.resolve(result);
 
@@ -293,9 +289,13 @@ jobs:
           public class MainActivity extends BridgeActivity {
 
               @Override
-              public void onCreate(Bundle savedInstanceState) {
+              public void onCreate(
+                  Bundle savedInstanceState
+              ) {
 
-                  registerPlugin(PanelLauncherPlugin.class);
+                  registerPlugin(
+                      PanelLauncherPlugin.class
+                  );
 
                   super.onCreate(savedInstanceState);
               }
@@ -373,7 +373,7 @@ jobs:
           PY
 
       # ============================================================
-      # LAUNCHER ICON
+      # CONFIGURE LAUNCHER ICON
       # ============================================================
       - name: Configure Android Launcher Icon
         shell: bash
@@ -391,30 +391,20 @@ jobs:
 
           s = p.read_text()
 
-          if 'android:icon="@mipmap/ic_launcher"' in s:
-              s = s.replace(
-                  'android:icon="@mipmap/ic_launcher"',
-                  'android:icon="@drawable/admin_icon"'
-              )
+          s = s.replace(
+              'android:icon="@mipmap/ic_launcher"',
+              'android:icon="@drawable/admin_icon"'
+          )
 
-          if 'android:roundIcon="@mipmap/ic_launcher_round"' in s:
-              s = s.replace(
-                  'android:roundIcon="@mipmap/ic_launcher_round"',
-                  'android:roundIcon="@drawable/admin_icon"'
-              )
+          s = s.replace(
+              'android:roundIcon="@mipmap/ic_launcher_round"',
+              'android:roundIcon="@drawable/admin_icon"'
+          )
 
           p.write_text(s)
           PY
 
-          echo "Launcher icon configured:"
-
-          grep -o \
-            'android:icon="[^"]*"' \
-            android/app/src/main/AndroidManifest.xml || true
-
-          grep -o \
-            'android:roundIcon="[^"]*"' \
-            android/app/src/main/AndroidManifest.xml || true
+          echo "Launcher icon configured."
 
       # ============================================================
       # VERIFY MANIFEST
@@ -425,10 +415,6 @@ jobs:
           set -e
 
           cd cap-admin
-
-          echo "Checking AndroidManifest.xml..."
-
-          cat android/app/src/main/AndroidManifest.xml
 
           python3 - <<'PY'
           import xml.etree.ElementTree as ET
@@ -443,7 +429,7 @@ jobs:
           PY
 
       # ============================================================
-      # VERIFY ICON
+      # VERIFY ADMIN ICON
       # ============================================================
       - name: Verify Admin Icon
         shell: bash
@@ -455,8 +441,11 @@ jobs:
           if [ ! -f \
             "android/app/src/main/res/drawable/admin_icon.png"
           ]; then
+
             echo "ERROR: Admin icon is missing."
+
             exit 1
+
           fi
 
           file \
@@ -466,7 +455,7 @@ jobs:
             "android/app/src/main/res/drawable/admin_icon.png"
 
       # ============================================================
-      # VERIFY FINAL WEB FILE INSIDE APK PROJECT
+      # VERIFY FINAL WEB FILE
       # ============================================================
       - name: Verify final Admin web file
         shell: bash
@@ -476,34 +465,49 @@ jobs:
           cd cap-admin
 
           echo "======================================"
-          echo "Final Admin Web File Verification"
+          echo "FINAL ADMIN WEB FILE"
           echo "======================================"
 
           ls -lh www/index.html
 
-          if grep -q "Category Added Successfully" www/index.html; then
-            echo "OK: Updated category code is inside APK project."
-          else
-            echo "ERROR: Updated category code is NOT inside APK project."
+          if ! grep -q "ADMIN CONTROL CENTER" \
+              www/index.html; then
+
+            echo "ERROR: Admin Control Center missing."
+
             exit 1
+
           fi
 
-          if grep -q "Category Updated Successfully" www/index.html; then
-            echo "OK: Category edit code is inside APK project."
-          else
-            echo "ERROR: Category edit code is missing."
+          if ! grep -q "Customer Panel" \
+              www/index.html; then
+
+            echo "ERROR: Customer Panel missing."
+
             exit 1
+
           fi
 
-          if grep -q "Category Deleted Successfully" www/index.html; then
-            echo "OK: Category delete code is inside APK project."
-          else
-            echo "ERROR: Category delete code is missing."
+          if ! grep -q "Restaurant Panel" \
+              www/index.html; then
+
+            echo "ERROR: Restaurant Panel missing."
+
             exit 1
+
           fi
 
-          echo "======================================"
-          echo "Final web verification successful."
+          if ! grep -q "Delivery Panel" \
+              www/index.html; then
+
+            echo "ERROR: Delivery Panel missing."
+
+            exit 1
+
+          fi
+
+          echo ""
+          echo "FINAL ADMIN HTML VERIFIED."
           echo "======================================"
 
       # ============================================================
@@ -547,14 +551,17 @@ jobs:
           FINAL_APK="app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk"
 
           if [ ! -f "$SOURCE_APK" ]; then
+
             echo "ERROR: APK was not generated."
+
             exit 1
+
           fi
 
           cp "$SOURCE_APK" "$FINAL_APK"
 
           echo "======================================"
-          echo "Kumaoni Potli Admin APK created"
+          echo "Kumaoni Potli Admin APK CREATED"
           echo "======================================"
 
           ls -lh "$FINAL_APK"
