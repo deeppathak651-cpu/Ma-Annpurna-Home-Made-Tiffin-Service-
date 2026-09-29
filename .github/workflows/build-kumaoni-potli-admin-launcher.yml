@@ -8,8 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-      - name: Checkout
+      - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -25,6 +24,8 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools platforms;android-35 build-tools;35.0.0"
 
       - name: Create Capacitor Admin project
         shell: bash
@@ -33,7 +34,14 @@ jobs:
 
           mkdir -p cap-admin/www
 
-          cp admin-panel.html cap-admin/www/index.html
+          if [ ! -f "admin-panel.html" ]; then
+            echo "ERROR: admin-panel.html not found in repository root."
+            echo "Files in repository:"
+            ls -la
+            exit 1
+          fi
+
+          cp "admin-panel.html" "cap-admin/www/index.html"
 
           cd cap-admin
 
@@ -41,7 +49,7 @@ jobs:
 
           npm install @capacitor/core@7.4.3 @capacitor/android@7.4.3 @capacitor/cli@7.4.3
 
-          npx cap init "Kumaoni Potli Admin" com.annapurna.admin --web-dir=www
+          npx cap init "Kumaoni Potli Admin" "com.annapurna.admin" --web-dir=www
 
           npx cap add android
 
@@ -72,7 +80,7 @@ jobs:
               public void launch(PluginCall call) {
 
                   String packageName =
-                          call.getString("packageName", "");
+                      call.getString("packageName", "");
 
                   if (packageName == null ||
                       packageName.trim().isEmpty()) {
@@ -84,37 +92,42 @@ jobs:
                   try {
 
                       Intent intent =
-                              getContext()
-                                      .getPackageManager()
-                                      .getLaunchIntentForPackage(
-                                              packageName.trim()
-                                      );
+                          getContext()
+                          .getPackageManager()
+                          .getLaunchIntentForPackage(
+                              packageName.trim()
+                          );
 
                       if (intent == null) {
 
                           JSObject result = new JSObject();
+
                           result.put("launched", false);
+                          result.put("packageName", packageName);
+                          result.put("message", "Panel app is not installed");
 
                           call.resolve(result);
                           return;
                       }
 
                       intent.addFlags(
-                              Intent.FLAG_ACTIVITY_NEW_TASK
+                          Intent.FLAG_ACTIVITY_NEW_TASK
                       );
 
                       getContext().startActivity(intent);
 
                       JSObject result = new JSObject();
+
                       result.put("launched", true);
+                      result.put("packageName", packageName);
 
                       call.resolve(result);
 
                   } catch (Exception e) {
 
                       call.reject(
-                              "Could not launch panel app",
-                              e
+                          "Could not launch panel app",
+                          e
                       );
                   }
               }
@@ -154,11 +167,11 @@ jobs:
           s = p.read_text()
 
           queries = """
-          <queries>
-              <package android:name="com.annapurna.customer" />
-              <package android:name="com.annapurna.restaurant" />
-              <package android:name="com.annapurna.delivery" />
-          </queries>
+              <queries>
+                  <package android:name="com.annapurna.customer" />
+                  <package android:name="com.annapurna.restaurant" />
+                  <package android:name="com.annapurna.delivery" />
+              </queries>
           """
 
           if "<queries>" not in s:
@@ -175,9 +188,7 @@ jobs:
         shell: bash
         run: |
           set -e
-
           cd cap-admin
-
           npx cap sync android
 
       - name: Build Admin APK
@@ -196,3 +207,4 @@ jobs:
         with:
           name: Kumaoni-Potli-Admin-Panel-Launcher-APK
           path: cap-admin/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
