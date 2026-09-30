@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#087653">
+<title>Kumaoni Potli Admin</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:Arial,sans-serif;background:#f4faf7;color:#173b35}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.page{display:none;min-height:100vh}.page.active{display:block}
+.center{min-height:100vh;display:grid;place-items:center;padding:18px;background:linear-gradient(145deg,#eaf8f2,#fff)}
+.login{width:min(430px,100%);background:#fff;border-radius:24px;padding:24px;box-shadow:0 14px 40px #173b3520;text-align:center}
+.brand{font:800 31px Georgia;color:#08704d}.brand em{color:#f47700;font-style:normal}
+.muted{color:#667873;font-size:13px}.field{margin:10px 0;text-align:left}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:5px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cfe1db;border-radius:11px;background:#fff;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#087653}
+.primary{border:0;background:#087653;color:#fff;border-radius:11px;padding:12px 16px;width:100%;font-weight:700}
+.error{color:#c62828;font-size:13px;min-height:20px;margin:5px}
+.top{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#006c4e,#07583f);color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 12px #0002}
+.top h2{margin:0;font-size:19px}.top .spacer{flex:1}.top button{border:1px solid #ffffff55;background:#ffffff14;color:#fff;border-radius:9px;padding:8px}
+.wrap{max-width:1000px;margin:auto;padding:14px 12px 90px}
+.selectbox{background:#fff;border:1px solid #cfe2dc;border-radius:16px;padding:12px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.card{background:#fff;border:1px solid #d6e7e1;border-radius:15px;padding:13px;box-shadow:0 4px 14px #173b3508}
+.stat b{display:block;font-size:25px}.stat small{color:#657a74}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.action{border:0;border-radius:13px;padding:14px;color:#fff;font-weight:700}.a1{background:#2867c7}.a2{background:#15945a}.a3{background:#ee7d00}.a4{background:#7a3ac5}
+.list{margin-top:12px}.row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border-top:1px solid #e6efec;padding:11px 0}.row:first-child{border-top:0}
+.badge{padding:5px 9px;border-radius:20px;font-size:11px;font-weight:700;background:#e7f3ef;color:#087653}
+.danger{border:0;background:#c62828;color:#fff;border-radius:8px;padding:8px 10px}.secondary{border:1px solid #bcd4cc;background:#fff;color:#17594a;border-radius:8px;padding:8px 10px}
+.bottom{position:fixed;z-index:40;bottom:0;left:0;right:0;height:64px;background:#006448;display:grid;grid-template-columns:repeat(5,1fr);box-shadow:0 -4px 15px #0002}
+.bottom button{border:0;background:none;color:#fff;font-size:11px}.bottom b{font-size:20px;display:block}
+.toast{position:fixed;z-index:100;left:50%;bottom:80px;transform:translateX(-50%) translateY(15px);background:#173b35;color:#fff;padding:11px 16px;border-radius:22px;opacity:0;pointer-events:none;transition:.2s}.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.table{overflow:auto}.table table{width:100%;border-collapse:collapse;min-width:650px}.table th,.table td{padding:9px;border-bottom:1px solid #e3eeea;text-align:left;font-size:13px}
+.hero{background:linear-gradient(135deg,#087a57,#005f45);color:#fff;border-radius:17px;padding:17px;margin-bottom:12px}.hero h1{margin:0 0 5px;font-size:23px}
+.hidden{display:none!important}.back{font-size:23px!important;padding:5px 10px!important}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,1fr)}.actions{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+
+<section id="loginPage" class="page active">
+ <div class="center"><div class="login">
+  <div class="brand">Kumaoni <em>Potli</em></div>
+  <h2>Admin Panel</h2><p class="muted">Authorised administrator sign in</p>
+  <form onsubmit="login(event)">
+   <div class="field"><label>Email</label><input id="email" type="email" autocomplete="username" value="deeppathak651@gmail.com" required></div>
+   <div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password" required></div>
+   <div id="loginError" class="error"></div>
+   <button class="primary">Sign In</button>
+  </form>
+  <p class="muted">Demo admin password: <b>Admin@123</b></p>
+ </div></div>
+</section>
+
+<section id="homePage" class="page">
+ <header class="top"><h2>Kumaoni Potli Admin</h2><div class="spacer"></div><button onclick="logout()">Sign Out</button></header>
+ <main class="wrap">
+  <div class="selectbox"><label><b>Select Admin Page</b></label><select id="pageSelect" onchange="openPage(this.value)"><option value="">Choose a page</option><option value="dashboard">Dashboard</option><option value="orders">Orders</option><option value="menu">Menu / Food Items</option><option value="restaurants">Restaurants</option><option value="users">Users</option><option value="payments">Payments</option><option value="coupons">Coupons</option><option value="reviews">Reviews</option><option value="notifications">Notifications</option><option value="settings">Settings</option><option value="profile">Admin Profile</option><option value="customer">Customer Panel</option><option value="delivery">Delivery Panel</option><option value="restaurantPanel">Restaurant Panel</option></select></div>
+  <div class="hero"><h1>Admin Dashboard</h1><div>Manage the application from one place.</div></div>
+  <div class="grid">
+   <div class="card stat"><b id="statOrders">0</b><small>Total Orders</small></div><div class="card stat"><b id="statFoods">0</b><small>Food Items</small></div><div class="card stat"><b id="statUsers">0</b><small>Users</small></div>
+  </div>
+  <div class="actions">
+   <button class="action a1" onclick="openPage('orders')">📦 Orders</button><button class="action a2" onclick="openPage('menu')">🍛 Menu</button><button class="action a3" onclick="openPage('users')">👥 Users</button><button class="action a4" onclick="openPage('settings')">⚙ Settings</button>
+  </div>
+  <div class="card" style="margin-top:12px"><b>Recent Orders</b><div id="recent" class="list"></div></div>
+ </main><nav class="bottom"><button onclick="openPage('dashboard')"><b>⌂</b>Home</button><button onclick="openPage('orders')"><b>☷</b>Orders</button><button onclick="openPage('menu')"><b>🍴</b>Menu</button><button onclick="openPage('users')"><b>👥</b>Users</button><button onclick="openPage('settings')"><b>⚙</b>Settings</button></nav>
+</section>
+
+<section id="contentPage" class="page">
+ <header class="top"><button class="back" onclick="backHome()">‹</button><h2 id="contentTitle">Page</h2><div class="spacer"></div></header>
+ <main id="content" class="wrap"></main>
+ <nav class="bottom"><button onclick="openPage('dashboard')"><b>⌂</b>Home</button><button onclick="openPage('orders')"><b>☷</b>Orders</button><button onclick="openPage('menu')"><b>🍴</b>Menu</button><button onclick="openPage('users')"><b>👥</b>Users</button><button onclick="openPage('settings')"><b>⚙</b>Settings</button></nav>
+</section>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const ADMIN_EMAIL='deeppathak651@gmail.com', ADMIN_PASSWORD='Admin@123';
+const KEY='kp_admin_data_v2';
+const seed={
+ orders:[
+  {id:'#ORD1001',customer:'Rohit Sharma',items:'Kumaoni Thali ×2',amount:240,payment:'COD',status:'Delivered',address:'Haldwani, Uttarakhand'},
+  {id:'#ORD1002',customer:'Priya Singh',items:'Dal Rice ×1',amount:120,payment:'UPI',status:'Preparing',address:'Haldwani, Uttarakhand'},
+  {id:'#ORD1003',customer:'Amit Joshi',items:'Thali ×3',amount:360,payment:'Card',status:'Out for Delivery',address:'Haldwani, Uttarakhand'},
+  {id:'#ORD1004',customer:'Neha Verma',items:'Roti Sabzi ×2',amount:280,payment:'COD',status:'Pending',address:'Haldwani, Uttarakhand'}
+ ],
+ foods:[{id:1,name:'Kumaoni Thali',price:120,category:'Lunch',image:'',active:true},{id:2,name:'Roti Sabzi',price:140,category:'Dinner',image:'',active:true}],
+ users:[{id:1,name:'Rohit Sharma',phone:'',role:'Customer',status:'Active'},{id:2,name:'Priya Singh',phone:'',role:'Customer',status:'Active'}],
+ restaurants:[{id:1,name:'Haldwani Kitchen',status:'Active'},{id:2,name:'Kumaoni Rasoi',status:'Active'}],
+ coupons:[], reviews:[], notifications:[],
+ settings:{area:'Haldwani Only',status:'Open'}
+};
+function data(){let x=localStorage.getItem(KEY);if(!x){localStorage.setItem(KEY,JSON.stringify(seed));return structuredClone(seed)}return JSON.parse(x)}
+function save(x){localStorage.setItem(KEY,JSON.stringify(x))}
+function toast(s){let t=document.getElementById('toast');t.textContent=s;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
+function login(e){e.preventDefault();let em=email.value.trim(),pw=password.value;if(em!==ADMIN_EMAIL||pw!==ADMIN_PASSWORD){loginError.textContent='Incorrect admin email or password.';password.value='';return}sessionStorage.setItem('kp_auth','1');loginError.textContent='';show('homePage');refreshDashboard();toast('Admin login successful')}
+function logout(){sessionStorage.removeItem('kp_auth');show('loginPage');pageSelect.value='';toast('Signed out')}
+function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0)}
+function guard(){if(sessionStorage.getItem('kp_auth')!=='1'){show('loginPage');return false}return true}
+function backHome(){show('homePage');document.getElementById('pageSelect').value='';refreshDashboard()}
+function openPage(p){if(!guard())return;if(!p||p==='dashboard'){show('homePage');refreshDashboard();return}document.getElementById('pageSelect').value=p;show('contentPage');render(p)}
+function refreshDashboard(){let d=data();statOrders.textContent=d.orders.length;statFoods.textContent=d.foods.length;statUsers.textContent=d.users.length;recent.innerHTML=d.orders.slice(0,5).map(o=>`<div class="row"><div><b>${o.id}</b><br>${o.customer}<br><small>${o.items} • ₹${o.amount}</small></div><span class="badge">${o.status}</span></div>`).join('')||'<p class="muted">No orders.</p>'}
+function render(p){
+ let d=data(),title='',html='';
+ const titles={orders:'Orders',menu:'Menu / Food Items',restaurants:'Restaurants',users:'Users',payments:'Payments',coupons:'Coupons',reviews:'Reviews',notifications:'Notifications',settings:'Settings',profile:'Admin Profile',customer:'Customer Panel',delivery:'Delivery Panel',restaurantPanel:'Restaurant Panel'};
+ title=titles[p]||p;
+ if(p==='orders') html=`<div class="card"><div class="field"><label>Filter</label><select onchange="renderOrders(this.value)"><option>All</option><option>Pending</option><option>Preparing</option><option>Out for Delivery</option><option>Delivered</option></select></div><div id="orderTable"></div></div>`;
+ if(p==='menu') html=`<div class="card"><h3>Add Food Item</h3><div class="grid"><input id="fn" placeholder="Food name"><input id="fp" type="number" placeholder="Price ₹"><input id="fc" placeholder="Category"><input id="fi" placeholder="Image URL (optional)"></div><button class="primary" style="margin-top:10px" onclick="addFood()">＋ Add Food</button></div><div id="foodList" class="list"></div>`;
+ if(p==='restaurants') html=`<div class="card"><h3>Add Restaurant</h3><div class="grid"><input id="rn" placeholder="Restaurant name"><select id="rs"><option>Active</option><option>Pending</option><option>Closed</option></select></div><button class="primary" style="margin-top:10px" onclick="addRestaurant()">＋ Add Restaurant</button></div><div id="restaurantList" class="list"></div>`;
+ if(p==='users') html=`<div class="card"><h3>Users</h3><div id="userList" class="list"></div></div>`;
+ if(p==='payments') html=`<div class="card"><h3>Payments</h3><div class="table"><table><thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>${d.orders.map(o=>`<tr><td>${o.id}</td><td>${o.customer}</td><td>₹${o.amount}</td><td>${o.payment}</td><td>${o.status}</td></tr>`).join('')}</tbody></table></div></div>`;
+ if(p==='coupons') html=`<div class="card"><div class="grid"><input id="cn" placeholder="Coupon code"><input id="cd" type="number" placeholder="Discount %"></div><button class="primary" style="margin-top:10px" onclick="addCoupon()">＋ Create Coupon</button></div><div id="couponList" class="list"></div>`;
+ if(p==='reviews') html=`<div class="card"><h3>Reviews</h3><div class="list">${(d.reviews.length?d.reviews:[{name:'Rohit Sharma',text:'Great taste and fresh food.',rating:5},{name:'Priya Singh',text:'Nicely packed.',rating:4}]).map(r=>`<div class="row"><div>⭐ ${r.rating}/5<br><b>${r.name}</b><br>${r.text}</div></div>`).join('')}</div></div>`;
+ if(p==='notifications') html=`<div class="card"><textarea id="nm" rows="4" placeholder="Notification message"></textarea><button class="primary" style="margin-top:10px" onclick="sendNotification()">Send Notification</button></div><div id="notificationList" class="list"></div>`;
+ if(p==='settings') html=`<div class="card"><div class="field"><label>Service Area</label><input id="area" value="${d.settings.area}"></div><div class="field"><label>Service Status</label><select id="appstatus"><option ${d.settings.status==='Open'?'selected':''}>Open</option><option ${d.settings.status==='Closed'?'selected':''}>Closed</option></select></div><button class="primary" onclick="saveSettings()">Save Settings</button></div>`;
+ if(p==='profile') html=`<div class="card"><div class="field"><label>Admin Name</label><input id="an" value="Administrator"></div><div class="field"><label>Admin Email</label><input value="${ADMIN_EMAIL}" disabled></div><button class="primary" onclick="toast('Profile saved')">Save Profile</button></div>`;
+ if(p==='customer') html=`<div class="hero"><h1>Customer Panel</h1>Browse menu, manage cart and view orders.</div><div class="grid"><div class="card"><b>🍛 Menu</b><p>Items: ${d.foods.length}</p></div><div class="card"><b>🛒 Cart</b><p>Ready for customer flow</p></div><div class="card"><b>📦 Orders</b><p>${d.orders.length} orders</p></div></div>`;
+ if(p==='delivery') html=`<div class="hero"><h1>Delivery Panel</h1>Haldwani delivery only.</div><div class="grid"><div class="card"><b>📋 Available Orders</b><p>${d.orders.filter(x=>x.status==='Pending').length}</p></div><div class="card"><b>🛵 Active Delivery</b><p>${d.orders.filter(x=>x.status==='Out for Delivery').length}</p></div><div class="card"><b>₹ Earnings</b><p>₹${d.orders.reduce((a,x)=>a+x.amount,0)}</p></div></div>`;
+ if(p==='restaurantPanel') html=`<div class="hero"><h1>Restaurant Panel</h1>Manage assigned food and orders.</div><div class="grid"><div class="card"><b>🍴 Menu</b><p>${d.foods.length} items</p></div><div class="card"><b>📦 Orders</b><p>${d.orders.length}</p></div><div class="card"><b>₹ Sales</b><p>₹${d.orders.reduce((a,x)=>a+x.amount,0)}</p></div></div>`;
+ contentTitle.textContent=title;content.innerHTML=html;
+ if(p==='orders')renderOrders('All');if(p==='menu')renderFoods();if(p==='restaurants')renderRestaurants();if(p==='users')renderUsers();if(p==='coupons')renderCoupons();if(p==='notifications')renderNotifications()
+}
+function renderOrders(f){let d=data(),a=f==='All'?d.orders:d.orders.filter(x=>x.status===f);orderTable.innerHTML=a.map(o=>`<div class="card" style="margin:9px 0"><div class="row"><div><b>${o.id}</b> — ${o.customer}<br><small>${o.items} • ${o.address}<br>Payment: ${o.payment} • <b>₹${o.amount}</b></small></div><span class="badge">${o.status}</span></div><div class="actions"><select onchange="setOrderStatus('${o.id}',this.value)"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Preparing'?'selected':''}>Preparing</option><option ${o.status==='Out for Delivery'?'selected':''}>Out for Delivery</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option></select><button class="danger" onclick="deleteOrder('${o.id}')">Delete Order</button></div></div>`).join('')||'<p class="muted">No orders.</p>'}
+function setOrderStatus(id,s){let d=data(),o=d.orders.find(x=>x.id===id);if(o)o.status=s;save(d);renderOrders('All');refreshDashboard();toast('Order status updated')}
+function deleteOrder(id){if(!confirm('Delete this order?'))return;let d=data();d.orders=d.orders.filter(x=>x.id!==id);save(d);renderOrders('All');refreshDashboard();toast('Order deleted')}
+function addFood(){let n=fn.value.trim(),p=fp.value,c=fc.value.trim()||'Other',i=fi.value.trim();if(!n||!p)return toast('Enter food name and price');let d=data();d.foods.push({id:Date.now(),name:n,price:Number(p),category:c,image:i,active:true});save(d);renderFoods();refreshDashboard();toast('Food added')}
+function renderFoods(){let d=data();foodList.innerHTML=d.foods.map(x=>`<div class="card row"><div><b>${x.name}</b><br><small>${x.category} • ₹${x.price}</small>${x.image?'<br><small>Image URL saved</small>':''}</div><button class="danger" onclick="deleteFood(${x.id})">Delete</button></div>`).join('')||'<p class="muted">No food items.</p>'}
+function deleteFood(id){let d=data();d.foods=d.foods.filter(x=>x.id!==id);save(d);renderFoods();refreshDashboard();toast('Food deleted')}
+function addRestaurant(){let n=rn.value.trim();if(!n)return toast('Enter restaurant name');let d=data();d.restaurants.push({id:Date.now(),name:n,status:rs.value});save(d);renderRestaurants();toast('Restaurant added')}
+function renderRestaurants(){let d=data();restaurantList.innerHTML=d.restaurants.map(x=>`<div class="card row"><div><b>🏪 ${x.name}</b><br><span class="badge">${x.status}</span></div><button class="danger" onclick="deleteRestaurant(${x.id})">Delete</button></div>`).join('')}
+function deleteRestaurant(id){let d=data();d.restaurants=d.restaurants.filter(x=>x.id!==id);save(d);renderRestaurants();toast('Restaurant deleted')}
+function renderUsers(){let d=data();userList.innerHTML=d.users.map(x=>`<div class="card row"><div>👤 <b>${x.name}</b><br><small>${x.role} • ${x.status}${x.phone?' • '+x.phone:''}</small></div><button class="danger" onclick="deleteUser(${x.id})">Delete</button></div>`).join('')||'<p class="muted">No users.</p>'}
+function deleteUser(id){let d=data();d.users=d.users.filter(x=>x.id!==id);save(d);renderUsers();refreshDashboard();toast('User deleted')}
+function addCoupon(){let c=cn.value.trim().toUpperCase(),v=Number(cd.value);if(!c||!v)return toast('Enter coupon and discount');let d=data();d.coupons.push({id:Date.now(),code:c,discount:v});save(d);renderCoupons();toast('Coupon created')}
+function renderCoupons(){let d=data();couponList.innerHTML=d.coupons.map(x=>`<div class="card row"><b>🏷️ ${x.code} — ${x.discount}% OFF</b><button class="danger" onclick="deleteCoupon(${x.id})">Delete</button></div>`).join('')||'<p class="muted">No coupons.</p>'}
+function deleteCoupon(id){let d=data();d.coupons=d.coupons.filter(x=>x.id!==id);save(d);renderCoupons();toast('Coupon deleted')}
+function sendNotification(){let m=nm.value.trim();if(!m)return toast('Enter message');let d=data();d.notifications.unshift({id:Date.now(),message:m,date:new Date().toLocaleString()});save(d);nm.value='';renderNotifications();toast('Notification saved')}
+function renderNotifications(){let d=data();notificationList.innerHTML=d.notifications.map(x=>`<div class="card row"><div><b>${x.message}</b><br><small>${x.date}</small></div></div>`).join('')||'<p class="muted">No notifications.</p>'}
+function saveSettings(){let d=data();d.settings.area=area.value.trim()||'Haldwani Only';d.settings.status=appstatus.value;save(d);toast('Settings saved')}
+if(sessionStorage.getItem('kp_auth')==='1'){show('homePage');refreshDashboard()}
+</script>
+</body>
+</html>
