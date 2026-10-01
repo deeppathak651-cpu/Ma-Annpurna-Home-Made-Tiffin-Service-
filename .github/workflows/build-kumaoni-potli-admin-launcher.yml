@@ -52,7 +52,7 @@ jobs:
           echo "SELECTING CURRENT ADMIN PANEL"
           echo "======================================"
 
-          SOURCE_HTML="Kumaoni-Potli-admin.html"
+          SOURCE_HTML="Kumaoni-Potli-Admin-FIXED.html"
 
           if [ ! -f "$SOURCE_HTML" ]; then
             echo "ERROR: $SOURCE_HTML was not found."
@@ -171,8 +171,6 @@ jobs:
           cp "../admin-icon.png" \
             "android/app/src/main/res/drawable/admin_icon.png"
 
-          # Create the round-icon filename too.
-          # Both icons intentionally use the same Admin logo.
           cp "../admin-icon.png" \
             "android/app/src/main/res/drawable/admin_icon_round.png"
 
@@ -403,29 +401,19 @@ jobs:
 
           s = p.read_text()
 
-          # Normal launcher icon
           s = s.replace(
               'android:icon="@mipmap/ic_launcher"',
               'android:icon="@drawable/admin_icon"'
           )
 
-          # Round launcher icon
           s = s.replace(
               'android:roundIcon="@mipmap/ic_launcher_round"',
               'android:roundIcon="@drawable/admin_icon_round"'
           )
 
-          # Fix any previous incorrect reference
-          s = s.replace(
-              '@drawable/admin_icon_round',
-              '@drawable/admin_icon_round'
-          )
-
           p.write_text(s)
 
           print("Launcher icons configured.")
-          print("Normal icon: @drawable/admin_icon")
-          print("Round icon:  @drawable/admin_icon_round")
           PY
 
           echo "Checking launcher icons..."
