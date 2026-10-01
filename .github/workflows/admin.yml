@@ -10,20 +10,35 @@ jobs:
 
     steps:
 
+      # ============================================================
+      # CHECKOUT
+      # ============================================================
       - name: Checkout source code
         uses: actions/checkout@v4
 
+
+      # ============================================================
+      # NODE.JS
+      # ============================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
+
+      # ============================================================
+      # JAVA
+      # ============================================================
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
+
+      # ============================================================
+      # CREATE PACKAGE.JSON
+      # ============================================================
       - name: Create package.json
         run: |
           cat > package.json <<'EOF'
@@ -42,34 +57,85 @@ jobs:
           }
           EOF
 
+
+      # ============================================================
+      # INSTALL CAPACITOR
+      # ============================================================
       - name: Install Capacitor
         run: |
           npm install
           npm install @capacitor/assets --save-dev
 
+
+      # ============================================================
+      # PREPARE CURRENT ADMIN HTML
+      # ============================================================
       - name: Prepare Admin HTML
         run: |
+          set -e
+
           rm -rf www
           mkdir -p www
 
-          FILE="./admin-panel.html"
+          FILE="./Kumaoni-Potli-Admin-FIXED.html"
+
+          echo "============================================"
+          echo "CHECKING CURRENT ADMIN HTML"
+          echo "============================================"
 
           if [ ! -f "$FILE" ]; then
-            echo "ERROR: Admin HTML file not found: $FILE"
-            echo "Current directory:"
-            pwd
+            echo "ERROR: Admin HTML file not found:"
+            echo "$FILE"
+            echo ""
             echo "Available HTML files:"
             find . -maxdepth 2 -type f -iname "*.html" -print
             exit 1
           fi
 
-          echo "Using Admin file: $FILE"
+          echo "Using Admin file:"
+          echo "$FILE"
 
           cp "$FILE" www/index.html
 
+          echo ""
           echo "Admin index.html:"
           ls -lh www/index.html
 
+
+      # ============================================================
+      # VERIFY ADMIN PANEL
+      # ============================================================
+      - name: Verify Admin Panel
+        run: |
+          set -e
+
+          FILE="./Kumaoni-Potli-Admin-FIXED.html"
+
+          echo "============================================"
+          echo "VERIFYING ADMIN PANEL"
+          echo "============================================"
+
+          if ! grep -qi "Kumaoni Potli" "$FILE"; then
+            echo "ERROR: Kumaoni Potli branding not found."
+            exit 1
+          fi
+
+          if ! grep -qi "Select Admin Page" "$FILE"; then
+            echo "ERROR: Select Admin Page not found."
+            exit 1
+          fi
+
+          if ! grep -qi "Menu Management" "$FILE"; then
+            echo "ERROR: Menu Management not found."
+            exit 1
+          fi
+
+          echo "Admin Panel verification successful."
+
+
+      # ============================================================
+      # CREATE CAPACITOR CONFIGURATION
+      # ============================================================
       - name: Create Capacitor configuration
         run: |
           cat > capacitor.config.json <<'EOF'
@@ -81,44 +147,87 @@ jobs:
           }
           EOF
 
+
+      # ============================================================
+      # ADD ANDROID PLATFORM
+      # ============================================================
       - name: Add Android platform
         run: |
           rm -rf android
           npx cap add android
 
+
+      # ============================================================
+      # ADMIN APP ICON
+      # ============================================================
       - name: Set Admin Panel App Icon
         run: |
-          mkdir -p resources
+          set -e
 
-          if [ -f "admin-icon.png" ]; then
-            cp admin-icon.png resources/icon.png
-            npx capacitor-assets generate --android
-          else
-            echo "Admin icon not found, continuing without custom icon."
+          if [ ! -f "admin-icon.png" ]; then
+            echo "ERROR: admin-icon.png not found."
+            exit 1
           fi
 
+          rm -rf resources
+          mkdir -p resources
+
+          cp admin-icon.png resources/icon.png
+
+          npx capacitor-assets generate --android
+
+          echo "Admin icon generated successfully."
+
+
+      # ============================================================
+      # COPY FIREBASE CONFIGURATION
+      # ============================================================
       - name: Copy Firebase configuration
         run: |
+          set -e
+
           if [ ! -f "google-services.json" ]; then
-            echo "ERROR: google-services.json not found"
+            echo "ERROR: google-services.json not found."
             exit 1
           fi
 
           mkdir -p android/app
-          cp google-services.json android/app/google-services.json
 
+          cp google-services.json \
+             android/app/google-services.json
+
+          echo "google-services.json copied successfully."
+
+
+      # ============================================================
+      # VERIFY FIREBASE PACKAGE
+      # ============================================================
       - name: Verify Admin Firebase package
         run: |
-          echo "Firebase Android packages:"
-          grep -n "package_name" google-services.json || true
+          set -e
 
-          if grep -q '"package_name"[[:space:]]*:[[:space:]]*"com.annapurna.admin"' google-services.json; then
+          echo "Firebase Android packages:"
+
+          grep -n "package_name" \
+            google-services.json || true
+
+          if grep -q \
+            '"package_name"[[:space:]]*:[[:space:]]*"com.annapurna.admin"' \
+            google-services.json; then
+
             echo "Admin Firebase package verified successfully."
+
           else
+
             echo "ERROR: com.annapurna.admin is missing from google-services.json"
             exit 1
+
           fi
 
+
+      # ============================================================
+      # FIX KOTLIN DUPLICATE CLASSES
+      # ============================================================
       - name: Fix Kotlin duplicate classes
         run: |
           cat >> android/build.gradle <<'EOF'
@@ -130,37 +239,76 @@ jobs:
           }
           EOF
 
+
+      # ============================================================
+      # SYNC CAPACITOR
+      # ============================================================
       - name: Sync Capacitor
         run: |
           npx cap sync android
 
+
+      # ============================================================
+      # VERIFY ADMIN ANDROID PROJECT
+      # ============================================================
       - name: Verify Admin Android project
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew --version
 
+
+      # ============================================================
+      # BUILD ADMIN APK
+      # ============================================================
       - name: Build Kumaoni Potli Admin APK
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew clean assembleDebug --stacktrace
 
+
+      # ============================================================
+      # VERIFY APK
+      # ============================================================
       - name: Verify Admin APK
         run: |
           APK="android/app/build/outputs/apk/debug/app-debug.apk"
 
           if [ ! -f "$APK" ]; then
-            echo "ERROR: Admin APK was not created"
+            echo "ERROR: Admin APK was not created."
             exit 1
           fi
 
-          echo "Admin APK created successfully:"
+          echo "============================================"
+          echo "ADMIN APK CREATED SUCCESSFULLY"
+          echo "============================================"
+
           ls -lh "$APK"
 
+
+      # ============================================================
+      # RENAME APK
+      # ============================================================
+      - name: Rename Admin APK
+        run: |
+          set -e
+
+          cp \
+            android/app/build/outputs/apk/debug/app-debug.apk \
+            android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
+
+          echo "Final APK:"
+          ls -lh \
+            android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
+
+
+      # ============================================================
+      # UPLOAD APK
+      # ============================================================
       - name: Upload Kumaoni Potli Admin APK
         uses: actions/upload-artifact@v4
         with:
           name: Kumaoni-Potli-Admin-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
           if-no-files-found: error
