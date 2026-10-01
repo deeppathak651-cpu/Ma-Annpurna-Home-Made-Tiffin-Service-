@@ -3,26 +3,48 @@ name: Build Kumaoni Potli Customer APK
 on:
   workflow_dispatch:
 
+  push:
+    paths:
+      - '.github/workflows/customer.yml'
+      - 'Kumaoni-Potli-Customer-FIXED.html'
+      - 'customer-icon.png'
+
 jobs:
   build:
     name: Build Customer APK
     runs-on: ubuntu-latest
 
     steps:
+
+      # ============================================================
+      # CHECKOUT
+      # ============================================================
       - name: Checkout source code
         uses: actions/checkout@v4
 
+
+      # ============================================================
+      # NODE.JS
+      # ============================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
+
+      # ============================================================
+      # JAVA
+      # ============================================================
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
+
+      # ============================================================
+      # CREATE PACKAGE.JSON
+      # ============================================================
       - name: Create package.json
         run: |
           cat > package.json <<'EOF'
@@ -39,68 +61,174 @@ jobs:
           }
           EOF
 
+
+      # ============================================================
+      # INSTALL CAPACITOR
+      # ============================================================
       - name: Install Capacitor
         run: |
           npm install
           npm install @capacitor/assets --save-dev
 
-      - name: Set Customer App Icon
-        run: |
-          mkdir -p resources
-          cp customer-icon.png resources/icon.png
-          npx capacitor-assets generate --android
 
+      # ============================================================
+      # CHECK CUSTOMER HTML
+      # ============================================================
+      - name: Check Customer HTML
+        run: |
+          FILE="./Kumaoni-Potli-Customer-FIXED.html"
+
+          echo "============================================"
+          echo "CHECKING CUSTOMER HTML"
+          echo "============================================"
+
+          if [ ! -f "$FILE" ]; then
+            echo "ERROR: Customer HTML file not found:"
+            echo "$FILE"
+            echo ""
+            echo "HTML files currently found:"
+            find . -maxdepth 2 -type f -iname "*.html" -print
+            exit 1
+          fi
+
+          echo "Customer HTML found:"
+          ls -lh "$FILE"
+
+          echo ""
+          echo "Customer HTML checksum:"
+          sha256sum "$FILE"
+
+
+      # ============================================================
+      # VERIFY FIRESTORE COLLECTION
+      # ============================================================
+      - name: Verify Customer Food Code
+        run: |
+          FILE="./Kumaoni-Potli-Customer-FIXED.html"
+
+          echo "============================================"
+          echo "VERIFYING CUSTOMER FOOD CODE"
+          echo "============================================"
+
+          if ! grep -q 'documents/kumaoniFoods' "$FILE"; then
+            echo "ERROR: Customer HTML is NOT using Firestore collection:"
+            echo "kumaoniFoods"
+            exit 1
+          fi
+
+          echo "OK: Firestore collection 'kumaoniFoods' found."
+
+          echo ""
+          echo "Firestore endpoint:"
+          grep -n "documents/kumaoniFoods" "$FILE" || true
+
+
+      # ============================================================
+      # PREPARE CUSTOMER HTML
+      # ============================================================
       - name: Prepare Customer HTML
         run: |
           rm -rf www
           mkdir -p www
 
-          FILE=$(find . -maxdepth 1 -type f -iname '*customer*.html' | head -n 1)
+          cp "./Kumaoni-Potli-Customer-FIXED.html" "./www/index.html"
 
-          if [ -z "$FILE" ]; then
-            echo "ERROR: Customer HTML file not found"
-            find . -maxdepth 1 -type f -name '*.html' -print
-            exit 1
-          fi
+          echo "============================================"
+          echo "CUSTOMER HTML COPIED TO APK"
+          echo "============================================"
 
-          echo "Using Customer file:"
-          echo "$FILE"
+          ls -lh "./www/index.html"
 
-          cp "$FILE" www/index.html
+          echo ""
+          echo "Copied HTML checksum:"
+          sha256sum "./www/index.html"
 
+
+      # ============================================================
+      # CREATE CAPACITOR CONFIGURATION
+      # ============================================================
       - name: Create Capacitor configuration
         run: |
           cat > capacitor.config.json <<'EOF'
           {
-            "appId": "com.annapurna.customer",
+            "appId": "com.kumaonipotli.customer",
             "appName": "Kumaoni Potli",
             "webDir": "www",
             "bundledWebRuntime": false
           }
           EOF
 
+          cat capacitor.config.json
+
+
+      # ============================================================
+      # ADD ANDROID PLATFORM
+      # ============================================================
       - name: Add Android platform
         run: |
           npx cap add android
 
-      - name: Generate Customer App Icon
+
+      # ============================================================
+      # PREPARE CUSTOMER ICON
+      # ============================================================
+      - name: Prepare Customer Icon
         run: |
-          mkdir -p android/app/src/main/res
+          if [ ! -f "customer-icon.png" ]; then
+            echo "ERROR: customer-icon.png not found."
+            exit 1
+          fi
+
+          rm -rf resources
+          mkdir -p resources
+
+          cp customer-icon.png resources/icon.png
+
+          echo "Customer icon ready:"
+          ls -lh resources/icon.png
+
+
+      # ============================================================
+      # GENERATE ANDROID APP ICON
+      # ============================================================
+      - name: Generate Android App Icon
+        run: |
           npx capacitor-assets generate --android
 
+
+      # ============================================================
+      # SYNC CAPACITOR
+      # ============================================================
       - name: Sync Capacitor
         run: |
           npx cap sync android
 
-      - name: Build Kumaoni Potli Customer APK
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew clean assembleDebug --stacktrace
 
-      - name: Upload Kumaoni Potli Customer APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Kumaoni-Potli-Customer-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+      # ============================================================
+      # VERIFY PACKAGED CUSTOMER HTML
+      # ============================================================
+      - name: Verify packaged Customer HTML
+        run: |
+          FILE="android/app/src/main/assets/public/index.html"
+
+          echo "============================================"
+          echo "VERIFYING PACKAGED CUSTOMER HTML"
+          echo "============================================"
+
+          if [ ! -f "$FILE" ]; then
+            echo "ERROR: Packaged index.html not found."
+            exit 1
+          fi
+
+          echo "Packaged index.html:"
+          ls -lh "$FILE"
+
+          echo ""
+          echo "Checking Firestore collection..."
+
+          if ! grep -q 'documents/kumaoniFoods' "$FILE"; then
+            echo "ERROR: APK package does not contain kumaoniFoods."
+            exit 1
+          fi
+
+          echo "OK: APK
