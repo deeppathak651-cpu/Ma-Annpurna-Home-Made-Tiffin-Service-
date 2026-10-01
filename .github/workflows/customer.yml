@@ -2,10 +2,11 @@ name: Build Kumaoni Potli Customer APK
 
 on:
   workflow_dispatch:
+
   push:
     paths:
-      - '.github/workflows/customer.yaml'
-      - '**/*customer*.html'
+      - '.github/workflows/customer.yml'
+      - 'Kumaoni-Potli-Customer.html'
       - 'customer-icon.png'
 
 jobs:
@@ -15,20 +16,35 @@ jobs:
 
     steps:
 
+      # ============================================================
+      # CHECKOUT
+      # ============================================================
       - name: Checkout source code
         uses: actions/checkout@v4
 
+
+      # ============================================================
+      # NODE.JS
+      # ============================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
+
+      # ============================================================
+      # JAVA
+      # ============================================================
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
+
+      # ============================================================
+      # CREATE PACKAGE.JSON
+      # ============================================================
       - name: Create package.json
         run: |
           cat > package.json <<'EOF'
@@ -45,87 +61,157 @@ jobs:
           }
           EOF
 
+
+      # ============================================================
+      # INSTALL CAPACITOR
+      # ============================================================
       - name: Install Capacitor
         run: |
           npm install
           npm install @capacitor/assets --save-dev
 
+
+      # ============================================================
+      # CHECK CUSTOMER HTML
+      # ============================================================
+      - name: Check Customer HTML
+        run: |
+          if [ ! -f "Kumaoni-Potli-Customer.html" ]; then
+            echo "ERROR: Kumaoni-Potli-Customer.html not found in repository root."
+            echo ""
+            echo "HTML files currently found:"
+            find . -maxdepth 1 -type f -iname '*.html' -print
+            exit 1
+          fi
+
+          echo "Customer HTML found:"
+          ls -lh "Kumaoni-Potli-Customer.html"
+
+
+      # ============================================================
+      # CHECK CUSTOMER ICON
+      # ============================================================
       - name: Check Customer Icon
         run: |
           if [ ! -f "customer-icon.png" ]; then
-            echo "ERROR: customer-icon.png not found in repository root"
+            echo "ERROR: customer-icon.png not found in repository root."
             exit 1
           fi
 
           echo "Customer icon found:"
           ls -lh customer-icon.png
 
+
+      # ============================================================
+      # PREPARE CUSTOMER HTML
+      # ============================================================
       - name: Prepare Customer HTML
         run: |
           rm -rf www
           mkdir -p www
 
-          FILE=$(find . -maxdepth 1 -type f -iname '*customer*.html' | head -n 1)
+          cp "Kumaoni-Potli-Customer.html" www/index.html
 
-          if [ -z "$FILE" ]; then
-            echo "ERROR: Customer HTML file not found"
-            find . -maxdepth 1 -type f -iname '*.html' -print
-            exit 1
-          fi
+          echo "Customer HTML copied successfully:"
+          ls -lh www/index.html
 
-          echo "Using Customer HTML:"
-          echo "$FILE"
 
-          cp "$FILE" www/index.html
-
+      # ============================================================
+      # CREATE CAPACITOR CONFIGURATION
+      # ============================================================
       - name: Create Capacitor configuration
         run: |
           cat > capacitor.config.json <<'EOF'
           {
-            "appId": "com.annapurna.customer",
+            "appId": "com.kumaonipotli.customer",
             "appName": "Kumaoni Potli",
             "webDir": "www",
             "bundledWebRuntime": false
           }
           EOF
 
+
+      # ============================================================
+      # ADD ANDROID PLATFORM
+      # ============================================================
       - name: Add Android platform
         run: |
           npx cap add android
 
+
+      # ============================================================
+      # PREPARE CUSTOMER ICON
+      # ============================================================
       - name: Prepare Customer Icon
         run: |
           rm -rf resources
           mkdir -p resources
+
           cp customer-icon.png resources/icon.png
 
           echo "Customer icon ready:"
           ls -lh resources/icon.png
 
+
+      # ============================================================
+      # GENERATE ANDROID APP ICON
+      # ============================================================
       - name: Generate Android App Icon
         run: |
           npx capacitor-assets generate --android
 
+
+      # ============================================================
+      # SYNC CAPACITOR
+      # ============================================================
       - name: Sync Capacitor
         run: |
           npx cap sync android
 
+
+      # ============================================================
+      # VERIFY ANDROID ICON
+      # ============================================================
       - name: Verify Android Icon
         run: |
           echo "Checking Android icon resources:"
+
           find android/app/src/main/res -type f \
             \( -iname '*launcher*' -o -iname '*icon*' \) \
             -print | head -100
 
+
+      # ============================================================
+      # BUILD CUSTOMER APK
+      # ============================================================
       - name: Build Kumaoni Potli Customer APK
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew clean assembleDebug --stacktrace
 
+
+      # ============================================================
+      # RENAME APK
+      # ============================================================
+      - name: Rename Customer APK
+        run: |
+          mkdir -p release
+
+          cp \
+            android/app/build/outputs/apk/debug/app-debug.apk \
+            release/Kumaoni-Potli-Customer.apk
+
+          echo "Final APK:"
+          ls -lh release/Kumaoni-Potli-Customer.apk
+
+
+      # ============================================================
+      # UPLOAD APK
+      # ============================================================
       - name: Upload Kumaoni Potli Customer APK
         uses: actions/upload-artifact@v4
         with:
           name: Kumaoni-Potli-Customer-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: release/Kumaoni-Potli-Customer.apk
           if-no-files-found: error
