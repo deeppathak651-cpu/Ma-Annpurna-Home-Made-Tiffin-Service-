@@ -148,7 +148,7 @@ jobs:
           npx cap add android
 
       # ============================================================
-      # ADD ADMIN ICON
+      # ADD ADMIN LAUNCHER ICON
       # ============================================================
       - name: Add Admin Launcher Icon
         shell: bash
@@ -157,6 +157,8 @@ jobs:
 
           if [ ! -f "admin-icon.png" ]; then
             echo "ERROR: admin-icon.png not found."
+            echo ""
+            echo "Repository files:"
             ls -lah
             exit 1
           fi
@@ -169,10 +171,16 @@ jobs:
           cp "../admin-icon.png" \
             "android/app/src/main/res/drawable/admin_icon.png"
 
-          echo "Admin icon copied successfully."
+          # Create the round-icon filename too.
+          # Both icons intentionally use the same Admin logo.
+          cp "../admin-icon.png" \
+            "android/app/src/main/res/drawable/admin_icon_round.png"
+
+          echo "Admin icons copied successfully."
 
           ls -lh \
-            "android/app/src/main/res/drawable/admin_icon.png"
+            android/app/src/main/res/drawable/admin_icon.png \
+            android/app/src/main/res/drawable/admin_icon_round.png
 
       # ============================================================
       # NATIVE PANEL LAUNCHER
@@ -312,7 +320,7 @@ jobs:
 
           cd cap-admin
 
-          python3 <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
 
           p = Path(
@@ -338,6 +346,8 @@ jobs:
           p.write_text(s)
           PY
 
+          echo "Android package visibility configured."
+
       # ============================================================
       # APP NAME
       # ============================================================
@@ -348,7 +358,7 @@ jobs:
 
           cd cap-admin
 
-          python3 <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
 
           p = Path(
@@ -361,15 +371,17 @@ jobs:
           )
 
           p.write_text(
-              '''<?xml version="1.0" encoding="utf-8"?>
+          """<?xml version="1.0" encoding="utf-8"?>
           <resources>
               <string name="app_name">Kumaoni Potli Admin</string>
               <string name="title_activity_main">Kumaoni Potli Admin</string>
               <string name="package_name">com.annapurna.admin</string>
               <string name="custom_url_scheme">com.annapurna.admin</string>
           </resources>
-          '''
+          """
           )
+
+          print("Admin app name configured.")
           PY
 
       # ============================================================
@@ -382,34 +394,57 @@ jobs:
 
           cd cap-admin
 
-          python3 <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
 
-          manifest = Path(
+          p = Path(
               "android/app/src/main/AndroidManifest.xml"
           )
 
-          if not manifest.exists():
-              print("ERROR: AndroidManifest.xml not found.")
-              raise SystemExit(1)
+          s = p.read_text()
 
-          text = manifest.read_text()
-
-          text = text.replace(
-              '@mipmap/ic_launcher',
-              '@drawable/admin_icon'
+          # Normal launcher icon
+          s = s.replace(
+              'android:icon="@mipmap/ic_launcher"',
+              'android:icon="@drawable/admin_icon"'
           )
 
-          text = text.replace(
-              '@mipmap/ic_launcher_round',
-              '@drawable/admin_icon'
+          # Round launcher icon
+          s = s.replace(
+              'android:roundIcon="@mipmap/ic_launcher_round"',
+              'android:roundIcon="@drawable/admin_icon_round"'
           )
 
-          manifest.write_text(text)
+          # Fix any previous incorrect reference
+          s = s.replace(
+              '@drawable/admin_icon_round',
+              '@drawable/admin_icon_round'
+          )
 
-          print("Launcher icon configured successfully.")
-          print("Icon: @drawable/admin_icon")
+          p.write_text(s)
+
+          print("Launcher icons configured.")
+          print("Normal icon: @drawable/admin_icon")
+          print("Round icon:  @drawable/admin_icon_round")
           PY
+
+          echo "Checking launcher icons..."
+
+          if [ ! -f \
+            "android/app/src/main/res/drawable/admin_icon.png"
+          ]; then
+            echo "ERROR: admin_icon.png is missing."
+            exit 1
+          fi
+
+          if [ ! -f \
+            "android/app/src/main/res/drawable/admin_icon_round.png"
+          ]; then
+            echo "ERROR: admin_icon_round.png is missing."
+            exit 1
+          fi
+
+          echo "Both launcher icons verified."
 
       # ============================================================
       # VERIFY MANIFEST
@@ -421,7 +456,7 @@ jobs:
 
           cd cap-admin
 
-          python3 <<'PY'
+          python3 - <<'PY'
           import xml.etree.ElementTree as ET
 
           ET.parse(
@@ -434,9 +469,9 @@ jobs:
           PY
 
       # ============================================================
-      # VERIFY ADMIN ICON
+      # VERIFY ADMIN ICONS
       # ============================================================
-      - name: Verify Admin Icon
+      - name: Verify Admin Icons
         shell: bash
         run: |
           set -e
@@ -446,18 +481,26 @@ jobs:
           if [ ! -f \
             "android/app/src/main/res/drawable/admin_icon.png"
           ]; then
-
             echo "ERROR: Admin icon is missing."
-
             exit 1
-
           fi
 
-          file \
-            "android/app/src/main/res/drawable/admin_icon.png"
+          if [ ! -f \
+            "android/app/src/main/res/drawable/admin_icon_round.png"
+          ]; then
+            echo "ERROR: Admin round icon is missing."
+            exit 1
+          fi
 
-          ls -lh \
-            "android/app/src/main/res/drawable/admin_icon.png"
+          echo "======================================"
+          echo "ADMIN ICONS VERIFIED"
+          echo "======================================"
+
+          file \
+            android/app/src/main/res/drawable/admin_icon.png
+
+          file \
+            android/app/src/main/res/drawable/admin_icon_round.png
 
       # ============================================================
       # VERIFY FINAL WEB FILE
@@ -477,26 +520,20 @@ jobs:
 
           if ! grep -qi "Kumaoni Potli" \
               www/index.html; then
-
             echo "ERROR: Kumaoni Potli branding missing."
             exit 1
-
           fi
 
           if ! grep -qi "Select Admin Page" \
               www/index.html; then
-
             echo "ERROR: Select Admin Page missing."
             exit 1
-
           fi
 
           if ! grep -qi "Menu Management" \
               www/index.html; then
-
             echo "ERROR: Menu Management missing."
             exit 1
-
           fi
 
           echo ""
