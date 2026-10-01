@@ -312,7 +312,7 @@ jobs:
 
           cd cap-admin
 
-          python3 - <<'PY'
+          python3 <<'PY'
           from pathlib import Path
 
           p = Path(
@@ -348,7 +348,7 @@ jobs:
 
           cd cap-admin
 
-          python3 - <<'PY'
+          python3 <<'PY'
           from pathlib import Path
 
           p = Path(
@@ -361,19 +361,19 @@ jobs:
           )
 
           p.write_text(
-          """<?xml version="1.0" encoding="utf-8"?>
+              '''<?xml version="1.0" encoding="utf-8"?>
           <resources>
               <string name="app_name">Kumaoni Potli Admin</string>
               <string name="title_activity_main">Kumaoni Potli Admin</string>
               <string name="package_name">com.annapurna.admin</string>
               <string name="custom_url_scheme">com.annapurna.admin</string>
           </resources>
-          """
+          '''
           )
           PY
 
       # ============================================================
-      # CONFIGURE LAUNCHER ICON
+      # CONFIGURE ANDROID LAUNCHER ICON
       # ============================================================
       - name: Configure Android Launcher Icon
         shell: bash
@@ -382,26 +382,186 @@ jobs:
 
           cd cap-admin
 
-          python3 - <<'PY'
+          python3 <<'PY'
           from pathlib import Path
 
-          p = Path(
+          manifest = Path(
               "android/app/src/main/AndroidManifest.xml"
           )
 
-          s = p.read_text()
+          if not manifest.exists():
+              print("ERROR: AndroidManifest.xml not found.")
+              raise SystemExit(1)
 
-          s = s.replace(
-              'android:icon="@mipmap/ic_launcher"',
-              'android:icon="@drawable/admin_icon"'
+          text = manifest.read_text()
+
+          text = text.replace(
+              '@mipmap/ic_launcher',
+              '@drawable/admin_icon'
           )
 
-          s = s.replace(
-              'android:roundIcon="@mipmap/ic_launcher_round"',
-              'android:roundIcon="@drawable/admin_icon"'
+          text = text.replace(
+              '@mipmap/ic_launcher_round',
+              '@drawable/admin_icon'
           )
 
-          p.write_text(s)
+          manifest.write_text(text)
+
+          print("Launcher icon configured successfully.")
+          print("Icon: @drawable/admin_icon")
           PY
 
-          echo "Launcher
+      # ============================================================
+      # VERIFY MANIFEST
+      # ============================================================
+      - name: Verify AndroidManifest.xml
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin
+
+          python3 <<'PY'
+          import xml.etree.ElementTree as ET
+
+          ET.parse(
+              "android/app/src/main/AndroidManifest.xml"
+          )
+
+          print(
+              "AndroidManifest.xml is valid XML."
+          )
+          PY
+
+      # ============================================================
+      # VERIFY ADMIN ICON
+      # ============================================================
+      - name: Verify Admin Icon
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin
+
+          if [ ! -f \
+            "android/app/src/main/res/drawable/admin_icon.png"
+          ]; then
+
+            echo "ERROR: Admin icon is missing."
+
+            exit 1
+
+          fi
+
+          file \
+            "android/app/src/main/res/drawable/admin_icon.png"
+
+          ls -lh \
+            "android/app/src/main/res/drawable/admin_icon.png"
+
+      # ============================================================
+      # VERIFY FINAL WEB FILE
+      # ============================================================
+      - name: Verify final Admin web file
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin
+
+          echo "======================================"
+          echo "FINAL ADMIN WEB FILE"
+          echo "======================================"
+
+          ls -lh www/index.html
+
+          if ! grep -qi "Kumaoni Potli" \
+              www/index.html; then
+
+            echo "ERROR: Kumaoni Potli branding missing."
+            exit 1
+
+          fi
+
+          if ! grep -qi "Select Admin Page" \
+              www/index.html; then
+
+            echo "ERROR: Select Admin Page missing."
+            exit 1
+
+          fi
+
+          if ! grep -qi "Menu Management" \
+              www/index.html; then
+
+            echo "ERROR: Menu Management missing."
+            exit 1
+
+          fi
+
+          echo ""
+          echo "FINAL ADMIN HTML VERIFIED."
+          echo "======================================"
+
+      # ============================================================
+      # SYNC CAPACITOR
+      # ============================================================
+      - name: Sync Capacitor
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin
+
+          npx cap sync android
+
+      # ============================================================
+      # BUILD APK
+      # ============================================================
+      - name: Build Admin APK
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin/android
+
+          chmod +x gradlew
+
+          ./gradlew assembleDebug --no-daemon
+
+      # ============================================================
+      # RENAME APK
+      # ============================================================
+      - name: Rename Admin APK
+        shell: bash
+        run: |
+          set -e
+
+          cd cap-admin/android
+
+          SOURCE_APK="app/build/outputs/apk/debug/app-debug.apk"
+
+          FINAL_APK="app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk"
+
+          if [ ! -f "$SOURCE_APK" ]; then
+            echo "ERROR: APK was not generated."
+            exit 1
+          fi
+
+          cp "$SOURCE_APK" "$FINAL_APK"
+
+          echo "======================================"
+          echo "KUMAONI POTLI ADMIN APK CREATED"
+          echo "======================================"
+
+          ls -lh "$FINAL_APK"
+
+      # ============================================================
+      # UPLOAD APK
+      # ============================================================
+      - name: Upload Admin APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Kumaoni-Potli-Admin-APK
+          path: cap-admin/android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
+          if-no-files-found: error
