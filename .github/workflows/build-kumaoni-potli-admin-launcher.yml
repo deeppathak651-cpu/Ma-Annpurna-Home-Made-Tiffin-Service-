@@ -41,7 +41,7 @@ jobs:
           packages: "platform-tools platforms;android-35 build-tools;35.0.0"
 
       # ============================================================
-      # ALWAYS USE CURRENT ADMIN HTML
+      # SELECT CURRENT ADMIN HTML
       # ============================================================
       - name: Select current Admin HTML
         shell: bash
@@ -52,15 +52,15 @@ jobs:
           echo "SELECTING CURRENT ADMIN PANEL"
           echo "======================================"
 
-          if [ ! -f "admin-panel.html" ]; then
-            echo "ERROR: admin-panel.html was not found."
+          SOURCE_HTML="Kumaoni-Potli-admin.html"
+
+          if [ ! -f "$SOURCE_HTML" ]; then
+            echo "ERROR: $SOURCE_HTML was not found."
             echo ""
             echo "Repository root files:"
             ls -lah
             exit 1
           fi
-
-          SOURCE_HTML="admin-panel.html"
 
           echo "Using Admin HTML:"
           echo "$SOURCE_HTML"
@@ -83,28 +83,29 @@ jobs:
           echo "VERIFYING CURRENT ADMIN PANEL"
           echo "======================================"
 
-          if ! grep -q "ADMIN CONTROL CENTER" "$FILE"; then
-            echo "ERROR: ADMIN CONTROL CENTER not found."
+          if [ ! -f "$FILE" ]; then
+            echo "ERROR: Admin HTML file not found."
             exit 1
           fi
 
-          if ! grep -q "Customer Panel" "$FILE"; then
-            echo "ERROR: Customer Panel not found."
+          if ! grep -qi "Kumaoni Potli" "$FILE"; then
+            echo "ERROR: Kumaoni Potli branding not found."
             exit 1
           fi
 
-          if ! grep -q "Restaurant Panel" "$FILE"; then
-            echo "ERROR: Restaurant Panel not found."
+          if ! grep -qi "Select Admin Page" "$FILE"; then
+            echo "ERROR: Select Admin Page not found."
             exit 1
           fi
 
-          if ! grep -q "Delivery Panel" "$FILE"; then
-            echo "ERROR: Delivery Panel not found."
+          if ! grep -qi "Menu Management" "$FILE"; then
+            echo "ERROR: Menu Management not found."
             exit 1
           fi
 
           echo ""
           echo "CURRENT ADMIN PANEL VERIFIED."
+          echo "File: $FILE"
           echo "======================================"
 
       # ============================================================
@@ -128,8 +129,7 @@ jobs:
           echo "Admin HTML copied to:"
           echo "cap-admin/www/index.html"
 
-          ls -lh \
-            "cap-admin/www/index.html"
+          ls -lh "cap-admin/www/index.html"
 
           cd cap-admin
 
@@ -195,8 +195,8 @@ jobs:
           import com.getcapacitor.JSObject;
           import com.getcapacitor.Plugin;
           import com.getcapacitor.PluginCall;
-          import com.getcapacitor.annotation.CapacitorPlugin;
           import com.getcapacitor.PluginMethod;
+          import com.getcapacitor.annotation.CapacitorPlugin;
 
           @CapacitorPlugin(name = "PanelLauncher")
           public class PanelLauncherPlugin extends Plugin {
@@ -404,174 +404,4 @@ jobs:
           p.write_text(s)
           PY
 
-          echo "Launcher icon configured."
-
-      # ============================================================
-      # VERIFY MANIFEST
-      # ============================================================
-      - name: Verify AndroidManifest.xml
-        shell: bash
-        run: |
-          set -e
-
-          cd cap-admin
-
-          python3 - <<'PY'
-          import xml.etree.ElementTree as ET
-
-          ET.parse(
-              "android/app/src/main/AndroidManifest.xml"
-          )
-
-          print(
-              "AndroidManifest.xml is valid XML."
-          )
-          PY
-
-      # ============================================================
-      # VERIFY ADMIN ICON
-      # ============================================================
-      - name: Verify Admin Icon
-        shell: bash
-        run: |
-          set -e
-
-          cd cap-admin
-
-          if [ ! -f \
-            "android/app/src/main/res/drawable/admin_icon.png"
-          ]; then
-
-            echo "ERROR: Admin icon is missing."
-
-            exit 1
-
-          fi
-
-          file \
-            "android/app/src/main/res/drawable/admin_icon.png"
-
-          ls -lh \
-            "android/app/src/main/res/drawable/admin_icon.png"
-
-      # ============================================================
-      # VERIFY FINAL WEB FILE
-      # ============================================================
-      - name: Verify final Admin web file
-        shell: bash
-        run: |
-          set -e
-
-          cd cap-admin
-
-          echo "======================================"
-          echo "FINAL ADMIN WEB FILE"
-          echo "======================================"
-
-          ls -lh www/index.html
-
-          if ! grep -q "ADMIN CONTROL CENTER" \
-              www/index.html; then
-
-            echo "ERROR: Admin Control Center missing."
-
-            exit 1
-
-          fi
-
-          if ! grep -q "Customer Panel" \
-              www/index.html; then
-
-            echo "ERROR: Customer Panel missing."
-
-            exit 1
-
-          fi
-
-          if ! grep -q "Restaurant Panel" \
-              www/index.html; then
-
-            echo "ERROR: Restaurant Panel missing."
-
-            exit 1
-
-          fi
-
-          if ! grep -q "Delivery Panel" \
-              www/index.html; then
-
-            echo "ERROR: Delivery Panel missing."
-
-            exit 1
-
-          fi
-
-          echo ""
-          echo "FINAL ADMIN HTML VERIFIED."
-          echo "======================================"
-
-      # ============================================================
-      # SYNC CAPACITOR
-      # ============================================================
-      - name: Sync Capacitor
-        shell: bash
-        run: |
-          set -e
-
-          cd cap-admin
-
-          npx cap sync android
-
-      # ============================================================
-      # BUILD APK
-      # ============================================================
-      - name: Build Admin APK
-        shell: bash
-        run: |
-          set -e
-
-          cd cap-admin/android
-
-          chmod +x gradlew
-
-          ./gradlew assembleDebug --no-daemon
-
-      # ============================================================
-      # RENAME APK
-      # ============================================================
-      - name: Rename Admin APK
-        shell: bash
-        run: |
-          set -e
-
-          cd cap-admin/android
-
-          SOURCE_APK="app/build/outputs/apk/debug/app-debug.apk"
-
-          FINAL_APK="app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk"
-
-          if [ ! -f "$SOURCE_APK" ]; then
-
-            echo "ERROR: APK was not generated."
-
-            exit 1
-
-          fi
-
-          cp "$SOURCE_APK" "$FINAL_APK"
-
-          echo "======================================"
-          echo "Kumaoni Potli Admin APK CREATED"
-          echo "======================================"
-
-          ls -lh "$FINAL_APK"
-
-      # ============================================================
-      # UPLOAD APK
-      # ============================================================
-      - name: Upload Admin APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Kumaoni-Potli-Admin-APK
-          path: cap-admin/android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
-          if-no-files-found: error
+          echo "Launcher
