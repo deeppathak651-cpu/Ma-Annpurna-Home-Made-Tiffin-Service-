@@ -76,30 +76,52 @@ jobs:
       # ============================================================
       - name: Check Customer HTML
         run: |
-          if [ ! -f "Kumaoni-Potli-Customer.html" ]; then
-            echo "ERROR: Kumaoni-Potli-Customer.html not found in repository root."
+          FILE="./Kumaoni-Potli-Customer.html"
+
+          echo "============================================"
+          echo "CHECKING CUSTOMER HTML"
+          echo "============================================"
+
+          if [ ! -f "$FILE" ]; then
+            echo "ERROR: Customer HTML file not found:"
+            echo "$FILE"
             echo ""
             echo "HTML files currently found:"
-            find . -maxdepth 1 -type f -iname '*.html' -print
+            find . -maxdepth 2 -type f -iname "*.html" -print
             exit 1
           fi
 
           echo "Customer HTML found:"
-          ls -lh "Kumaoni-Potli-Customer.html"
+          ls -lh "$FILE"
+
+          echo ""
+          echo "Customer HTML checksum:"
+          sha256sum "$FILE"
 
 
       # ============================================================
-      # CHECK CUSTOMER ICON
+      # VERIFY FIRESTORE FOODS COLLECTION
       # ============================================================
-      - name: Check Customer Icon
+      - name: Verify Customer Food Code
         run: |
-          if [ ! -f "customer-icon.png" ]; then
-            echo "ERROR: customer-icon.png not found in repository root."
+          FILE="./Kumaoni-Potli-Customer.html"
+
+          echo "============================================"
+          echo "VERIFYING CUSTOMER FOOD CODE"
+          echo "============================================"
+
+          if ! grep -q 'documents/foods' "$FILE"; then
+            echo "ERROR: Customer HTML is NOT using Firestore collection 'foods'."
+            echo "The Customer HTML must contain:"
+            echo "documents/foods"
             exit 1
           fi
 
-          echo "Customer icon found:"
-          ls -lh customer-icon.png
+          echo "OK: Firestore collection 'foods' found."
+
+          echo ""
+          echo "Firestore endpoint:"
+          grep -n "documents/foods" "$FILE" || true
 
 
       # ============================================================
@@ -110,10 +132,17 @@ jobs:
           rm -rf www
           mkdir -p www
 
-          cp "Kumaoni-Potli-Customer.html" www/index.html
+          cp "./Kumaoni-Potli-Customer.html" "./www/index.html"
 
-          echo "Customer HTML copied successfully:"
-          ls -lh www/index.html
+          echo "============================================"
+          echo "CUSTOMER HTML COPIED TO APK"
+          echo "============================================"
+
+          ls -lh "./www/index.html"
+
+          echo ""
+          echo "Copied HTML checksum:"
+          sha256sum "./www/index.html"
 
 
       # ============================================================
@@ -130,6 +159,8 @@ jobs:
           }
           EOF
 
+          cat capacitor.config.json
+
 
       # ============================================================
       # ADD ANDROID PLATFORM
@@ -144,6 +175,11 @@ jobs:
       # ============================================================
       - name: Prepare Customer Icon
         run: |
+          if [ ! -f "customer-icon.png" ]; then
+            echo "ERROR: customer-icon.png not found."
+            exit 1
+          fi
+
           rm -rf resources
           mkdir -p resources
 
@@ -170,15 +206,36 @@ jobs:
 
 
       # ============================================================
-      # VERIFY ANDROID ICON
+      # VERIFY FINAL APK HTML
       # ============================================================
-      - name: Verify Android Icon
+      - name: Verify packaged Customer HTML
         run: |
-          echo "Checking Android icon resources:"
+          echo "============================================"
+          echo "VERIFYING PACKAGED CUSTOMER HTML"
+          echo "============================================"
 
-          find android/app/src/main/res -type f \
-            \( -iname '*launcher*' -o -iname '*icon*' \) \
-            -print | head -100
+          if [ ! -f "android/app/src/main/assets/public/index.html" ]; then
+            echo "ERROR: Packaged index.html not found."
+            exit 1
+          fi
+
+          echo "Packaged index.html:"
+          ls -lh android/app/src/main/assets/public/index.html
+
+          echo ""
+          echo "Checking Firestore collection..."
+
+          if ! grep -q 'documents/foods' \
+            android/app/src/main/assets/public/index.html; then
+            echo "ERROR: APK package does not contain documents/foods"
+            exit 1
+          fi
+
+          echo "OK: APK package contains Firestore 'foods' collection."
+
+          echo ""
+          echo "Packaged HTML checksum:"
+          sha256sum android/app/src/main/assets/public/index.html
 
 
       # ============================================================
@@ -202,7 +259,10 @@ jobs:
             android/app/build/outputs/apk/debug/app-debug.apk \
             release/Kumaoni-Potli-Customer.apk
 
-          echo "Final APK:"
+          echo "============================================"
+          echo "FINAL CUSTOMER APK"
+          echo "============================================"
+
           ls -lh release/Kumaoni-Potli-Customer.apk
 
 
