@@ -6,7 +6,7 @@ on:
   push:
     paths:
       - '.github/workflows/customer.yml'
-      - 'Kumaoni-Potli-Customer.html'
+      - 'Kumaoni-Potli-Customer-FIXED.html'
       - 'customer-icon.png'
 
 jobs:
@@ -76,7 +76,7 @@ jobs:
       # ============================================================
       - name: Check Customer HTML
         run: |
-          FILE="./Kumaoni-Potli-Customer.html"
+          FILE="./Kumaoni-Potli-Customer-FIXED.html"
 
           echo "============================================"
           echo "CHECKING CUSTOMER HTML"
@@ -104,24 +104,24 @@ jobs:
       # ============================================================
       - name: Verify Customer Food Code
         run: |
-          FILE="./Kumaoni-Potli-Customer.html"
+          FILE="./Kumaoni-Potli-Customer-FIXED.html"
 
           echo "============================================"
           echo "VERIFYING CUSTOMER FOOD CODE"
           echo "============================================"
 
-          if ! grep -q 'documents/foods' "$FILE"; then
-            echo "ERROR: Customer HTML is NOT using Firestore collection 'foods'."
+          if ! grep -q 'documents/kumaoniFoods' "$FILE"; then
+            echo "ERROR: Customer HTML is NOT using Firestore collection 'kumaoniFoods'."
             echo "The Customer HTML must contain:"
-            echo "documents/foods"
+            echo "documents/kumaoniFoods"
             exit 1
           fi
 
-          echo "OK: Firestore collection 'foods' found."
+          echo "OK: Firestore collection 'kumaoniFoods' found."
 
           echo ""
           echo "Firestore endpoint:"
-          grep -n "documents/foods" "$FILE" || true
+          grep -n "documents/kumaoniFoods" "$FILE" || true
 
 
       # ============================================================
@@ -132,7 +132,7 @@ jobs:
           rm -rf www
           mkdir -p www
 
-          cp "./Kumaoni-Potli-Customer.html" "./www/index.html"
+          cp "./Kumaoni-Potli-Customer-FIXED.html" "./www/index.html"
 
           echo "============================================"
           echo "CUSTOMER HTML COPIED TO APK"
@@ -225,13 +225,13 @@ jobs:
           echo ""
           echo "Checking Firestore collection..."
 
-          if ! grep -q 'documents/foods' \
+          if ! grep -q 'documents/kumaoniFoods' \
             android/app/src/main/assets/public/index.html; then
-            echo "ERROR: APK package does not contain documents/foods"
+            echo "ERROR: APK package does not contain documents/kumaoniFoods"
             exit 1
           fi
 
-          echo "OK: APK package contains Firestore 'foods' collection."
+          echo "OK: APK package contains Firestore 'kumaoniFoods' collection."
 
           echo ""
           echo "Packaged HTML checksum:"
