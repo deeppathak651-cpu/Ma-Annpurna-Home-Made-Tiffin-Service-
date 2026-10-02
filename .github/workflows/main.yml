@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - '.github/workflows/main.yml'
-      - '*delivery*.html'
+      - 'Kumaoni-Potli-Delivery-FIXED.html'
       - 'delivery-icon.png'
       - 'google-services.json'
 
@@ -19,20 +19,32 @@ jobs:
 
     steps:
 
+      # ============================================================
+      # CHECKOUT
+      # ============================================================
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      # ============================================================
+      # NODE.JS
+      # ============================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
+      # ============================================================
+      # JAVA
+      # ============================================================
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
+      # ============================================================
+      # PACKAGE.JSON
+      # ============================================================
       - name: Create package.json
         run: |
           cat > package.json <<'EOF'
@@ -52,10 +64,16 @@ jobs:
           }
           EOF
 
+      # ============================================================
+      # INSTALL CAPACITOR
+      # ============================================================
       - name: Install Capacitor
         run: |
           npm install
 
+      # ============================================================
+      # CHECK DELIVERY ICON
+      # ============================================================
       - name: Check Delivery Icon
         run: |
           if [ ! -f "delivery-icon.png" ]; then
@@ -68,28 +86,46 @@ jobs:
           echo "Delivery icon found:"
           ls -lh delivery-icon.png
 
+      # ============================================================
+      # PREPARE DELIVERY HTML
+      # ============================================================
       - name: Prepare Delivery web files
         run: |
-          rm -rf www
-          mkdir -p www
+          DELIVERY_HTML="Kumaoni-Potli-Delivery-FIXED.html"
 
-          FILE=$(find . -maxdepth 1 -type f -iname '*delivery*.html' | head -n 1)
+          echo "Checking Delivery HTML:"
+          echo "$DELIVERY_HTML"
 
-          if [ -z "$FILE" ]; then
-            echo "ERROR: Delivery HTML file not found"
+          if [ ! -f "$DELIVERY_HTML" ]; then
+            echo ""
+            echo "ERROR: $DELIVERY_HTML not found in repository root"
+            echo ""
             echo "Available HTML files:"
             find . -maxdepth 1 -type f -iname '*.html' -print
+            echo ""
+            echo "Current directory:"
+            pwd
+            echo ""
+            echo "Repository files:"
+            ls -la
             exit 1
           fi
 
-          echo "Using Delivery app:"
-          echo "$FILE"
+          rm -rf www
+          mkdir -p www
 
-          cp "$FILE" www/index.html
+          cp "$DELIVERY_HTML" www/index.html
 
-          echo "Delivery web files:"
-          ls -lh www
+          echo ""
+          echo "Delivery HTML prepared successfully."
+          echo "Source:"
+          ls -lh "$DELIVERY_HTML"
+          echo "Web file:"
+          ls -lh www/index.html
 
+      # ============================================================
+      # CAPACITOR CONFIG
+      # ============================================================
       - name: Create Capacitor configuration
         run: |
           cat > capacitor.config.json <<'EOF'
@@ -101,10 +137,16 @@ jobs:
           }
           EOF
 
+      # ============================================================
+      # ANDROID PLATFORM
+      # ============================================================
       - name: Add Android platform
         run: |
           npx cap add android
 
+      # ============================================================
+      # DELIVERY APP ICON
+      # ============================================================
       - name: Set Delivery App Icon
         run: |
           rm -rf resources
@@ -115,10 +157,16 @@ jobs:
           echo "Delivery icon copied:"
           ls -lh resources/icon.png
 
+      # ============================================================
+      # GENERATE APP ICON
+      # ============================================================
       - name: Generate Delivery App Icon
         run: |
           npx capacitor-assets generate --android
 
+      # ============================================================
+      # FIREBASE CONFIGURATION
+      # ============================================================
       - name: Copy Firebase configuration
         run: |
           if [ -f "google-services.json" ]; then
@@ -131,6 +179,9 @@ jobs:
             exit 1
           fi
 
+      # ============================================================
+      # VERIFY FIREBASE PACKAGE
+      # ============================================================
       - name: Verify Delivery Firebase package
         run: |
           echo "Checking Firebase package..."
@@ -142,6 +193,9 @@ jobs:
             exit 1
           fi
 
+      # ============================================================
+      # LOCATION PERMISSIONS
+      # ============================================================
       - name: Add Android location permissions
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
@@ -154,6 +208,9 @@ jobs:
 
           echo "Location permissions configured."
 
+      # ============================================================
+      # KOTLIN FIX
+      # ============================================================
       - name: Fix Kotlin duplicate classes
         run: |
           cat >> android/build.gradle <<'EOF'
@@ -165,27 +222,42 @@ jobs:
           }
           EOF
 
+      # ============================================================
+      # CAPACITOR SYNC
+      # ============================================================
       - name: Sync Capacitor
         run: |
           npx cap sync android
 
+      # ============================================================
+      # VERIFY ANDROID PROJECT
+      # ============================================================
       - name: Verify Android project
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew --version
 
+      # ============================================================
+      # BUILD APK
+      # ============================================================
       - name: Build Delivery APK
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew clean assembleDebug --stacktrace
 
+      # ============================================================
+      # VERIFY APK
+      # ============================================================
       - name: Verify APK
         run: |
           ls -lh android/app/build/outputs/apk/debug/
           test -f android/app/build/outputs/apk/debug/app-debug.apk
 
+      # ============================================================
+      # UPLOAD APK
+      # ============================================================
       - name: Upload Delivery APK
         uses: actions/upload-artifact@v4
         with:
