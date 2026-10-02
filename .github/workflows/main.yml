@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - '.github/workflows/main.yml'
-      - 'Kumaoni-Potli-Delivery-FIXED.html'
+      - '*delivery*.html'
       - 'delivery-icon.png'
       - 'google-services.json'
 
@@ -91,40 +91,37 @@ jobs:
       # ============================================================
       - name: Prepare Delivery web files
         run: |
-          DELIVERY_HTML="Kumaoni-Potli-Delivery-FIXED.html"
+          rm -rf www
+          mkdir -p www
 
-          echo "Checking Delivery HTML:"
-          echo "$DELIVERY_HTML"
+          echo "Searching for Delivery HTML..."
 
-          if [ ! -f "$DELIVERY_HTML" ]; then
-            echo ""
-            echo "ERROR: $DELIVERY_HTML not found in repository root"
+          DELIVERY_HTML=$(find . \
+            -maxdepth 1 \
+            -type f \
+            -iname '*delivery*.html' \
+            -print \
+            | head -n 1)
+
+          if [ -z "$DELIVERY_HTML" ]; then
+            echo "ERROR: Delivery HTML file not found"
             echo ""
             echo "Available HTML files:"
             find . -maxdepth 1 -type f -iname '*.html' -print
-            echo ""
-            echo "Current directory:"
-            pwd
-            echo ""
-            echo "Repository files:"
-            ls -la
             exit 1
           fi
 
-          rm -rf www
-          mkdir -p www
+          echo "Delivery HTML found:"
+          echo "$DELIVERY_HTML"
 
           cp "$DELIVERY_HTML" www/index.html
 
           echo ""
-          echo "Delivery HTML prepared successfully."
-          echo "Source:"
-          ls -lh "$DELIVERY_HTML"
-          echo "Web file:"
+          echo "Delivery web files prepared successfully:"
           ls -lh www/index.html
 
       # ============================================================
-      # CAPACITOR CONFIG
+      # CAPACITOR CONFIGURATION
       # ============================================================
       - name: Create Capacitor configuration
         run: |
@@ -138,7 +135,7 @@ jobs:
           EOF
 
       # ============================================================
-      # ANDROID PLATFORM
+      # ADD ANDROID
       # ============================================================
       - name: Add Android platform
         run: |
@@ -158,7 +155,7 @@ jobs:
           ls -lh resources/icon.png
 
       # ============================================================
-      # GENERATE APP ICON
+      # GENERATE ICON
       # ============================================================
       - name: Generate Delivery App Icon
         run: |
@@ -239,7 +236,7 @@ jobs:
           ./gradlew --version
 
       # ============================================================
-      # BUILD APK
+      # BUILD DELIVERY APK
       # ============================================================
       - name: Build Delivery APK
         working-directory: android
