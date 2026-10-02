@@ -77,7 +77,7 @@ jobs:
       - name: Check Delivery Icon
         run: |
           if [ ! -f "delivery-icon.png" ]; then
-            echo "ERROR: delivery-icon.png not found in repository root"
+            echo "ERROR: delivery-icon.png not found"
             echo ""
             echo "Available PNG files:"
             find . -maxdepth 2 -type f -iname '*.png' -print
@@ -103,7 +103,7 @@ jobs:
           DELIVERY_HTML=$(git ls-files | grep -iE '(^|/)[^/]*delivery[^/]*\.html$' | head -n 1 || true)
 
           if [ -z "$DELIVERY_HTML" ]; then
-            echo "ERROR: Delivery HTML file not found in Git tracked files"
+            echo "ERROR: Delivery HTML file not found"
             echo ""
             echo "Git tracked HTML files:"
             git ls-files | grep -i '\.html$' || true
@@ -111,7 +111,7 @@ jobs:
           fi
 
           echo "Delivery HTML found:"
-          printf '%s\n' "$DELIVERY_HTML"
+          echo "$DELIVERY_HTML"
 
           cp -- "$DELIVERY_HTML" www/index.html
 
@@ -133,11 +133,11 @@ jobs:
           }
           EOF
 
-          echo "Capacitor configuration created:"
+          echo "Capacitor configuration:"
           cat capacitor.config.json
 
       # ============================================================
-      # ADD ANDROID PLATFORM
+      # ANDROID PLATFORM
       # ============================================================
       - name: Add Android platform
         run: |
@@ -157,7 +157,7 @@ jobs:
           ls -lh resources/icon.png
 
       # ============================================================
-      # GENERATE DELIVERY APP ICON
+      # GENERATE APP ICON
       # ============================================================
       - name: Generate Delivery App Icon
         run: |
@@ -200,4 +200,108 @@ jobs:
       # ============================================================
       # LOCATION PERMISSIONS
       # ============================================================
-      - name: Add Android location
+      - name: Add Android location permissions
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          manifest = Path("android/app/src/main/AndroidManifest.xml")
+          text = manifest.read_text()
+
+          permissions = [
+              '    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
+              '    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />'
+          ]
+
+          additions = []
+
+          for permission in permissions:
+              if permission not in text:
+                  additions.append(permission)
+
+          if additions:
+              marker = "<manifest"
+              position = text.find(marker)
+
+              if position == -1:
+                  raise SystemExit("ERROR: <manifest> tag not found")
+
+              end = text.find(">", position)
+
+              if end == -1:
+                  raise SystemExit("ERROR: Opening <manifest> tag is invalid")
+
+              insert = "\n" + "\n".join(additions)
+
+              text = text[:end + 1] + insert + text[end + 1:]
+
+              manifest.write_text(text)
+
+          print("Location permissions configured successfully.")
+          PY
+
+      # ============================================================
+      # KOTLIN DUPLICATE CLASS FIX
+      # ============================================================
+      - name: Fix Kotlin duplicate classes
+        run: |
+          cat >> android/build.gradle <<'EOF'
+
+          configurations.all {
+              resolutionStrategy {
+                  force 'org.jetbrains.kotlin:kotlin-stdlib:2.0.21'
+              }
+          }
+          EOF
+
+          echo "Kotlin resolution strategy configured."
+
+      # ============================================================
+      # CAPACITOR SYNC
+      # ============================================================
+      - name: Sync Capacitor
+        run: |
+          npx cap sync android
+
+      # ============================================================
+      # VERIFY ANDROID PROJECT
+      # ============================================================
+      - name: Verify Android project
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew --version
+
+      # ============================================================
+      # BUILD DELIVERY APK
+      # ============================================================
+      - name: Build Delivery APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew clean assembleDebug --stacktrace
+
+      # ============================================================
+      # VERIFY APK
+      # ============================================================
+      - name: Verify APK
+        run: |
+          echo "Checking generated APK..."
+
+          ls -lh android/app/build/outputs/apk/debug/
+
+          test -f android/app/build/outputs/apk/debug/app-debug.apk
+
+          echo ""
+          echo "APK generated successfully:"
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
+
+      # ============================================================
+      # UPLOAD DELIVERY APK
+      # ============================================================
+      - name: Upload Delivery APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Kumaoni-Potli-Delivery-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
