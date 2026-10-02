@@ -78,6 +78,7 @@ jobs:
         run: |
           if [ ! -f "delivery-icon.png" ]; then
             echo "ERROR: delivery-icon.png not found in repository root"
+            echo ""
             echo "Available PNG files:"
             find . -maxdepth 2 -type f -iname '*.png' -print
             exit 1
@@ -90,34 +91,32 @@ jobs:
       # PREPARE DELIVERY HTML
       # ============================================================
       - name: Prepare Delivery web files
+        shell: bash
         run: |
+          set -e
+
           rm -rf www
           mkdir -p www
 
-          echo "Searching for Delivery HTML..."
+          echo "Searching Git tracked files for Delivery HTML..."
 
-          DELIVERY_HTML=$(find . \
-            -maxdepth 1 \
-            -type f \
-            -iname '*delivery*.html' \
-            -print \
-            | head -n 1)
+          DELIVERY_HTML=$(git ls-files | grep -iE '(^|/)[^/]*delivery[^/]*\.html$' | head -n 1 || true)
 
           if [ -z "$DELIVERY_HTML" ]; then
-            echo "ERROR: Delivery HTML file not found"
+            echo "ERROR: Delivery HTML file not found in Git tracked files"
             echo ""
-            echo "Available HTML files:"
-            find . -maxdepth 1 -type f -iname '*.html' -print
+            echo "Git tracked HTML files:"
+            git ls-files | grep -i '\.html$' || true
             exit 1
           fi
 
           echo "Delivery HTML found:"
-          echo "$DELIVERY_HTML"
+          printf '%s\n' "$DELIVERY_HTML"
 
-          cp "$DELIVERY_HTML" www/index.html
+          cp -- "$DELIVERY_HTML" www/index.html
 
           echo ""
-          echo "Delivery web files prepared successfully:"
+          echo "Delivery web file prepared successfully:"
           ls -lh www/index.html
 
       # ============================================================
@@ -134,8 +133,11 @@ jobs:
           }
           EOF
 
+          echo "Capacitor configuration created:"
+          cat capacitor.config.json
+
       # ============================================================
-      # ADD ANDROID
+      # ADD ANDROID PLATFORM
       # ============================================================
       - name: Add Android platform
         run: |
@@ -155,7 +157,7 @@ jobs:
           ls -lh resources/icon.png
 
       # ============================================================
-      # GENERATE ICON
+      # GENERATE DELIVERY APP ICON
       # ============================================================
       - name: Generate Delivery App Icon
         run: |
@@ -169,9 +171,11 @@ jobs:
           if [ -f "google-services.json" ]; then
             mkdir -p android/app
             cp google-services.json android/app/google-services.json
-            echo "Firebase configuration copied"
+            echo "Firebase configuration copied successfully."
           else
             echo "ERROR: google-services.json not found"
+            echo ""
+            echo "Available Firebase files:"
             find . -maxdepth 2 -type f -name 'google-services*.json' -print
             exit 1
           fi
@@ -187,77 +191,13 @@ jobs:
             echo "Delivery Firebase package verified successfully."
           else
             echo "ERROR: com.annapurna.delivery is not registered in google-services.json"
+            echo ""
+            echo "Firebase package names found:"
+            grep -o '"package_name"[^,]*' google-services.json || true
             exit 1
           fi
 
       # ============================================================
       # LOCATION PERMISSIONS
       # ============================================================
-      - name: Add Android location permissions
-        run: |
-          MANIFEST="android/app/src/main/AndroidManifest.xml"
-
-          if ! grep -q "android.permission.ACCESS_FINE_LOCATION" "$MANIFEST"; then
-            sed -i '/<manifest/a\
-              <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\
-              <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' "$MANIFEST"
-          fi
-
-          echo "Location permissions configured."
-
-      # ============================================================
-      # KOTLIN FIX
-      # ============================================================
-      - name: Fix Kotlin duplicate classes
-        run: |
-          cat >> android/build.gradle <<'EOF'
-
-          configurations.all {
-              resolutionStrategy {
-                  force 'org.jetbrains.kotlin:kotlin-stdlib:2.0.21'
-              }
-          }
-          EOF
-
-      # ============================================================
-      # CAPACITOR SYNC
-      # ============================================================
-      - name: Sync Capacitor
-        run: |
-          npx cap sync android
-
-      # ============================================================
-      # VERIFY ANDROID PROJECT
-      # ============================================================
-      - name: Verify Android project
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew --version
-
-      # ============================================================
-      # BUILD DELIVERY APK
-      # ============================================================
-      - name: Build Delivery APK
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew clean assembleDebug --stacktrace
-
-      # ============================================================
-      # VERIFY APK
-      # ============================================================
-      - name: Verify APK
-        run: |
-          ls -lh android/app/build/outputs/apk/debug/
-          test -f android/app/build/outputs/apk/debug/app-debug.apk
-
-      # ============================================================
-      # UPLOAD APK
-      # ============================================================
-      - name: Upload Delivery APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Kumaoni-Potli-Delivery-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+      - name: Add Android location
