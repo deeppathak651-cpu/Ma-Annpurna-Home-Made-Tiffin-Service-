@@ -56,6 +56,7 @@ jobs:
               "@capacitor/core": "^7.4.3",
               "@capacitor/cli": "^7.4.3",
               "@capacitor/android": "^7.4.3",
+              "@capacitor/geolocation": "^7.1.0",
               "@capacitor/assets": "^3.0.5"
             }
           }
@@ -63,9 +64,9 @@ jobs:
 
 
       # ============================================================
-      # INSTALL CAPACITOR
+      # INSTALL CAPACITOR + GEOLOCATION
       # ============================================================
-      - name: Install Capacitor
+      - name: Install Capacitor and Geolocation
         run: |
           npm install
           npm install @capacitor/assets --save-dev
@@ -111,9 +112,8 @@ jobs:
           echo "============================================"
 
           if ! grep -q 'documents/kumaoniFoods' "$FILE"; then
-            echo "ERROR: Customer HTML is NOT using Firestore collection 'kumaoniFoods'."
-            echo "The Customer HTML must contain:"
-            echo "documents/kumaoniFoods"
+            echo "ERROR: Customer HTML is NOT using Firestore collection:"
+            echo "kumaoniFoods"
             exit 1
           fi
 
@@ -146,6 +146,277 @@ jobs:
 
 
       # ============================================================
+      # CREATE NATIVE LOCATION BRIDGE
+      # ============================================================
+      - name: Create Native Location Bridge
+        run: |
+          cat > native-location.js <<'EOF'
+          import { Geolocation } from '@capacitor/geolocation';
+
+          window.KumaoniNativeLocation = {
+
+            async requestPermissions() {
+              return await Geolocation.requestPermissions({
+                permissions: ['location']
+              });
+            },
+
+            async checkPermissions() {
+              return await Geolocation.checkPermissions();
+            },
+
+            async getCurrentPosition(options = {}) {
+              return await Geolocation.getCurrentPosition({
+                enableHighAccuracy:
+                  options.enableHighAccuracy !== false,
+                timeout:
+                  Number(options.timeout || 20000),
+                maximumAge:
+                  Number(options.maximumAge || 0)
+              });
+            }
+
+          };
+          EOF
+
+          npx esbuild native-location.js \
+            --bundle \
+            --format=iife \
+            --platform=browser \
+            --outfile=www/native-location.js
+
+          echo "Native location bridge created:"
+          ls -lh www/native-location.js
+
+
+      # ============================================================
+      # CONNECT HTML TO NATIVE LOCATION
+      # ============================================================
+      - name: Connect Customer HTML To Native Location
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path("www/index.html")
+          html = path.read_text(encoding="utf-8")
+
+          bridge = r'''
+          <script src="native-location.js"></script>
+
+          <script>
+          (function () {
+
+            try {
+
+              if (!window.KumaoniNativeLocation) {
+                console.warn(
+                  'Kumaoni Potli native location bridge unavailable.'
+                );
+                return;
+              }
+
+              const nativeLocation =
+                window.KumaoniNativeLocation;
+
+              if (!navigator.geolocation) {
+                console.warn(
+                  'Browser geolocation API unavailable.'
+                );
+                return;
+              }
+
+              navigator.geolocation.getCurrentPosition =
+                function(success, error, options) {
+
+                  const opts = options || {};
+
+                  nativeLocation.requestPermissions()
+
+                    .then(function(permission) {
+
+                      console.log(
+                        'Kumaoni Potli location permission:',
+                        permission
+                      );
+
+                      if (
+                        permission &&
+                        permission.location &&
+                        permission.location !== 'granted'
+                      ) {
+                        throw new Error(
+                          'LOCATION_PERMISSION_DENIED'
+                        );
+                      }
+
+                      return nativeLocation.getCurrentPosition({
+
+                        enableHighAccuracy:
+                          opts.enableHighAccuracy !== false,
+
+                        timeout:
+                          Number(
+                            opts.timeout || 20000
+                          ),
+
+                        maximumAge:
+                          Number(
+                            opts.maximumAge || 0
+                          )
+
+                      });
+
+                    })
+
+                    .then(function(position) {
+
+                      console.log(
+                        'Kumaoni Potli location:',
+                        position
+                      );
+
+                      if (
+                        typeof success === 'function'
+                      ) {
+
+                        success({
+
+                          coords: {
+
+                            latitude:
+                              position.coords.latitude,
+
+                            longitude:
+                              position.coords.longitude,
+
+                            accuracy:
+                              position.coords.accuracy,
+
+                            altitude:
+                              position.coords.altitude ??
+                              null,
+
+                            altitudeAccuracy:
+                              position.coords.altitudeAccuracy ??
+                              null,
+
+                            heading:
+                              position.coords.heading ??
+                              null,
+
+                            speed:
+                              position.coords.speed ??
+                              null
+
+                          },
+
+                          timestamp:
+                            position.timestamp ||
+                            Date.now()
+
+                        });
+
+                      }
+
+                    })
+
+                    .catch(function(err) {
+
+                      console.error(
+                        'Kumaoni Potli location error:',
+                        err
+                      );
+
+                      if (
+                        typeof error === 'function'
+                      ) {
+
+                        let code = 2;
+
+                        const message =
+                          String(
+                            err?.message ||
+                            err?.code ||
+                            ''
+                          ).toLowerCase();
+
+                        if (
+                          message.includes('permission') ||
+                          message.includes('denied')
+                        ) {
+                          code = 1;
+                        }
+
+                        if (
+                          message.includes('timeout')
+                        ) {
+                          code = 3;
+                        }
+
+                        error({
+
+                          code: code,
+
+                          message:
+                            err?.message ||
+                            'Unable to get current location.'
+
+                        });
+
+                      }
+
+                    });
+
+                };
+
+              console.log(
+                'Kumaoni Potli native Android location bridge active.'
+              );
+
+            }
+
+            catch (e) {
+
+              console.error(
+                'Kumaoni Potli location bridge failed:',
+                e
+              );
+
+            }
+
+          })();
+          </script>
+          '''
+
+          if "native-location.js" not in html:
+
+              if "</body>" in html:
+
+                  html = html.replace(
+                      "</body>",
+                      bridge + "\n</body>",
+                      1
+                  )
+
+              else:
+
+                  html += bridge
+
+          path.write_text(
+              html,
+              encoding="utf-8"
+          )
+          PY
+
+          echo "Native location bridge connected."
+
+          echo ""
+          echo "Checking location bridge:"
+          grep -n "KumaoniNativeLocation" \
+            www/index.html || true
+
+
+      # ============================================================
       # CREATE CAPACITOR CONFIGURATION
       # ============================================================
       - name: Create Capacitor configuration
@@ -155,7 +426,11 @@ jobs:
             "appId": "com.kumaonipotli.customer",
             "appName": "Kumaoni Potli",
             "webDir": "www",
-            "bundledWebRuntime": false
+            "bundledWebRuntime": false,
+            "server": {
+              "hostname": "localhost",
+              "androidScheme": "https"
+            }
           }
           EOF
 
@@ -198,6 +473,66 @@ jobs:
 
 
       # ============================================================
+      # ADD ANDROID LOCATION PERMISSIONS
+      # ============================================================
+      - name: Add Android Location Permissions
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+
+          echo "============================================"
+          echo "ADDING ANDROID LOCATION PERMISSIONS"
+          echo "============================================"
+
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path(
+              "android/app/src/main/AndroidManifest.xml"
+          )
+
+          text = path.read_text(
+              encoding="utf-8"
+          )
+
+          permissions = """
+              <uses-permission
+                  android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+              <uses-permission
+                  android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+              <uses-feature
+                  android:name="android.hardware.location.gps"
+                  android:required="false" />
+          """
+
+          if (
+              "android.permission.ACCESS_COARSE_LOCATION"
+              not in text
+          ):
+
+              text = text.replace(
+                  "</manifest>",
+                  permissions +
+                  "\n</manifest>",
+                  1
+              )
+
+          path.write_text(
+              text,
+              encoding="utf-8"
+          )
+          PY
+
+          echo "Android location permissions added."
+
+          echo ""
+          grep -n -E \
+            "ACCESS_COARSE_LOCATION|ACCESS_FINE_LOCATION|hardware.location.gps" \
+            "$MANIFEST" || true
+
+
+      # ============================================================
       # SYNC CAPACITOR
       # ============================================================
       - name: Sync Capacitor
@@ -206,36 +541,85 @@ jobs:
 
 
       # ============================================================
-      # VERIFY FINAL APK HTML
+      # VERIFY ANDROID LOCATION PERMISSIONS
+      # ============================================================
+      - name: Verify Android Location Permissions
+        run: |
+          FILE="android/app/src/main/AndroidManifest.xml"
+
+          echo "============================================"
+          echo "VERIFYING LOCATION PERMISSIONS"
+          echo "============================================"
+
+          if ! grep -q \
+            'android.permission.ACCESS_COARSE_LOCATION' \
+            "$FILE"; then
+
+            echo "ERROR: COARSE location permission missing."
+            exit 1
+          fi
+
+          if ! grep -q \
+            'android.permission.ACCESS_FINE_LOCATION' \
+            "$FILE"; then
+
+            echo "ERROR: FINE location permission missing."
+            exit 1
+          fi
+
+          echo "OK: COARSE location permission found."
+          echo "OK: FINE location permission found."
+
+
+      # ============================================================
+      # VERIFY PACKAGED CUSTOMER HTML
       # ============================================================
       - name: Verify packaged Customer HTML
         run: |
+          FILE="android/app/src/main/assets/public/index.html"
+
           echo "============================================"
           echo "VERIFYING PACKAGED CUSTOMER HTML"
           echo "============================================"
 
-          if [ ! -f "android/app/src/main/assets/public/index.html" ]; then
+          if [ ! -f "$FILE" ]; then
             echo "ERROR: Packaged index.html not found."
             exit 1
           fi
 
           echo "Packaged index.html:"
-          ls -lh android/app/src/main/assets/public/index.html
+          ls -lh "$FILE"
 
           echo ""
           echo "Checking Firestore collection..."
 
-          if ! grep -q 'documents/kumaoniFoods' \
-            android/app/src/main/assets/public/index.html; then
-            echo "ERROR: APK package does not contain documents/kumaoniFoods"
+          if ! grep -q \
+            'documents/kumaoniFoods' \
+            "$FILE"; then
+
+            echo "ERROR: APK package does not contain:"
+            echo "documents/kumaoniFoods"
             exit 1
           fi
 
-          echo "OK: APK package contains Firestore 'kumaoniFoods' collection."
+          echo "OK: Firestore collection found."
+
+          echo ""
+          echo "Checking native location bridge..."
+
+          if ! grep -q \
+            'KumaoniNativeLocation' \
+            "$FILE"; then
+
+            echo "ERROR: Native location bridge missing."
+            exit 1
+          fi
+
+          echo "OK: Native location bridge found."
 
           echo ""
           echo "Packaged HTML checksum:"
-          sha256sum android/app/src/main/assets/public/index.html
+          sha256sum "$FILE"
 
 
       # ============================================================
@@ -255,15 +639,24 @@ jobs:
         run: |
           mkdir -p release
 
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+
+          if [ ! -f "$APK" ]; then
+            echo "ERROR: APK not found:"
+            echo "$APK"
+            exit 1
+          fi
+
           cp \
-            android/app/build/outputs/apk/debug/app-debug.apk \
-            release/Kumaoni-Potli-Customer.apk
+            "$APK" \
+            "release/Kumaoni-Potli-Customer.apk"
 
           echo "============================================"
           echo "FINAL CUSTOMER APK"
           echo "============================================"
 
-          ls -lh release/Kumaoni-Potli-Customer.apk
+          ls -lh \
+            "release/Kumaoni-Potli-Customer.apk"
 
 
       # ============================================================
