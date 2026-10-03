@@ -98,27 +98,49 @@ jobs:
           rm -rf www
           mkdir -p www
 
+          # IMPORTANT:
+          # Only this exact HTML file will be used for the APK.
           DELIVERY_HTML="Kumaoni-Potli-Delivery-FIXED.html"
 
           if [ ! -f "$DELIVERY_HTML" ]; then
-            echo "ERROR: Delivery HTML file not found:"
+            echo "=================================================="
+            echo "ERROR: DELIVERY HTML FILE NOT FOUND"
             echo "$DELIVERY_HTML"
+            echo "=================================================="
             echo ""
-            echo "Available Delivery HTML files:"
-            find . -maxdepth 2 -type f -iname '*delivery*.html' -print
+            echo "Delivery HTML files found in repository:"
+            find . -maxdepth 3 -type f -iname '*delivery*.html' -print
             exit 1
           fi
 
-          echo "=========================================="
-          echo "USING EXACT DELIVERY HTML:"
+          echo "=================================================="
+          echo "EXACT DELIVERY HTML SELECTED"
+          echo "=================================================="
           echo "$DELIVERY_HTML"
-          echo "=========================================="
+          echo "=================================================="
 
           cp -- "$DELIVERY_HTML" www/index.html
 
           echo ""
-          echo "Delivery web file prepared successfully:"
+          echo "Copied Delivery HTML:"
           ls -lh www/index.html
+
+          echo ""
+          echo "Checking important login code..."
+
+          if grep -q "window.loginUser" www/index.html; then
+            echo "OK: loginUser found."
+          else
+            echo "ERROR: loginUser not found."
+            exit 1
+          fi
+
+          if grep -q "Signing In" www/index.html; then
+            echo "OK: Signing In code found."
+          else
+            echo "ERROR: Signing In code not found."
+            exit 1
+          fi
 
       # ============================================================
       # CAPACITOR CONFIGURATION
@@ -172,12 +194,16 @@ jobs:
           if [ -f "google-services.json" ]; then
             mkdir -p android/app
             cp google-services.json android/app/google-services.json
+
             echo "Firebase configuration copied successfully."
+            echo ""
+            echo "Firebase file:"
+            ls -lh android/app/google-services.json
           else
             echo "ERROR: google-services.json not found"
             echo ""
             echo "Available Firebase files:"
-            find . -maxdepth 2 -type f -name 'google-services*.json' -print
+            find . -maxdepth 3 -type f -name 'google-services*.json' -print
             exit 1
           fi
 
@@ -199,17 +225,23 @@ jobs:
           fi
 
       # ============================================================
-      # LOCATION PERMISSIONS
+      # ANDROID INTERNET + LOCATION PERMISSIONS
       # ============================================================
-      - name: Add Android location permissions
+      - name: Add Android permissions
         run: |
           python3 <<'PY'
           from pathlib import Path
 
           manifest = Path("android/app/src/main/AndroidManifest.xml")
+
+          if not manifest.exists():
+              raise SystemExit("ERROR: AndroidManifest.xml not found")
+
           text = manifest.read_text()
 
           permissions = [
+              '    <uses-permission android:name="android.permission.INTERNET" />',
+              '    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />',
               '    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
               '    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />'
           ]
@@ -238,8 +270,13 @@ jobs:
 
               manifest.write_text(text)
 
-          print("Location permissions configured successfully.")
+          print("Android Internet/network/location permissions configured successfully.")
           PY
+
+          echo ""
+          echo "Checking Android permissions:"
+          grep -E "INTERNET|ACCESS_NETWORK_STATE|ACCESS_FINE_LOCATION|ACCESS_COARSE_LOCATION" \
+            android/app/src/main/AndroidManifest.xml || true
 
       # ============================================================
       # KOTLIN DUPLICATE CLASS FIX
@@ -280,6 +317,7 @@ jobs:
         working-directory: android
         run: |
           chmod +x gradlew
+
           ./gradlew clean assembleDebug --stacktrace
 
       # ============================================================
@@ -287,7 +325,9 @@ jobs:
       # ============================================================
       - name: Verify APK
         run: |
-          echo "Checking generated APK..."
+          echo "=================================================="
+          echo "CHECKING GENERATED APK"
+          echo "=================================================="
 
           ls -lh android/app/build/outputs/apk/debug/
 
