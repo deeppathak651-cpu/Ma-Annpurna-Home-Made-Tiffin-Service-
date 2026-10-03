@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: Build Customer APK
+    name: Build Kumaoni Potli Customer APK
     runs-on: ubuntu-latest
 
     steps:
@@ -58,18 +58,22 @@ jobs:
               "@capacitor/android": "^7.4.3",
               "@capacitor/geolocation": "^7.1.0",
               "@capacitor/assets": "^3.0.5"
+            },
+            "devDependencies": {
+              "esbuild": "^0.25.0"
             }
           }
           EOF
 
 
       # ============================================================
-      # INSTALL CAPACITOR + GEOLOCATION
+      # INSTALL PACKAGES
       # ============================================================
-      - name: Install Capacitor and Geolocation
+      - name: Install Capacitor and required packages
         run: |
           npm install
           npm install @capacitor/assets --save-dev
+          npm install esbuild --save-dev
 
 
       # ============================================================
@@ -101,7 +105,7 @@ jobs:
 
 
       # ============================================================
-      # VERIFY FIRESTORE FOODS COLLECTION
+      # VERIFY FIRESTORE FOOD COLLECTION
       # ============================================================
       - name: Verify Customer Food Code
         run: |
@@ -169,8 +173,10 @@ jobs:
               return await Geolocation.getCurrentPosition({
                 enableHighAccuracy:
                   options.enableHighAccuracy !== false,
+
                 timeout:
                   Number(options.timeout || 20000),
+
                 maximumAge:
                   Number(options.maximumAge || 0)
               });
@@ -388,7 +394,7 @@ jobs:
           </script>
           '''
 
-          if "native-location.js" not in html:
+          if "KumaoniNativeLocation" not in html:
 
               if "</body>" in html:
 
@@ -418,12 +424,15 @@ jobs:
 
       # ============================================================
       # CREATE CAPACITOR CONFIGURATION
+      # IMPORTANT:
+      # Firebase existing Customer Android App:
+      # com.annpurna.tiffin
       # ============================================================
       - name: Create Capacitor configuration
         run: |
           cat > capacitor.config.json <<'EOF'
           {
-            "appId": "com.kumaonipotli.customer",
+            "appId": "com.annpurna.tiffin",
             "appName": "Kumaoni Potli",
             "webDir": "www",
             "bundledWebRuntime": false,
@@ -434,6 +443,10 @@ jobs:
           }
           EOF
 
+          echo "============================================"
+          echo "CAPACITOR CONFIGURATION"
+          echo "============================================"
+
           cat capacitor.config.json
 
 
@@ -443,60 +456,6 @@ jobs:
       - name: Add Android platform
         run: |
           npx cap add android
-
-
-      # ============================================================
-      # GENERATE FIREBASE SHA-1 / SHA-256
-      # ============================================================
-      - name: Generate Firebase SHA Fingerprints
-        working-directory: android
-        run: |
-          echo "============================================"
-          echo "KUMAONI POTLI CUSTOMER"
-          echo "FIREBASE SHA FINGERPRINTS"
-          echo "============================================"
-
-          chmod +x gradlew
-
-          echo ""
-          echo "========== GRADLE SIGNING REPORT =========="
-
-          ./gradlew signingReport
-
-          echo ""
-          echo "========== DEBUG KEYSTORE =========="
-
-          if [ ! -f "$HOME/.android/debug.keystore" ]; then
-            echo "Debug keystore not found."
-            echo "Creating debug keystore..."
-
-            mkdir -p "$HOME/.android"
-
-            keytool -genkeypair \
-              -v \
-              -keystore "$HOME/.android/debug.keystore" \
-              -storepass android \
-              -alias androiddebugkey \
-              -keypass android \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000 \
-              -dname "CN=Android Debug,O=Android,C=US"
-          fi
-
-          keytool -list -v \
-            -alias androiddebugkey \
-            -keystore "$HOME/.android/debug.keystore" \
-            -storepass android \
-            -keypass android \
-            | grep -E "Alias name:|SHA1:|SHA256:"
-
-          echo ""
-          echo "============================================"
-          echo "IMPORTANT:"
-          echo "Copy the SHA1 and SHA256 values from this log"
-          echo "and add them to Firebase Project Settings."
-          echo "============================================"
 
 
       # ============================================================
@@ -595,6 +554,29 @@ jobs:
 
 
       # ============================================================
+      # VERIFY ANDROID PACKAGE ID
+      # ============================================================
+      - name: Verify Customer Package ID
+        run: |
+          echo "============================================"
+          echo "VERIFYING CUSTOMER PACKAGE ID"
+          echo "============================================"
+
+          if ! grep -R \
+            -q \
+            'com.annpurna.tiffin' \
+            android/app/src/main; then
+
+            echo "ERROR: Customer Package ID not found:"
+            echo "com.annpurna.tiffin"
+            exit 1
+          fi
+
+          echo "OK: Customer Package ID:"
+          echo "com.annpurna.tiffin"
+
+
+      # ============================================================
       # VERIFY ANDROID LOCATION PERMISSIONS
       # ============================================================
       - name: Verify Android Location Permissions
@@ -677,13 +659,73 @@ jobs:
 
 
       # ============================================================
+      # GENERATE FIREBASE SHA FINGERPRINTS
+      # ============================================================
+      - name: Generate Firebase SHA Fingerprints
+        working-directory: android
+        run: |
+          echo "============================================"
+          echo "KUMAONI POTLI CUSTOMER"
+          echo "FIREBASE SHA FINGERPRINTS"
+          echo "============================================"
+
+          echo ""
+          echo "Generating debug signing report..."
+
+          chmod +x gradlew
+
+          ./gradlew signingReport || true
+
+          echo ""
+          echo "============================================"
+          echo "SHA FINGERPRINTS ABOVE"
+          echo "============================================"
+          echo ""
+          echo "Firebase Android App:"
+          echo "com.annpurna.tiffin"
+          echo ""
+          echo "Add SHA-1 and SHA-256 to this existing"
+          echo "Customer Android app in Firebase Project Settings."
+          echo "============================================"
+
+
+      # ============================================================
       # BUILD CUSTOMER APK
       # ============================================================
       - name: Build Kumaoni Potli Customer APK
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew clean assembleDebug --stacktrace
+
+          ./gradlew \
+            clean \
+            assembleDebug \
+            --stacktrace
+
+
+      # ============================================================
+      # CHECK APK
+      # ============================================================
+      - name: Check Customer APK
+        run: |
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+
+          echo "============================================"
+          echo "CHECKING CUSTOMER APK"
+          echo "============================================"
+
+          if [ ! -f "$APK" ]; then
+            echo "ERROR: APK not found:"
+            echo "$APK"
+            exit 1
+          fi
+
+          echo "APK successfully created:"
+          ls -lh "$APK"
+
+          echo ""
+          echo "APK SHA256:"
+          sha256sum "$APK"
 
 
       # ============================================================
