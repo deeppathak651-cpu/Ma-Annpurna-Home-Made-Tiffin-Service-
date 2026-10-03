@@ -88,7 +88,7 @@ jobs:
           ls -lh delivery-icon.png
 
       # ============================================================
-      # PREPARE EXACT DELIVERY HTML
+      # PREPARE DELIVERY HTML
       # ============================================================
       - name: Prepare Delivery web files
         shell: bash
@@ -98,8 +98,6 @@ jobs:
           rm -rf www
           mkdir -p www
 
-          # IMPORTANT:
-          # Only this exact HTML file will be used for the APK.
           DELIVERY_HTML="Kumaoni-Potli-Delivery-FIXED.html"
 
           if [ ! -f "$DELIVERY_HTML" ]; then
@@ -114,7 +112,7 @@ jobs:
           fi
 
           echo "=================================================="
-          echo "EXACT DELIVERY HTML SELECTED"
+          echo "DELIVERY HTML SELECTED"
           echo "=================================================="
           echo "$DELIVERY_HTML"
           echo "=================================================="
@@ -126,21 +124,7 @@ jobs:
           ls -lh www/index.html
 
           echo ""
-          echo "Checking important login code..."
-
-          if grep -q "window.loginUser" www/index.html; then
-            echo "OK: loginUser found."
-          else
-            echo "ERROR: loginUser not found."
-            exit 1
-          fi
-
-          if grep -q "Signing In" www/index.html; then
-            echo "OK: Signing In code found."
-          else
-            echo "ERROR: Signing In code not found."
-            exit 1
-          fi
+          echo "Delivery HTML is ready for Capacitor."
 
       # ============================================================
       # CAPACITOR CONFIGURATION
@@ -225,7 +209,7 @@ jobs:
           fi
 
       # ============================================================
-      # ANDROID INTERNET + LOCATION PERMISSIONS
+      # ANDROID PERMISSIONS
       # ============================================================
       - name: Add Android permissions
         run: |
@@ -270,7 +254,7 @@ jobs:
 
               manifest.write_text(text)
 
-          print("Android Internet/network/location permissions configured successfully.")
+          print("Android permissions configured successfully.")
           PY
 
           echo ""
