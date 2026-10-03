@@ -68,7 +68,7 @@ jobs:
 
 
       # ============================================================
-      # PREPARE CURRENT ADMIN HTML
+      # PREPARE ADMIN HTML
       # ============================================================
       - name: Prepare Admin HTML
         run: |
@@ -200,7 +200,7 @@ jobs:
 
 
       # ============================================================
-      # VERIFY FIREBASE PACKAGE
+      # VERIFY ADMIN FIREBASE PACKAGE
       # ============================================================
       - name: Verify Admin Firebase package
         run: |
@@ -271,17 +271,27 @@ jobs:
           echo "FIREBASE SHA FINGERPRINTS"
           echo "============================================"
 
-          mkdir -p "$HOME/.android"
+          # Gradle is looking for this exact location
+          KEYSTORE_DIR="$HOME/.config/.android"
+          KEYSTORE="$KEYSTORE_DIR/debug.keystore"
 
-          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+          mkdir -p "$KEYSTORE_DIR"
+
+          echo ""
+          echo "Keystore path:"
+          echo "$KEYSTORE"
+          echo ""
+
+          # Create debug keystore
+          if [ ! -f "$KEYSTORE" ]; then
 
             echo "Creating debug keystore..."
 
             keytool -genkeypair -v \
-              -keystore "$HOME/.android/debug.keystore" \
+              -keystore "$KEYSTORE" \
               -storepass android \
               -keypass android \
-              -alias androiddebugkey \
+              -alias AndroidDebugKey \
               -keyalg RSA \
               -keysize 2048 \
               -validity 10000 \
@@ -293,11 +303,23 @@ jobs:
 
           fi
 
-          chmod +x gradlew
+          echo ""
+          echo "============================================"
+          echo "CHECKING DEBUG KEYSTORE"
+          echo "============================================"
+
+          keytool -list -v \
+            -keystore "$KEYSTORE" \
+            -storepass android \
+            -alias AndroidDebugKey
 
           echo ""
-          echo "Generating signing report..."
+          echo "============================================"
+          echo "GENERATING SIGNING REPORT"
+          echo "============================================"
           echo ""
+
+          chmod +x gradlew
 
           ./gradlew signingReport
 
@@ -350,7 +372,6 @@ jobs:
             android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
 
           echo "Final APK:"
-
           ls -lh \
             android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
 
