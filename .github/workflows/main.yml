@@ -1,0 +1,308 @@
+name: Build Kumaoni Potli Delivery APK
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/main.yml'
+      - 'Kumaoni-Potli-Delivery-FIXED.html'
+      - 'delivery-icon.png'
+      - 'google-services.json'
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Delivery APK
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ============================================================
+      # CHECKOUT
+      # ============================================================
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # ============================================================
+      # NODE.JS
+      # ============================================================
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # ============================================================
+      # JAVA
+      # ============================================================
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # ============================================================
+      # PACKAGE.JSON
+      # ============================================================
+      - name: Create package.json
+        run: |
+          cat > package.json <<'EOF'
+          {
+            "name": "kumaoni-potli-delivery",
+            "version": "1.0.0",
+            "private": true,
+            "dependencies": {
+              "@capacitor/core": "^7.4.3",
+              "@capacitor/cli": "^7.4.3",
+              "@capacitor/android": "^7.4.3",
+              "@capacitor/assets": "^3.0.5"
+            },
+            "devDependencies": {
+              "@capacitor/assets": "^3.0.5"
+            }
+          }
+          EOF
+
+      # ============================================================
+      # INSTALL CAPACITOR
+      # ============================================================
+      - name: Install Capacitor
+        run: |
+          npm install
+
+      # ============================================================
+      # CHECK DELIVERY ICON
+      # ============================================================
+      - name: Check Delivery Icon
+        run: |
+          if [ ! -f "delivery-icon.png" ]; then
+            echo "ERROR: delivery-icon.png not found"
+            echo ""
+            echo "Available PNG files:"
+            find . -maxdepth 2 -type f -iname '*.png' -print
+            exit 1
+          fi
+
+          echo "Delivery icon found:"
+          ls -lh delivery-icon.png
+
+      # ============================================================
+      # PREPARE EXACT DELIVERY HTML
+      # ============================================================
+      - name: Prepare Delivery web files
+        shell: bash
+        run: |
+          set -e
+
+          rm -rf www
+          mkdir -p www
+
+          DELIVERY_HTML="Kumaoni-Potli-Delivery-FIXED.html"
+
+          if [ ! -f "$DELIVERY_HTML" ]; then
+            echo "ERROR: Delivery HTML file not found:"
+            echo "$DELIVERY_HTML"
+            echo ""
+            echo "Available Delivery HTML files:"
+            find . -maxdepth 2 -type f -iname '*delivery*.html' -print
+            exit 1
+          fi
+
+          echo "=========================================="
+          echo "USING EXACT DELIVERY HTML:"
+          echo "$DELIVERY_HTML"
+          echo "=========================================="
+
+          cp -- "$DELIVERY_HTML" www/index.html
+
+          echo ""
+          echo "Delivery web file prepared successfully:"
+          ls -lh www/index.html
+
+      # ============================================================
+      # CAPACITOR CONFIGURATION
+      # ============================================================
+      - name: Create Capacitor configuration
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.annapurna.delivery",
+            "appName": "Kumaoni Potli Delivery",
+            "webDir": "www",
+            "bundledWebRuntime": false
+          }
+          EOF
+
+          echo "Capacitor configuration:"
+          cat capacitor.config.json
+
+      # ============================================================
+      # ANDROID PLATFORM
+      # ============================================================
+      - name: Add Android platform
+        run: |
+          npx cap add android
+
+      # ============================================================
+      # DELIVERY APP ICON
+      # ============================================================
+      - name: Set Delivery App Icon
+        run: |
+          rm -rf resources
+          mkdir -p resources
+
+          cp delivery-icon.png resources/icon.png
+
+          echo "Delivery icon copied:"
+          ls -lh resources/icon.png
+
+      # ============================================================
+      # GENERATE APP ICON
+      # ============================================================
+      - name: Generate Delivery App Icon
+        run: |
+          npx capacitor-assets generate --android
+
+      # ============================================================
+      # FIREBASE CONFIGURATION
+      # ============================================================
+      - name: Copy Firebase configuration
+        run: |
+          if [ -f "google-services.json" ]; then
+            mkdir -p android/app
+            cp google-services.json android/app/google-services.json
+            echo "Firebase configuration copied successfully."
+          else
+            echo "ERROR: google-services.json not found"
+            echo ""
+            echo "Available Firebase files:"
+            find . -maxdepth 2 -type f -name 'google-services*.json' -print
+            exit 1
+          fi
+
+      # ============================================================
+      # VERIFY FIREBASE PACKAGE
+      # ============================================================
+      - name: Verify Delivery Firebase package
+        run: |
+          echo "Checking Firebase package..."
+
+          if grep -q '"package_name": "com.annapurna.delivery"' google-services.json; then
+            echo "Delivery Firebase package verified successfully."
+          else
+            echo "ERROR: com.annapurna.delivery is not registered in google-services.json"
+            echo ""
+            echo "Firebase package names found:"
+            grep -o '"package_name"[^,]*' google-services.json || true
+            exit 1
+          fi
+
+      # ============================================================
+      # LOCATION PERMISSIONS
+      # ============================================================
+      - name: Add Android location permissions
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          manifest = Path("android/app/src/main/AndroidManifest.xml")
+          text = manifest.read_text()
+
+          permissions = [
+              '    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
+              '    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />'
+          ]
+
+          additions = []
+
+          for permission in permissions:
+              if permission not in text:
+                  additions.append(permission)
+
+          if additions:
+              marker = "<manifest"
+              position = text.find(marker)
+
+              if position == -1:
+                  raise SystemExit("ERROR: <manifest> tag not found")
+
+              end = text.find(">", position)
+
+              if end == -1:
+                  raise SystemExit("ERROR: Opening <manifest> tag is invalid")
+
+              insert = "\n" + "\n".join(additions)
+
+              text = text[:end + 1] + insert + text[end + 1:]
+
+              manifest.write_text(text)
+
+          print("Location permissions configured successfully.")
+          PY
+
+      # ============================================================
+      # KOTLIN DUPLICATE CLASS FIX
+      # ============================================================
+      - name: Fix Kotlin duplicate classes
+        run: |
+          cat >> android/build.gradle <<'EOF'
+
+          configurations.all {
+              resolutionStrategy {
+                  force 'org.jetbrains.kotlin:kotlin-stdlib:2.0.21'
+              }
+          }
+          EOF
+
+          echo "Kotlin resolution strategy configured."
+
+      # ============================================================
+      # CAPACITOR SYNC
+      # ============================================================
+      - name: Sync Capacitor
+        run: |
+          npx cap sync android
+
+      # ============================================================
+      # VERIFY ANDROID PROJECT
+      # ============================================================
+      - name: Verify Android project
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew --version
+
+      # ============================================================
+      # BUILD DELIVERY APK
+      # ============================================================
+      - name: Build Delivery APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew clean assembleDebug --stacktrace
+
+      # ============================================================
+      # VERIFY APK
+      # ============================================================
+      - name: Verify APK
+        run: |
+          echo "Checking generated APK..."
+
+          ls -lh android/app/build/outputs/apk/debug/
+
+          test -f android/app/build/outputs/apk/debug/app-debug.apk
+
+          echo ""
+          echo "APK generated successfully:"
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
+
+      # ============================================================
+      # UPLOAD DELIVERY APK
+      # ============================================================
+      - name: Upload Delivery APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Kumaoni-Potli-Delivery-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
