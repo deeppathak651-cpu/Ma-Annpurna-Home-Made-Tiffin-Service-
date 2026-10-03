@@ -446,6 +446,60 @@ jobs:
 
 
       # ============================================================
+      # GENERATE FIREBASE SHA-1 / SHA-256
+      # ============================================================
+      - name: Generate Firebase SHA Fingerprints
+        working-directory: android
+        run: |
+          echo "============================================"
+          echo "KUMAONI POTLI CUSTOMER"
+          echo "FIREBASE SHA FINGERPRINTS"
+          echo "============================================"
+
+          chmod +x gradlew
+
+          echo ""
+          echo "========== GRADLE SIGNING REPORT =========="
+
+          ./gradlew signingReport
+
+          echo ""
+          echo "========== DEBUG KEYSTORE =========="
+
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+            echo "Debug keystore not found."
+            echo "Creating debug keystore..."
+
+            mkdir -p "$HOME/.android"
+
+            keytool -genkeypair \
+              -v \
+              -keystore "$HOME/.android/debug.keystore" \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
+          keytool -list -v \
+            -alias androiddebugkey \
+            -keystore "$HOME/.android/debug.keystore" \
+            -storepass android \
+            -keypass android \
+            | grep -E "Alias name:|SHA1:|SHA256:"
+
+          echo ""
+          echo "============================================"
+          echo "IMPORTANT:"
+          echo "Copy the SHA1 and SHA256 values from this log"
+          echo "and add them to Firebase Project Settings."
+          echo "============================================"
+
+
+      # ============================================================
       # PREPARE CUSTOMER ICON
       # ============================================================
       - name: Prepare Customer Icon
