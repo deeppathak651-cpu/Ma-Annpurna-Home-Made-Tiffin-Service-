@@ -1,0 +1,180 @@
+name: Build Kumaoni Potli Delivery APK
+
+on:
+  workflow_dispatch:
+
+  push:
+    paths:
+      - 'delivery.yml'
+      - 'Kumaoni-Potli-Delivery-CREATE-ACCOUNT-WORKING-FINAL.html'
+      - 'delivery-icon.png'
+
+jobs:
+  build:
+    name: Build Kumaoni Potli Delivery APK
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # =========================================================
+      # 1. CHECKOUT
+      # =========================================================
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      # =========================================================
+      # 2. NODE
+      # =========================================================
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+
+      # =========================================================
+      # 3. JAVA
+      # =========================================================
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+
+      # =========================================================
+      # 4. CREATE CAPACITOR PROJECT
+      # =========================================================
+      - name: Create Capacitor project
+        run: |
+          mkdir -p www
+
+          cp "Kumaoni-Potli-Delivery-CREATE-ACCOUNT-WORKING-FINAL.html" www/index.html
+
+          cat > package.json <<'EOF'
+          {
+            "name": "kumaoni-potli-delivery",
+            "version": "1.0.0",
+            "private": true,
+            "scripts": {
+              "build": "echo Kumaoni Potli Delivery"
+            },
+            "dependencies": {
+              "@capacitor/core": "^7.4.4",
+              "@capacitor/android": "^7.4.4",
+              "@capacitor/geolocation": "^7.1.0"
+            },
+            "devDependencies": {
+              "@capacitor/cli": "^7.4.4"
+            }
+          }
+          EOF
+
+          npm install
+
+
+      # =========================================================
+      # 5. CAPACITOR CONFIG
+      # =========================================================
+      - name: Create Capacitor config
+        run: |
+          cat > capacitor.config.ts <<'EOF'
+          import type { CapacitorConfig } from '@capacitor/cli';
+
+          const config: CapacitorConfig = {
+            appId: 'com.kumaonipotli.delivery',
+            appName: 'Kumaoni Potli Delivery',
+            webDir: 'www',
+            bundledWebRuntime: false
+          };
+
+          export default config;
+          EOF
+
+
+      # =========================================================
+      # 6. ADD ANDROID
+      # =========================================================
+      - name: Add Android platform
+        run: |
+          npx cap add android
+
+
+      # =========================================================
+      # 7. INSTALL / SYNC GEOLOCATION
+      # =========================================================
+      - name: Sync Capacitor
+        run: |
+          npx cap sync android
+
+
+      # =========================================================
+      # 8. ANDROID LOCATION PERMISSIONS
+      # =========================================================
+      - name: Add Android Location permissions
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/app/src/main/AndroidManifest.xml")
+          s = p.read_text()
+
+          permissions = [
+              '<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
+              '<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />'
+          ]
+
+          insert = "\n".join(
+              x for x in permissions
+              if x not in s
+          )
+
+          if insert:
+              s = s.replace("<manifest", "<manifest\n    " + insert, 1)
+
+          p.write_text(s)
+          PY
+
+
+      # =========================================================
+      # 9. MAKE SURE ANDROID LOCATION IS AVAILABLE
+      # =========================================================
+      - name: Verify Android manifest
+        run: |
+          echo "Checking Android location permissions..."
+          grep -n "ACCESS_FINE_LOCATION" android/app/src/main/AndroidManifest.xml
+          grep -n "ACCESS_COARSE_LOCATION" android/app/src/main/AndroidManifest.xml
+
+
+      # =========================================================
+      # 10. BUILD APK
+      # =========================================================
+      - name: Build Delivery APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+
+      # =========================================================
+      # 11. RENAME APK
+      # =========================================================
+      - name: Rename APK
+        run: |
+          mkdir -p release
+
+          cp android/app/build/outputs/apk/debug/app-debug.apk \
+             release/Kumaoni-Potli-Delivery.apk
+
+
+      # =========================================================
+      # 12. UPLOAD APK
+      # =========================================================
+      - name: Upload Kumaoni Potli Delivery APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Kumaoni-Potli-Delivery
+          path: release/Kumaoni-Potli-Delivery.apk
+          if-no-files-found: error
