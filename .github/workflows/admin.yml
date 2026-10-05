@@ -7,74 +7,174 @@ on:
       - main
 
 jobs:
-  build-admin-apk:
+  build:
     name: Build Admin APK
     runs-on: ubuntu-latest
 
     steps:
 
-      # 1. Source Code
+      # ==========================================
+      # 1. CHECKOUT SOURCE CODE
+      # ==========================================
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      # 2. Node.js
+
+      # ==========================================
+      # 2. SETUP NODE.JS
+      # ==========================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # 3. Java
-      - name: Setup Java 17
+
+      # ==========================================
+      # 3. SETUP JAVA
+      # ==========================================
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
-      # 4. Check files
-      - name: Check project files
+
+      # ==========================================
+      # 4. SETUP ANDROID SDK
+      # ==========================================
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+
+      # ==========================================
+      # 5. SHOW REPOSITORY FILES
+      # ==========================================
+      - name: Show repository files
         run: |
-          echo "===== PROJECT FILES ====="
-          ls -la
-          echo "===== ADMIN FILE ====="
-          if [ -f admin.html ]; then
-            echo "admin.html FOUND"
-          else
-            echo "ERROR: admin.html NOT FOUND"
+          echo "======================================"
+          echo "REPOSITORY FILES"
+          echo "======================================"
+
+          ls -lah
+
+          echo ""
+          echo "HTML FILES:"
+          ls -lah *.html || true
+
+
+      # ==========================================
+      # 6. SELECT CURRENT ADMIN HTML
+      # ==========================================
+      - name: Select current Admin HTML
+        run: |
+          set -e
+
+          echo "======================================"
+          echo "SELECTING CURRENT ADMIN PANEL"
+          echo "======================================"
+
+          ADMIN_FILE="Kumaoni-Potli-Admin-CONNECTED.html"
+
+          if [ ! -f "$ADMIN_FILE" ]; then
+            echo ""
+            echo "ERROR: $ADMIN_FILE was not found."
+            echo ""
+            echo "Available HTML files:"
+            ls -lah *.html || true
             exit 1
           fi
 
-      # 5. Create web folder
-      - name: Prepare web files
-        run: |
+          echo ""
+          echo "Admin file found:"
+          echo "$ADMIN_FILE"
+
           rm -rf www
           mkdir -p www
-          cp admin.html www/index.html
 
-          echo "===== WWW FILES ====="
-          ls -la www
+          cp "$ADMIN_FILE" www/index.html
 
-      # 6. Create package.json if missing
+          echo ""
+          echo "Admin panel copied successfully."
+
+          ls -lah www
+
+
+      # ==========================================
+      # 7. VERIFY ADMIN HTML
+      # ==========================================
+      - name: Verify current Admin Panel
+        run: |
+          set -e
+
+          echo "======================================"
+          echo "VERIFYING ADMIN PANEL"
+          echo "======================================"
+
+          if [ ! -f "www/index.html" ]; then
+            echo "ERROR: www/index.html not found."
+            exit 1
+          fi
+
+          FILE_SIZE=$(stat -c%s "www/index.html")
+
+          echo "Admin HTML size: $FILE_SIZE bytes"
+
+          if [ "$FILE_SIZE" -lt 1000 ]; then
+            echo "ERROR: Admin HTML appears too small."
+            exit 1
+          fi
+
+          echo "Admin HTML verification successful."
+
+
+      # ==========================================
+      # 8. CREATE NODE PROJECT
+      # ==========================================
       - name: Prepare Node project
         run: |
+          set -e
+
+          echo "======================================"
+          echo "PREPARING NODE PROJECT"
+          echo "======================================"
+
           if [ ! -f package.json ]; then
             npm init -y
           fi
 
           cat package.json
 
-      # 7. Install Capacitor
+
+      # ==========================================
+      # 9. INSTALL CAPACITOR
+      # ==========================================
       - name: Install Capacitor
         run: |
+          set -e
+
+          echo "======================================"
+          echo "INSTALLING CAPACITOR"
+          echo "======================================"
+
           npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
 
-      # 8. Create Capacitor config
+
+      # ==========================================
+      # 10. CREATE CAPACITOR CONFIG
+      # ==========================================
       - name: Create Capacitor config
         run: |
+          set -e
+
+          echo "======================================"
+          echo "CREATING CAPACITOR CONFIG"
+          echo "======================================"
+
           cat > capacitor.config.ts <<'EOF'
           import type { CapacitorConfig } from '@capacitor/cli';
 
           const config: CapacitorConfig = {
-            appId: 'com.kumaonijayka.admin',
+            appId: 'com.kumaonipotli.admin',
             appName: 'Kumaoni Potli Admin',
             webDir: 'www',
             bundledWebRuntime: false
@@ -85,58 +185,132 @@ jobs:
 
           cat capacitor.config.ts
 
-      # 9. Create Android project
-      - name: Create Android project
+
+      # ==========================================
+      # 11. CREATE ANDROID PROJECT
+      # ==========================================
+      - name: Create Capacitor Android project
         run: |
+          set -e
+
+          echo "======================================"
+          echo "CREATING ANDROID PROJECT"
+          echo "======================================"
+
           npx cap add android
 
-      # 10. Copy web files
-      - name: Sync web files
+
+      # ==========================================
+      # 12. COPY ADMIN WEB FILES
+      # ==========================================
+      - name: Copy Admin web files
         run: |
+          set -e
+
+          echo "======================================"
+          echo "COPYING ADMIN WEB FILES"
+          echo "======================================"
+
           npx cap copy android
 
-      # 11. Sync Capacitor
+
+      # ==========================================
+      # 13. SYNC CAPACITOR
+      # ==========================================
       - name: Sync Capacitor
         run: |
+          set -e
+
+          echo "======================================"
+          echo "SYNCING CAPACITOR"
+          echo "======================================"
+
           npx cap sync android
 
-      # 12. Give Gradle permission
+
+      # ==========================================
+      # 14. VERIFY ANDROID PROJECT
+      # ==========================================
+      - name: Verify Android project
+        run: |
+          set -e
+
+          echo "======================================"
+          echo "VERIFYING ANDROID PROJECT"
+          echo "======================================"
+
+          if [ ! -d "android" ]; then
+            echo "ERROR: Android project was not created."
+            exit 1
+          fi
+
+          if [ ! -f "android/gradlew" ]; then
+            echo "ERROR: Gradle wrapper not found."
+            exit 1
+          fi
+
+          ls -lah android
+
+
+      # ==========================================
+      # 15. MAKE GRADLE EXECUTABLE
+      # ==========================================
       - name: Make Gradle executable
         run: |
           chmod +x android/gradlew
 
-      # 13. Build APK
+
+      # ==========================================
+      # 16. VERIFY FIREBASE FILE
+      # ==========================================
+      - name: Check Firebase configuration
+        run: |
+          echo "======================================"
+          echo "CHECKING FIREBASE FILE"
+          echo "======================================"
+
+          if [ -f "google-services.json" ]; then
+            echo "google-services.json found."
+          else
+            echo "google-services.json not found."
+            echo "Continuing because current Admin HTML can use Firebase web configuration."
+          fi
+
+
+      # ==========================================
+      # 17. BUILD DEBUG APK
+      # ==========================================
       - name: Build Admin APK
         run: |
+          set -e
+
+          echo "======================================"
+          echo "BUILDING ADMIN APK"
+          echo "======================================"
+
           cd android
+
           ./gradlew assembleDebug --no-daemon
 
-      # 14. Find APK
-      - name: Find APK
-        run: |
-          echo "===== APK FILES ====="
-          find android -type f -name "*.apk"
 
-      # 15. Rename APK
-      - name: Rename Admin APK
-        run: |
-          mkdir -p output
-          cp android/app/build/outputs/apk/debug/app-debug.apk \
-             output/Kumaoni-Potli-Admin.apk
-
-          ls -lh output/Kumaoni-Potli-Admin.apk
-
-      # 16. Upload APK
-      - name: Upload Admin APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Kumaoni-Potli-Admin-APK
-          path: output/Kumaoni-Potli-Admin.apk
-          if-no-files-found: error
-
-      # 17. Finish
-      - name: Build Complete
+      # ==========================================
+      # 18. FIND APK
+      # ==========================================
+      - name: Find generated APK
         run: |
           echo "======================================"
-          echo "KUMAONI POTLI ADMIN APK BUILD DONE"
+          echo "GENERATED APK FILES"
           echo "======================================"
+
+          find android -type f -name "*.apk" -print
+
+
+      # ==========================================
+      # 19. PREPARE APK OUTPUT
+      # ==========================================
+      - name: Prepare Admin APK
+        run: |
+          set -e
+
+          echo "======================================"
+          echo "
