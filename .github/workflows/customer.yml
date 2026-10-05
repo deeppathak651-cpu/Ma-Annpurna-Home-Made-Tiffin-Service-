@@ -2,765 +2,82 @@ name: Build Kumaoni Potli Customer APK
 
 on:
   workflow_dispatch:
-
   push:
-    paths:
-      - '.github/workflows/customer.yml'
-      - 'Kumaoni-Potli-Customer-FIXED.html'
-      - 'customer-icon.png'
+    branches:
+      - main
 
 jobs:
   build:
-    name: Build Kumaoni Potli Customer APK
     runs-on: ubuntu-latest
 
     steps:
-
-      # ============================================================
-      # CHECKOUT
-      # ============================================================
       - name: Checkout source code
         uses: actions/checkout@v4
 
-
-      # ============================================================
-      # NODE.JS
-      # ============================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
 
-
-      # ============================================================
-      # JAVA
-      # ============================================================
-      - name: Setup Java
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '21'
 
-
-      # ============================================================
-      # CREATE PACKAGE.JSON
-      # ============================================================
-      - name: Create package.json
+      - name: Verify Customer HTML
         run: |
-          cat > package.json <<'EOF'
-          {
-            "name": "kumaoni-potli-customer",
-            "version": "1.0.0",
-            "private": true,
-            "dependencies": {
-              "@capacitor/core": "^7.4.3",
-              "@capacitor/cli": "^7.4.3",
-              "@capacitor/android": "^7.4.3",
-              "@capacitor/geolocation": "^7.1.0",
-              "@capacitor/assets": "^3.0.5"
-            },
-            "devDependencies": {
-              "esbuild": "^0.25.0"
-            }
-          }
-          EOF
+          CUSTOMER_FILE="Kumaoni-Potli-Customer-CONNECTED.html"
 
-
-      # ============================================================
-      # INSTALL PACKAGES
-      # ============================================================
-      - name: Install Capacitor and required packages
-        run: |
-          npm install
-          npm install @capacitor/assets --save-dev
-          npm install esbuild --save-dev
-
-
-      # ============================================================
-      # CHECK CUSTOMER HTML
-      # ============================================================
-      - name: Check Customer HTML
-        run: |
-          FILE="./Kumaoni-Potli-Customer-FIXED.html"
-
-          echo "============================================"
-          echo "CHECKING CUSTOMER HTML"
-          echo "============================================"
-
-          if [ ! -f "$FILE" ]; then
-            echo "ERROR: Customer HTML file not found:"
-            echo "$FILE"
-            echo ""
-            echo "HTML files currently found:"
-            find . -maxdepth 2 -type f -iname "*.html" -print
+          if [ ! -f "$CUSTOMER_FILE" ]; then
+            echo "ERROR: $CUSTOMER_FILE not found"
+            ls -la
             exit 1
           fi
 
-          echo "Customer HTML found:"
-          ls -lh "$FILE"
-
-          echo ""
-          echo "Customer HTML checksum:"
-          sha256sum "$FILE"
-
-
-      # ============================================================
-      # VERIFY FIRESTORE FOOD COLLECTION
-      # ============================================================
-      - name: Verify Customer Food Code
+      - name: Create Capacitor Project
         run: |
-          FILE="./Kumaoni-Potli-Customer-FIXED.html"
+          mkdir apk-build
+          mkdir apk-build/www
 
-          echo "============================================"
-          echo "VERIFYING CUSTOMER FOOD CODE"
-          echo "============================================"
+          cp "Kumaoni-Potli-Customer-CONNECTED.html" apk-build/www/index.html
 
-          if ! grep -q 'documents/kumaoniFoods' "$FILE"; then
-            echo "ERROR: Customer HTML is NOT using Firestore collection:"
-            echo "kumaoniFoods"
-            exit 1
-          fi
+          cd apk-build
 
-          echo "OK: Firestore collection 'kumaoniFoods' found."
+          npm init -y
 
-          echo ""
-          echo "Firestore endpoint:"
-          grep -n "documents/kumaoniFoods" "$FILE" || true
+          npm install @capacitor/core @capacitor/android
+          npm install -D @capacitor/cli
 
+          npx cap init \
+          "Kumaoni Potli Customer" \
+          "com.kumaonipotli.customer" \
+          --web-dir www
 
-      # ============================================================
-      # PREPARE CUSTOMER HTML
-      # ============================================================
-      - name: Prepare Customer HTML
+      - name: Add Android
         run: |
-          rm -rf www
-          mkdir -p www
-
-          cp "./Kumaoni-Potli-Customer-FIXED.html" "./www/index.html"
-
-          echo "============================================"
-          echo "CUSTOMER HTML COPIED TO APK"
-          echo "============================================"
-
-          ls -lh "./www/index.html"
-
-          echo ""
-          echo "Copied HTML checksum:"
-          sha256sum "./www/index.html"
-
-
-      # ============================================================
-      # CREATE NATIVE LOCATION BRIDGE
-      # ============================================================
-      - name: Create Native Location Bridge
-        run: |
-          cat > native-location.js <<'EOF'
-          import { Geolocation } from '@capacitor/geolocation';
-
-          window.KumaoniNativeLocation = {
-
-            async requestPermissions() {
-              return await Geolocation.requestPermissions({
-                permissions: ['location']
-              });
-            },
-
-            async checkPermissions() {
-              return await Geolocation.checkPermissions();
-            },
-
-            async getCurrentPosition(options = {}) {
-              return await Geolocation.getCurrentPosition({
-                enableHighAccuracy:
-                  options.enableHighAccuracy !== false,
-
-                timeout:
-                  Number(options.timeout || 20000),
-
-                maximumAge:
-                  Number(options.maximumAge || 0)
-              });
-            }
-
-          };
-          EOF
-
-          npx esbuild native-location.js \
-            --bundle \
-            --format=iife \
-            --platform=browser \
-            --outfile=www/native-location.js
-
-          echo "Native location bridge created:"
-          ls -lh www/native-location.js
-
-
-      # ============================================================
-      # CONNECT HTML TO NATIVE LOCATION
-      # ============================================================
-      - name: Connect Customer HTML To Native Location
-        run: |
-          python3 <<'PY'
-          from pathlib import Path
-
-          path = Path("www/index.html")
-          html = path.read_text(encoding="utf-8")
-
-          bridge = r'''
-          <script src="native-location.js"></script>
-
-          <script>
-          (function () {
-
-            try {
-
-              if (!window.KumaoniNativeLocation) {
-                console.warn(
-                  'Kumaoni Potli native location bridge unavailable.'
-                );
-                return;
-              }
-
-              const nativeLocation =
-                window.KumaoniNativeLocation;
-
-              if (!navigator.geolocation) {
-                console.warn(
-                  'Browser geolocation API unavailable.'
-                );
-                return;
-              }
-
-              navigator.geolocation.getCurrentPosition =
-                function(success, error, options) {
-
-                  const opts = options || {};
-
-                  nativeLocation.requestPermissions()
-
-                    .then(function(permission) {
-
-                      console.log(
-                        'Kumaoni Potli location permission:',
-                        permission
-                      );
-
-                      if (
-                        permission &&
-                        permission.location &&
-                        permission.location !== 'granted'
-                      ) {
-                        throw new Error(
-                          'LOCATION_PERMISSION_DENIED'
-                        );
-                      }
-
-                      return nativeLocation.getCurrentPosition({
-
-                        enableHighAccuracy:
-                          opts.enableHighAccuracy !== false,
-
-                        timeout:
-                          Number(
-                            opts.timeout || 20000
-                          ),
-
-                        maximumAge:
-                          Number(
-                            opts.maximumAge || 0
-                          )
-
-                      });
-
-                    })
-
-                    .then(function(position) {
-
-                      console.log(
-                        'Kumaoni Potli location:',
-                        position
-                      );
-
-                      if (
-                        typeof success === 'function'
-                      ) {
-
-                        success({
-
-                          coords: {
-
-                            latitude:
-                              position.coords.latitude,
-
-                            longitude:
-                              position.coords.longitude,
-
-                            accuracy:
-                              position.coords.accuracy,
-
-                            altitude:
-                              position.coords.altitude ??
-                              null,
-
-                            altitudeAccuracy:
-                              position.coords.altitudeAccuracy ??
-                              null,
-
-                            heading:
-                              position.coords.heading ??
-                              null,
-
-                            speed:
-                              position.coords.speed ??
-                              null
-
-                          },
-
-                          timestamp:
-                            position.timestamp ||
-                            Date.now()
-
-                        });
-
-                      }
-
-                    })
-
-                    .catch(function(err) {
-
-                      console.error(
-                        'Kumaoni Potli location error:',
-                        err
-                      );
-
-                      if (
-                        typeof error === 'function'
-                      ) {
-
-                        let code = 2;
-
-                        const message =
-                          String(
-                            err?.message ||
-                            err?.code ||
-                            ''
-                          ).toLowerCase();
-
-                        if (
-                          message.includes('permission') ||
-                          message.includes('denied')
-                        ) {
-                          code = 1;
-                        }
-
-                        if (
-                          message.includes('timeout')
-                        ) {
-                          code = 3;
-                        }
-
-                        error({
-
-                          code: code,
-
-                          message:
-                            err?.message ||
-                            'Unable to get current location.'
-
-                        });
-
-                      }
-
-                    });
-
-                };
-
-              console.log(
-                'Kumaoni Potli native Android location bridge active.'
-              );
-
-            }
-
-            catch (e) {
-
-              console.error(
-                'Kumaoni Potli location bridge failed:',
-                e
-              );
-
-            }
-
-          })();
-          </script>
-          '''
-
-          if "KumaoniNativeLocation" not in html:
-
-              if "</body>" in html:
-
-                  html = html.replace(
-                      "</body>",
-                      bridge + "\n</body>",
-                      1
-                  )
-
-              else:
-
-                  html += bridge
-
-          path.write_text(
-              html,
-              encoding="utf-8"
-          )
-          PY
-
-          echo "Native location bridge connected."
-
-          echo ""
-          echo "Checking location bridge:"
-          grep -n "KumaoniNativeLocation" \
-            www/index.html || true
-
-
-      # ============================================================
-      # CREATE CAPACITOR CONFIGURATION
-      # IMPORTANT:
-      # Firebase existing Customer Android App:
-      # com.annpurna.tiffin
-      # ============================================================
-      - name: Create Capacitor configuration
-        run: |
-          cat > capacitor.config.json <<'EOF'
-          {
-            "appId": "com.annpurna.tiffin",
-            "appName": "Kumaoni Potli",
-            "webDir": "www",
-            "bundledWebRuntime": false,
-            "server": {
-              "hostname": "localhost",
-              "androidScheme": "https"
-            }
-          }
-          EOF
-
-          echo "============================================"
-          echo "CAPACITOR CONFIGURATION"
-          echo "============================================"
-
-          cat capacitor.config.json
-
-
-      # ============================================================
-      # ADD ANDROID PLATFORM
-      # ============================================================
-      - name: Add Android platform
-        run: |
+          cd apk-build
           npx cap add android
 
-
-      # ============================================================
-      # PREPARE CUSTOMER ICON
-      # ============================================================
-      - name: Prepare Customer Icon
+      - name: Copy Web Files
         run: |
-          if [ ! -f "customer-icon.png" ]; then
-            echo "ERROR: customer-icon.png not found."
-            exit 1
-          fi
-
-          rm -rf resources
-          mkdir -p resources
-
-          cp customer-icon.png resources/icon.png
-
-          echo "Customer icon ready:"
-          ls -lh resources/icon.png
-
-
-      # ============================================================
-      # GENERATE ANDROID APP ICON
-      # ============================================================
-      - name: Generate Android App Icon
-        run: |
-          npx capacitor-assets generate --android
-
-
-      # ============================================================
-      # ADD ANDROID LOCATION PERMISSIONS
-      # ============================================================
-      - name: Add Android Location Permissions
-        run: |
-          MANIFEST="android/app/src/main/AndroidManifest.xml"
-
-          echo "============================================"
-          echo "ADDING ANDROID LOCATION PERMISSIONS"
-          echo "============================================"
-
-          python3 <<'PY'
-          from pathlib import Path
-
-          path = Path(
-              "android/app/src/main/AndroidManifest.xml"
-          )
-
-          text = path.read_text(
-              encoding="utf-8"
-          )
-
-          permissions = """
-              <uses-permission
-                  android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-              <uses-permission
-                  android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-              <uses-feature
-                  android:name="android.hardware.location.gps"
-                  android:required="false" />
-          """
-
-          if (
-              "android.permission.ACCESS_COARSE_LOCATION"
-              not in text
-          ):
-
-              text = text.replace(
-                  "</manifest>",
-                  permissions +
-                  "\n</manifest>",
-                  1
-              )
-
-          path.write_text(
-              text,
-              encoding="utf-8"
-          )
-          PY
-
-          echo "Android location permissions added."
-
-          echo ""
-          grep -n -E \
-            "ACCESS_COARSE_LOCATION|ACCESS_FINE_LOCATION|hardware.location.gps" \
-            "$MANIFEST" || true
-
-
-      # ============================================================
-      # SYNC CAPACITOR
-      # ============================================================
-      - name: Sync Capacitor
-        run: |
+          cd apk-build
+          npx cap copy android
           npx cap sync android
 
-
-      # ============================================================
-      # VERIFY ANDROID PACKAGE ID
-      # ============================================================
-      - name: Verify Customer Package ID
+      - name: Build APK
         run: |
-          echo "============================================"
-          echo "VERIFYING CUSTOMER PACKAGE ID"
-          echo "============================================"
-
-          if ! grep -R \
-            -q \
-            'com.annpurna.tiffin' \
-            android/app/src/main; then
-
-            echo "ERROR: Customer Package ID not found:"
-            echo "com.annpurna.tiffin"
-            exit 1
-          fi
-
-          echo "OK: Customer Package ID:"
-          echo "com.annpurna.tiffin"
-
-
-      # ============================================================
-      # VERIFY ANDROID LOCATION PERMISSIONS
-      # ============================================================
-      - name: Verify Android Location Permissions
-        run: |
-          FILE="android/app/src/main/AndroidManifest.xml"
-
-          echo "============================================"
-          echo "VERIFYING LOCATION PERMISSIONS"
-          echo "============================================"
-
-          if ! grep -q \
-            'android.permission.ACCESS_COARSE_LOCATION' \
-            "$FILE"; then
-
-            echo "ERROR: COARSE location permission missing."
-            exit 1
-          fi
-
-          if ! grep -q \
-            'android.permission.ACCESS_FINE_LOCATION' \
-            "$FILE"; then
-
-            echo "ERROR: FINE location permission missing."
-            exit 1
-          fi
-
-          echo "OK: COARSE location permission found."
-          echo "OK: FINE location permission found."
-
-
-      # ============================================================
-      # VERIFY PACKAGED CUSTOMER HTML
-      # ============================================================
-      - name: Verify packaged Customer HTML
-        run: |
-          FILE="android/app/src/main/assets/public/index.html"
-
-          echo "============================================"
-          echo "VERIFYING PACKAGED CUSTOMER HTML"
-          echo "============================================"
-
-          if [ ! -f "$FILE" ]; then
-            echo "ERROR: Packaged index.html not found."
-            exit 1
-          fi
-
-          echo "Packaged index.html:"
-          ls -lh "$FILE"
-
-          echo ""
-          echo "Checking Firestore collection..."
-
-          if ! grep -q \
-            'documents/kumaoniFoods' \
-            "$FILE"; then
-
-            echo "ERROR: APK package does not contain:"
-            echo "documents/kumaoniFoods"
-            exit 1
-          fi
-
-          echo "OK: Firestore collection found."
-
-          echo ""
-          echo "Checking native location bridge..."
-
-          if ! grep -q \
-            'KumaoniNativeLocation' \
-            "$FILE"; then
-
-            echo "ERROR: Native location bridge missing."
-            exit 1
-          fi
-
-          echo "OK: Native location bridge found."
-
-          echo ""
-          echo "Packaged HTML checksum:"
-          sha256sum "$FILE"
-
-
-      # ============================================================
-      # GENERATE FIREBASE SHA FINGERPRINTS
-      # ============================================================
-      - name: Generate Firebase SHA Fingerprints
-        working-directory: android
-        run: |
-          echo "============================================"
-          echo "KUMAONI POTLI CUSTOMER"
-          echo "FIREBASE SHA FINGERPRINTS"
-          echo "============================================"
-
-          echo ""
-          echo "Generating debug signing report..."
-
+          cd apk-build/android
           chmod +x gradlew
+          ./gradlew assembleDebug
 
-          ./gradlew signingReport || true
-
-          echo ""
-          echo "============================================"
-          echo "SHA FINGERPRINTS ABOVE"
-          echo "============================================"
-          echo ""
-          echo "Firebase Android App:"
-          echo "com.annpurna.tiffin"
-          echo ""
-          echo "Add SHA-1 and SHA-256 to this existing"
-          echo "Customer Android app in Firebase Project Settings."
-          echo "============================================"
-
-
-      # ============================================================
-      # BUILD CUSTOMER APK
-      # ============================================================
-      - name: Build Kumaoni Potli Customer APK
-        working-directory: android
+      - name: Rename APK
         run: |
-          chmod +x gradlew
+          cp apk-build/android/app/build/outputs/apk/debug/app-debug.apk \
+          Kumaoni-Potli-Customer.apk
 
-          ./gradlew \
-            clean \
-            assembleDebug \
-            --stacktrace
-
-
-      # ============================================================
-      # CHECK APK
-      # ============================================================
-      - name: Check Customer APK
-        run: |
-          APK="android/app/build/outputs/apk/debug/app-debug.apk"
-
-          echo "============================================"
-          echo "CHECKING CUSTOMER APK"
-          echo "============================================"
-
-          if [ ! -f "$APK" ]; then
-            echo "ERROR: APK not found:"
-            echo "$APK"
-            exit 1
-          fi
-
-          echo "APK successfully created:"
-          ls -lh "$APK"
-
-          echo ""
-          echo "APK SHA256:"
-          sha256sum "$APK"
-
-
-      # ============================================================
-      # RENAME APK
-      # ============================================================
-      - name: Rename Customer APK
-        run: |
-          mkdir -p release
-
-          APK="android/app/build/outputs/apk/debug/app-debug.apk"
-
-          if [ ! -f "$APK" ]; then
-            echo "ERROR: APK not found:"
-            echo "$APK"
-            exit 1
-          fi
-
-          cp \
-            "$APK" \
-            "release/Kumaoni-Potli-Customer.apk"
-
-          echo "============================================"
-          echo "FINAL CUSTOMER APK"
-          echo "============================================"
-
-          ls -lh \
-            "release/Kumaoni-Potli-Customer.apk"
-
-
-      # ============================================================
-      # UPLOAD APK
-      # ============================================================
-      - name: Upload Kumaoni Potli Customer APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Kumaoni-Potli-Customer-APK
-          path: release/Kumaoni-Potli-Customer.apk
-          if-no-files-found: error
+          path: Kumaoni-Potli-Customer.apk
