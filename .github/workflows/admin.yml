@@ -2,6 +2,9 @@ name: Build Kumaoni Potli Admin APK
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -9,379 +12,158 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-      # ============================================================
-      # CHECKOUT
-      # ============================================================
+      # 1. Checkout repository
       - name: Checkout source code
         uses: actions/checkout@v4
 
-
-      # ============================================================
-      # NODE.JS
-      # ============================================================
+      # 2. Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
+          cache: npm
 
-
-      # ============================================================
-      # JAVA
-      # ============================================================
-      - name: Setup Java
+      # 3. Java
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '21'
 
-
-      # ============================================================
-      # CREATE PACKAGE.JSON
-      # ============================================================
-      - name: Create package.json
-        run: |
-          cat > package.json <<'EOF'
-          {
-            "name": "kumaoni-potli-admin",
-            "version": "1.0.0",
-            "private": true,
-            "dependencies": {
-              "@capacitor/core": "^7.4.3",
-              "@capacitor/cli": "^7.4.3",
-              "@capacitor/android": "^7.4.3"
-            },
-            "devDependencies": {
-              "@capacitor/assets": "^3.0.5"
-            }
-          }
-          EOF
-
-
-      # ============================================================
-      # INSTALL CAPACITOR
-      # ============================================================
-      - name: Install Capacitor
-        run: |
-          npm install
-          npm install @capacitor/assets --save-dev
-
-
-      # ============================================================
-      # PREPARE ADMIN HTML
-      # ============================================================
-      - name: Prepare Admin HTML
+      # 4. Verify Admin HTML
+      - name: Verify Admin HTML
+        shell: bash
         run: |
           set -e
 
-          rm -rf www
-          mkdir -p www
+          echo "========================================"
+          echo "CHECKING KUMAONI POTLI ADMIN PANEL"
+          echo "========================================"
 
-          FILE="./Kumaoni-Potli-Admin-FIXED.html"
+          ADMIN_FILE="Kumaoni-Potli-Admin-CONNECTED.html"
 
-          echo "============================================"
-          echo "CHECKING CURRENT ADMIN HTML"
-          echo "============================================"
-
-          if [ ! -f "$FILE" ]; then
-            echo "ERROR: Admin HTML file not found:"
-            echo "$FILE"
+          if [ ! -f "$ADMIN_FILE" ]; then
+            echo "ERROR: $ADMIN_FILE was not found."
             echo ""
-            echo "Available HTML files:"
-            find . -maxdepth 2 -type f -iname "*.html" -print
+            echo "Files in repository:"
+            ls -la
             exit 1
           fi
 
-          echo "Using Admin file:"
-          echo "$FILE"
+          echo "Found: $ADMIN_FILE"
+          echo "Admin HTML size:"
+          wc -c "$ADMIN_FILE"
 
-          cp "$FILE" www/index.html
-
-          echo ""
-          echo "Admin index.html:"
-          ls -lh www/index.html
-
-
-      # ============================================================
-      # VERIFY ADMIN PANEL
-      # ============================================================
-      - name: Verify Admin Panel
+      # 5. Create Capacitor project
+      - name: Create Capacitor project
+        shell: bash
         run: |
           set -e
 
-          FILE="./Kumaoni-Potli-Admin-FIXED.html"
+          rm -rf apk-build
+          mkdir -p apk-build/www
 
-          echo "============================================"
-          echo "VERIFYING ADMIN PANEL"
-          echo "============================================"
+          cp "Kumaoni-Potli-Admin-CONNECTED.html" \
+             "apk-build/www/index.html"
 
-          if ! grep -qi "Kumaoni Potli" "$FILE"; then
-            echo "ERROR: Kumaoni Potli branding not found."
-            exit 1
-          fi
+          cd apk-build
 
-          if ! grep -qi "Select Admin Page" "$FILE"; then
-            echo "ERROR: Select Admin Page not found."
-            exit 1
-          fi
+          npm init -y
 
-          if ! grep -qi "Menu Management" "$FILE"; then
-            echo "ERROR: Menu Management not found."
-            exit 1
-          fi
+          npm install \
+            @capacitor/core \
+            @capacitor/android
 
-          echo "Admin Panel verification successful."
+          npm install -D \
+            @capacitor/cli
 
+          npx cap init \
+            "Kumaoni Potli Admin" \
+            "com.kumaonipotli.admin" \
+            --web-dir www
 
-      # ============================================================
-      # CREATE CAPACITOR CONFIGURATION
-      # ============================================================
-      - name: Create Capacitor configuration
+      # 6. Add Android
+      - name: Create Android project
+        shell: bash
         run: |
-          cat > capacitor.config.json <<'EOF'
-          {
-            "appId": "com.annapurna.admin",
-            "appName": "Kumaoni Potli Admin",
-            "webDir": "www",
-            "bundledWebRuntime": false
-          }
-          EOF
+          set -e
 
+          cd apk-build
 
-      # ============================================================
-      # ADD ANDROID PLATFORM
-      # ============================================================
-      - name: Add Android platform
-        run: |
-          rm -rf android
           npx cap add android
 
-
-      # ============================================================
-      # ADMIN APP ICON
-      # ============================================================
-      - name: Set Admin Panel App Icon
+      # 7. Configure Android
+      - name: Configure Android
+        shell: bash
         run: |
           set -e
 
-          if [ ! -f "admin-icon.png" ]; then
-            echo "ERROR: admin-icon.png not found."
-            exit 1
+          cd apk-build
+
+          echo "Configuring Android application..."
+
+          # Make sure app name is correct
+          if [ -f "android/app/src/main/res/values/strings.xml" ]; then
+            sed -i \
+              's#<string name="app_name">.*</string>#<string name="app_name">Kumaoni Potli Admin</string>#' \
+              android/app/src/main/res/values/strings.xml || true
           fi
 
-          rm -rf resources
-          mkdir -p resources
-
-          cp admin-icon.png resources/icon.png
-
-          npx capacitor-assets generate --android
-
-          echo "Admin icon generated successfully."
-
-
-      # ============================================================
-      # COPY FIREBASE CONFIGURATION
-      # ============================================================
-      - name: Copy Firebase configuration
+      # 8. Copy web files
+      - name: Sync web files
+        shell: bash
         run: |
           set -e
 
-          if [ ! -f "google-services.json" ]; then
-            echo "ERROR: google-services.json not found."
-            exit 1
-          fi
+          cd apk-build
 
-          mkdir -p android/app
+          npx cap copy android
 
-          cp google-services.json \
-             android/app/google-services.json
-
-          echo "google-services.json copied successfully."
-
-
-      # ============================================================
-      # VERIFY ADMIN FIREBASE PACKAGE
-      # ============================================================
-      - name: Verify Admin Firebase package
-        run: |
-          set -e
-
-          echo "Firebase Android packages:"
-
-          grep -n "package_name" \
-            google-services.json || true
-
-          if grep -q \
-            '"package_name"[[:space:]]*:[[:space:]]*"com.annapurna.admin"' \
-            google-services.json; then
-
-            echo "Admin Firebase package verified successfully."
-
-          else
-
-            echo "ERROR: com.annapurna.admin is missing from google-services.json"
-            exit 1
-
-          fi
-
-
-      # ============================================================
-      # FIX KOTLIN DUPLICATE CLASSES
-      # ============================================================
-      - name: Fix Kotlin duplicate classes
-        run: |
-          cat >> android/build.gradle <<'EOF'
-
-          configurations.all {
-              resolutionStrategy {
-                  force 'org.jetbrains.kotlin:kotlin-stdlib:2.0.21'
-              }
-          }
-          EOF
-
-
-      # ============================================================
-      # SYNC CAPACITOR
-      # ============================================================
+      # 9. Sync Capacitor
       - name: Sync Capacitor
+        shell: bash
         run: |
+          set -e
+
+          cd apk-build
+
           npx cap sync android
 
-
-      # ============================================================
-      # VERIFY ADMIN ANDROID PROJECT
-      # ============================================================
-      - name: Verify Admin Android project
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew --version
-
-
-      # ============================================================
-      # GENERATE FIREBASE SHA FINGERPRINTS
-      # ============================================================
-      - name: Generate Firebase SHA Fingerprints
-        working-directory: android
+      # 10. Build Debug APK
+      - name: Build Admin APK
+        shell: bash
         run: |
           set -e
 
-          echo "============================================"
-          echo "KUMAONI POTLI ADMIN"
-          echo "FIREBASE SHA FINGERPRINTS"
-          echo "============================================"
-
-          # Gradle is looking for this exact location
-          KEYSTORE_DIR="$HOME/.config/.android"
-          KEYSTORE="$KEYSTORE_DIR/debug.keystore"
-
-          mkdir -p "$KEYSTORE_DIR"
-
-          echo ""
-          echo "Keystore path:"
-          echo "$KEYSTORE"
-          echo ""
-
-          # Create debug keystore
-          if [ ! -f "$KEYSTORE" ]; then
-
-            echo "Creating debug keystore..."
-
-            keytool -genkeypair -v \
-              -keystore "$KEYSTORE" \
-              -storepass android \
-              -keypass android \
-              -alias AndroidDebugKey \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000 \
-              -dname "CN=Android Debug,O=Android,C=US"
-
-          else
-
-            echo "Debug keystore already exists."
-
-          fi
-
-          echo ""
-          echo "============================================"
-          echo "CHECKING DEBUG KEYSTORE"
-          echo "============================================"
-
-          keytool -list -v \
-            -keystore "$KEYSTORE" \
-            -storepass android \
-            -alias AndroidDebugKey
-
-          echo ""
-          echo "============================================"
-          echo "GENERATING SIGNING REPORT"
-          echo "============================================"
-          echo ""
+          cd apk-build/android
 
           chmod +x gradlew
 
-          ./gradlew signingReport
+          ./gradlew assembleDebug
 
-          echo ""
-          echo "============================================"
-          echo "SHA FINGERPRINTS ABOVE"
-          echo "Firebase Android App:"
-          echo "com.annapurna.admin"
-          echo "============================================"
-
-
-      # ============================================================
-      # BUILD ADMIN APK
-      # ============================================================
-      - name: Build Kumaoni Potli Admin APK
-        working-directory: android
+      # 11. Rename APK
+      - name: Rename Admin APK
+        shell: bash
         run: |
-          chmod +x gradlew
-          ./gradlew clean assembleDebug --stacktrace
+          set -e
 
+          APK_PATH="apk-build/android/app/build/outputs/apk/debug/app-debug.apk"
 
-      # ============================================================
-      # VERIFY APK
-      # ============================================================
-      - name: Verify Admin APK
-        run: |
-          APK="android/app/build/outputs/apk/debug/app-debug.apk"
-
-          if [ ! -f "$APK" ]; then
-            echo "ERROR: Admin APK was not created."
+          if [ ! -f "$APK_PATH" ]; then
+            echo "ERROR: APK was not generated."
             exit 1
           fi
 
-          echo "============================================"
-          echo "ADMIN APK CREATED SUCCESSFULLY"
-          echo "============================================"
+          cp "$APK_PATH" \
+             "Kumaoni-Potli-Admin.apk"
 
-          ls -lh "$APK"
+          echo "APK created successfully:"
+          ls -lh Kumaoni-Potli-Admin.apk
 
-
-      # ============================================================
-      # RENAME APK
-      # ============================================================
-      - name: Rename Admin APK
-        run: |
-          set -e
-
-          cp \
-            android/app/build/outputs/apk/debug/app-debug.apk \
-            android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
-
-          echo "Final APK:"
-          ls -lh \
-            android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
-
-
-      # ============================================================
-      # UPLOAD APK
-      # ============================================================
-      - name: Upload Kumaoni Potli Admin APK
+      # 12. Upload APK
+      - name: Upload Admin APK
         uses: actions/upload-artifact@v4
         with:
           name: Kumaoni-Potli-Admin-APK
-          path: android/app/build/outputs/apk/debug/Kumaoni-Potli-Admin.apk
+          path: Kumaoni-Potli-Admin.apk
           if-no-files-found: error
