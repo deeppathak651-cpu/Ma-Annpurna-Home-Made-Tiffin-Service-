@@ -11,29 +11,30 @@ permissions:
 
 jobs:
   build:
-    name: Build Admin Android APK
+    name: Build Kumaoni Potli Admin APK
     runs-on: ubuntu-latest
 
     steps:
 
       # ============================================================
-      # 1. CHECKOUT SOURCE CODE
+      # 1. CHECKOUT
       # ============================================================
       - name: Checkout source code
         uses: actions/checkout@v4
 
 
       # ============================================================
-      # 2. SETUP NODE.JS
+      # 2. NODE.JS
       # ============================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
 
       # ============================================================
-      # 3. SETUP JAVA 21
+      # 3. JAVA 21
       # ============================================================
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -43,85 +44,74 @@ jobs:
 
 
       # ============================================================
-      # 4. CONFIGURE ANDROID SDK
+      # 4. ANDROID SDK
       # ============================================================
       - name: Setup Android SDK
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
           echo "SETTING UP ANDROID SDK"
           echo "========================================"
 
-          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
 
-          echo "Android SDK:"
-          echo "$SDK"
-
-          if [ ! -d "$SDK" ]; then
-            echo "ERROR: Android SDK not found."
-            exit 1
+          if [ -z "$ANDROID_HOME" ]; then
+            export ANDROID_HOME="$ANDROID_SDK_ROOT"
           fi
 
-          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
-          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+          if [ -z "$ANDROID_SDK_ROOT" ]; then
+            export ANDROID_SDK_ROOT="$ANDROID_HOME"
+          fi
 
-          echo "$SDK/platform-tools" >> "$GITHUB_PATH"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
 
           echo ""
           echo "Searching for sdkmanager..."
 
-          SDKMANAGER=$(find "$SDK/cmdline-tools" \
+          SDKMANAGER=$(find "$ANDROID_SDK_ROOT/cmdline-tools" \
             -type f \
             -name sdkmanager \
-            -print \
-            -quit 2>/dev/null || true)
+            2>/dev/null | head -n 1 || true)
 
           if [ -z "$SDKMANAGER" ]; then
             echo "ERROR: sdkmanager not found."
-
-            find "$SDK/cmdline-tools" \
-              -maxdepth 5 \
-              -type f \
-              -name sdkmanager \
-              -print || true
-
+            find "$ANDROID_SDK_ROOT" -maxdepth 5 -type f \
+              -name sdkmanager -print || true
             exit 1
           fi
 
-          echo ""
           echo "sdkmanager found:"
           echo "$SDKMANAGER"
 
-          SDKMANAGER_DIR="$(dirname "$SDKMANAGER")"
+          # Fix GitHub runner permission problem
+          chmod +x "$SDKMANAGER"
 
-          echo "$SDKMANAGER_DIR" >> "$GITHUB_PATH"
-
-          echo ""
-          echo "Checking sdkmanager..."
-
-          bash "$SDKMANAGER" --version
+          # Also fix all command line tools
+          chmod -R u+rwX "$ANDROID_SDK_ROOT/cmdline-tools" || true
 
           echo ""
-          echo "Accepting Android SDK licenses..."
+          echo "Accepting Android licenses..."
 
-          yes | bash "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
 
           echo ""
           echo "Installing required Android packages..."
 
-          bash "$SDKMANAGER" \
+          "$SDKMANAGER" \
             "platform-tools" \
             "platforms;android-35" \
             "build-tools;35.0.0"
 
           echo ""
-          echo "Android SDK setup completed successfully."
+          echo "Android SDK setup completed."
 
 
       # ============================================================
-      # 5. SHOW REPOSITORY FILES
+      # 5. SHOW REPOSITORY
       # ============================================================
       - name: Show repository files
         shell: bash
@@ -129,15 +119,11 @@ jobs:
           set -e
 
           echo "========================================"
-          echo "KUMAONI POTLI ADMIN BUILD"
+          echo "KUMAONI POTLI ADMIN"
           echo "========================================"
 
           echo ""
           echo "Repository root:"
-          pwd
-
-          echo ""
-          echo "Repository files:"
           ls -lah
 
           echo ""
@@ -146,9 +132,15 @@ jobs:
             -iname "*.html" \
             -print
 
+          echo ""
+          echo "PNG files:"
+          find . -maxdepth 2 -type f \
+            -iname "*.png" \
+            -print
+
 
       # ============================================================
-      # 6. SELECT CURRENT ADMIN HTML
+      # 6. SELECT ADMIN HTML
       # ============================================================
       - name: Select Admin HTML
         shell: bash
@@ -166,69 +158,66 @@ jobs:
             echo "ERROR: Admin HTML not found:"
             echo "$ADMIN_HTML"
             echo ""
-            echo "Available HTML files:"
-            find . -maxdepth 1 -type f \
-              -iname "*.html" \
+            echo "Available Admin HTML files:"
+            find . -maxdepth 2 -type f \
+              -iname "*admin*.html" \
               -print
-
             exit 1
           fi
 
           echo ""
           echo "Admin HTML found:"
-          echo "$ADMIN_HTML"
+          ls -lh "$ADMIN_HTML"
 
-          mkdir -p www
-
-          cp "$ADMIN_HTML" "www/index.html"
+          cp "$ADMIN_HTML" index.html
 
           echo ""
-          echo "Admin panel copied to:"
-          echo "www/index.html"
-
-          test -s "www/index.html"
-
-          ls -lh "www/index.html"
+          echo "Created:"
+          ls -lh index.html
 
 
       # ============================================================
-      # 7. COPY ADMIN ASSETS
+      # 7. PREPARE WEB DIRECTORY
       # ============================================================
-      - name: Copy Admin assets
+      - name: Prepare Admin web files
         shell: bash
         run: |
           set -e
 
           echo "========================================"
-          echo "COPYING ADMIN ASSETS"
+          echo "PREPARING ADMIN WEB FILES"
           echo "========================================"
 
-          # Copy image files from repository root
-          find . -maxdepth 1 -type f \
-            \( \
-              -iname "*.png" \
-              -o -iname "*.jpg" \
-              -o -iname "*.jpeg" \
-              -o -iname "*.webp" \
-              -o -iname "*.gif" \
-              -o -iname "*.svg" \
-              -o -iname "*.ico" \
-            \) \
-            -exec cp -f {} www/ \;
+          rm -rf www
+          mkdir -p www
 
-          # Copy CSS and JavaScript files from root
+          cp index.html www/index.html
+
+          # Copy all common web assets
           find . -maxdepth 1 -type f \
             \( \
-              -iname "*.css" \
-              -o -iname "*.js" \
+              -name "*.png" \
+              -o -name "*.jpg" \
+              -o -name "*.jpeg" \
+              -o -name "*.webp" \
+              -o -name "*.gif" \
+              -o -name "*.svg" \
+              -o -name "*.ico" \
+              -o -name "*.css" \
+              -o -name "*.js" \
             \) \
             -exec cp -f {} www/ \;
 
           echo ""
-          echo "Prepared web files:"
+          echo "Prepared web directory:"
           find www -maxdepth 1 -type f -print
 
-          test -s "www/index.html"
+          echo ""
+          echo "Checking index.html..."
+
+          test -s www/index.html
+
+          echo "Admin HTML is ready."
 
 
       # ============================================================
@@ -240,7 +229,7 @@ jobs:
           set -e
 
           echo "========================================"
-          echo "CREATING CAPACITOR PACKAGE"
+          echo "CREATING CAPACITOR PROJECT"
           echo "========================================"
 
           cat > package.json <<'EOF'
@@ -250,11 +239,13 @@ jobs:
             "private": true,
             "description": "Kumaoni Potli Admin Panel",
             "scripts": {
-              "build": "echo Kumaoni Potli Admin build"
+              "build": "echo Kumaoni Potli Admin"
             },
             "dependencies": {
               "@capacitor/core": "^7.4.3",
-              "@capacitor/android": "^7.4.3",
+              "@capacitor/android": "^7.4.3"
+            },
+            "devDependencies": {
               "@capacitor/cli": "^7.4.3"
             }
           }
@@ -262,9 +253,11 @@ jobs:
 
           npm install
 
+          echo "Capacitor packages installed."
+
 
       # ============================================================
-      # 9. INITIALIZE CAPACITOR
+      # 9. CREATE CAPACITOR CONFIG
       # ============================================================
       - name: Configure Capacitor
         shell: bash
@@ -275,17 +268,53 @@ jobs:
           echo "CONFIGURING CAPACITOR"
           echo "========================================"
 
+          cat > capacitor.config.ts <<'EOF'
+          import type { CapacitorConfig } from '@capacitor/cli';
+
+          const config: CapacitorConfig = {
+            appId: 'com.kumaonipotli.admin',
+            appName: 'Kumaoni Potli Admin',
+            webDir: 'www',
+            bundledWebRuntime: false,
+
+            server: {
+              androidScheme: 'https'
+            },
+
+            android: {
+              allowMixedContent: true,
+              backgroundColor: '#F5FAF6'
+            }
+          };
+
+          export default config;
+          EOF
+
+          echo "Capacitor configuration created."
+
+
+      # ============================================================
+      # 10. INITIALIZE CAPACITOR
+      # ============================================================
+      - name: Initialize Capacitor
+        shell: bash
+        run: |
+          set -e
+
+          echo "========================================"
+          echo "INITIALIZING CAPACITOR"
+          echo "========================================"
+
           npx cap init \
             "Kumaoni Potli Admin" \
             "com.kumaonipotli.admin" \
             --web-dir=www
 
-          echo ""
-          echo "Capacitor configured successfully."
+          echo "Capacitor initialized."
 
 
       # ============================================================
-      # 10. ADD ANDROID PLATFORM
+      # 11. ADD ANDROID
       # ============================================================
       - name: Add Android platform
         shell: bash
@@ -298,30 +327,248 @@ jobs:
 
           npx cap add android
 
-          echo ""
-          echo "Android platform added successfully."
+          echo "Android platform added."
 
 
       # ============================================================
-      # 11. SYNC ADMIN APP
+      # 12. COPY WEB FILES
       # ============================================================
-      - name: Sync Admin app
+      - name: Copy Admin web files
         shell: bash
         run: |
           set -e
 
           echo "========================================"
-          echo "SYNCING KUMAONI POTLI ADMIN"
+          echo "COPYING ADMIN WEB FILES"
+          echo "========================================"
+
+          npx cap copy android
+
+          echo ""
+          echo "Checking final Android web files..."
+
+          test -s \
+            android/app/src/main/assets/public/index.html
+
+          echo "Admin HTML copied successfully."
+
+
+      # ============================================================
+      # 13. ADMIN APP LOGO
+      # ============================================================
+      - name: Configure Admin App Logo
+        shell: bash
+        run: |
+          set -e
+
+          echo "========================================"
+          echo "CONFIGURING KUMAONI POTLI ADMIN LOGO"
+          echo "========================================"
+
+          ICON_SOURCE="admin-icon.png"
+
+          if [ ! -f "$ICON_SOURCE" ]; then
+            echo "WARNING: admin-icon.png not found."
+            echo "Default Capacitor icon will be kept."
+            exit 0
+          fi
+
+          echo "Admin icon found:"
+          ls -lh "$ICON_SOURCE"
+
+          mkdir -p android/app/src/main/res/drawable
+
+          cp "$ICON_SOURCE" \
+            android/app/src/main/res/drawable/kumaoni_potli_admin_logo.png
+
+          echo "Admin logo copied."
+
+
+      # ============================================================
+      # 14. SET APP NAME
+      # ============================================================
+      - name: Set Kumaoni Potli Admin App Name
+        shell: bash
+        run: |
+          set -e
+
+          echo "========================================"
+          echo "SETTING APP NAME"
+          echo "========================================"
+
+          STRINGS_FILE="android/app/src/main/res/values/strings.xml"
+
+          if [ ! -f "$STRINGS_FILE" ]; then
+            mkdir -p android/app/src/main/res/values
+
+            cat > "$STRINGS_FILE" <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="app_name">Kumaoni Potli Admin</string>
+              <string name="title_activity_main">Kumaoni Potli Admin</string>
+          </resources>
+          EOF
+
+          else
+
+            python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path("android/app/src/main/res/values/strings.xml")
+          s = p.read_text(encoding="utf-8")
+
+          if re.search(r'<string name="app_name">.*?</string>', s):
+              s = re.sub(
+                  r'<string name="app_name">.*?</string>',
+                  '<string name="app_name">Kumaoni Potli Admin</string>',
+                  s
+              )
+          else:
+              s = s.replace(
+                  '</resources>',
+                  '    <string name="app_name">Kumaoni Potli Admin</string>\n</resources>'
+              )
+
+          p.write_text(s, encoding="utf-8")
+          PY
+
+          fi
+
+          echo ""
+          cat "$STRINGS_FILE"
+
+
+      # ============================================================
+      # 15. ANDROID MANIFEST / PERMISSIONS
+      # ============================================================
+      - name: Configure Android permissions
+        shell: bash
+        run: |
+          set -e
+
+          echo "========================================"
+          echo "CONFIGURING ANDROID PERMISSIONS"
+          echo "========================================"
+
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+
+          if [ ! -f "$MANIFEST" ]; then
+            echo "ERROR: AndroidManifest.xml not found."
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/app/src/main/AndroidManifest.xml")
+          s = p.read_text(encoding="utf-8")
+
+          permissions = [
+              '<uses-permission android:name="android.permission.INTERNET" />',
+              '<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />',
+              '<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
+              '<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />'
+          ]
+
+          for perm in permissions:
+              if perm not in s:
+                  s = s.replace(
+                      '<manifest',
+                      '<manifest',
+                      1
+                  )
+                  first_end = s.find('>')
+                  if first_end != -1:
+                      s = (
+                          s[:first_end + 1]
+                          + '\n    '
+                          + perm
+                          + s[first_end + 1:]
+                      )
+
+          p.write_text(s, encoding="utf-8")
+          PY
+
+          echo "Android permissions configured."
+
+
+      # ============================================================
+      # 16. CONFIGURE GRADLE SDK
+      # ============================================================
+      - name: Configure Android SDK version
+        shell: bash
+        run: |
+          set -e
+
+          echo "========================================"
+          echo "CONFIGURING ANDROID SDK VERSION"
+          echo "========================================"
+
+          GRADLE_FILE="android/app/build.gradle"
+
+          if [ ! -f "$GRADLE_FILE" ]; then
+            echo "ERROR: app/build.gradle not found."
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/app/build.gradle")
+          s = p.read_text(encoding="utf-8")
+
+          if "compileSdk" in s:
+              import re
+              s = re.sub(
+                  r'compileSdk\s*=\s*\d+',
+                  'compileSdk = 35',
+                  s
+              )
+              s = re.sub(
+                  r'compileSdk\s+\d+',
+                  'compileSdk 35',
+                  s
+              )
+
+          if "targetSdk" in s:
+              import re
+              s = re.sub(
+                  r'targetSdk\s*=\s*\d+',
+                  'targetSdk = 35',
+                  s
+              )
+              s = re.sub(
+                  r'targetSdk\s+\d+',
+                  'targetSdk 35',
+                  s
+              )
+
+          p.write_text(s, encoding="utf-8")
+          PY
+
+          echo "Android SDK configuration completed."
+
+
+      # ============================================================
+      # 17. SYNC CAPACITOR
+      # ============================================================
+      - name: Sync Capacitor
+        shell: bash
+        run: |
+          set -e
+
+          echo "========================================"
+          echo "SYNCING CAPACITOR"
           echo "========================================"
 
           npx cap sync android
 
-          echo ""
-          echo "Admin app synchronized successfully."
+          echo "Capacitor sync completed."
 
 
       # ============================================================
-      # 12. VERIFY FINAL ADMIN HTML
+      # 18. VERIFY WEB FILE
       # ============================================================
       - name: Verify final Admin HTML
         shell: bash
@@ -329,79 +576,22 @@ jobs:
           set -e
 
           echo "========================================"
-          echo "VERIFYING FINAL ADMIN HTML"
+          echo "VERIFYING ADMIN HTML"
           echo "========================================"
 
-          ADMIN_WEB="android/app/src/main/assets/public/index.html"
+          FILE="android/app/src/main/assets/public/index.html"
 
-          if [ ! -f "$ADMIN_WEB" ]; then
-            echo "ERROR: Admin index.html was not copied."
-            exit 1
-          fi
+          test -s "$FILE"
 
-          if [ ! -s "$ADMIN_WEB" ]; then
-            echo "ERROR: Admin index.html is empty."
-            exit 1
-          fi
+          echo "Admin HTML:"
+          ls -lh "$FILE"
 
           echo ""
-          echo "Admin HTML successfully copied."
-
-          ls -lh "$ADMIN_WEB"
+          echo "HTML verification successful."
 
 
       # ============================================================
-      # 13. SET ADMIN APP NAME
-      # ============================================================
-      - name: Set Admin App Name
-        shell: bash
-        run: |
-          set -e
-
-          echo "========================================"
-          echo "SETTING ADMIN APP NAME"
-          echo "========================================"
-
-          STRINGS_FILE="android/app/src/main/res/values/strings.xml"
-
-          if [ ! -f "$STRINGS_FILE" ]; then
-            echo "ERROR: strings.xml not found."
-            exit 1
-          fi
-
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-
-          path = Path("android/app/src/main/res/values/strings.xml")
-
-          text = path.read_text()
-
-          if re.search(
-              r'<string\s+name="app_name">.*?</string>',
-              text
-          ):
-              text = re.sub(
-                  r'<string\s+name="app_name">.*?</string>',
-                  '<string name="app_name">Kumaoni Potli Admin</string>',
-                  text
-              )
-          else:
-              text = text.replace(
-                  '</resources>',
-                  '    <string name="app_name">Kumaoni Potli Admin</string>\n</resources>'
-              )
-
-          path.write_text(text)
-          PY
-
-          echo ""
-          echo "Admin app name set to:"
-          grep 'app_name' "$STRINGS_FILE"
-
-
-      # ============================================================
-      # 14. VERIFY ANDROID PROJECT
+      # 19. VERIFY ANDROID PROJECT
       # ============================================================
       - name: Verify Android project
         shell: bash
@@ -416,18 +606,15 @@ jobs:
           test -f android/gradlew
           test -f android/settings.gradle
           test -f android/app/build.gradle
-          test -f android/app/src/main/assets/public/index.html
+          test -s android/app/src/main/assets/public/index.html
 
-          chmod +x android/gradlew
-
-          echo ""
           echo "Android project verification successful."
 
 
       # ============================================================
-      # 15. BUILD ADMIN APK
+      # 20. BUILD APK
       # ============================================================
-      - name: Build Admin APK
+      - name: Build Kumaoni Potli Admin APK
         shell: bash
         working-directory: android
         run: |
@@ -441,15 +628,15 @@ jobs:
 
           ./gradlew \
             --no-daemon \
-            assembleDebug \
-            --stacktrace
+            --stacktrace \
+            assembleDebug
 
           echo ""
-          echo "Gradle build completed successfully."
+          echo "APK build completed."
 
 
       # ============================================================
-      # 16. VERIFY APK
+      # 21. VERIFY APK
       # ============================================================
       - name: Verify Admin APK
         shell: bash
@@ -462,38 +649,33 @@ jobs:
 
           APK="android/app/build/outputs/apk/debug/app-debug.apk"
 
-          if [ ! -f "$APK" ]; then
+          if [ ! -s "$APK" ]; then
+            echo "ERROR: APK was not generated."
             echo ""
-            echo "ERROR: Admin APK was not generated."
-
-            echo ""
-            echo "Available APK files:"
-
             find android/app/build/outputs \
               -type f \
               -name "*.apk" \
-              -print || true
-
+              -print
             exit 1
           fi
 
-          echo ""
-          echo "Admin APK generated successfully:"
+          echo "APK found:"
           ls -lh "$APK"
 
 
       # ============================================================
-      # 17. PREPARE FINAL APK
+      # 22. PREPARE FINAL APK
       # ============================================================
-      - name: Prepare Admin APK
+      - name: Prepare Kumaoni Potli Admin APK
         shell: bash
         run: |
           set -e
 
           echo "========================================"
-          echo "PREPARING FINAL ADMIN APK"
+          echo "PREPARING FINAL APK"
           echo "========================================"
 
+          rm -rf release
           mkdir -p release
 
           cp \
@@ -501,32 +683,43 @@ jobs:
             release/Kumaoni-Potli-Admin.apk
 
           echo ""
-          echo "Final APK:"
+          echo "FINAL APK:"
           ls -lh release/Kumaoni-Potli-Admin.apk
 
 
       # ============================================================
-      # 18. UPLOAD APK
+      # 23. UPLOAD APK
       # ============================================================
-      - name: Upload Admin APK
+      - name: Upload Kumaoni Potli Admin APK
         uses: actions/upload-artifact@v4
         with:
           name: Kumaoni-Potli-Admin-APK
           path: release/Kumaoni-Potli-Admin.apk
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 30
 
 
       # ============================================================
-      # 19. BUILD COMPLETE
+      # 24. BUILD COMPLETE
       # ============================================================
       - name: Build Complete
         shell: bash
         run: |
+          echo ""
           echo "========================================"
           echo "KUMAONI POTLI ADMIN BUILD COMPLETE"
           echo "========================================"
           echo ""
-          echo "APK: Kumaoni-Potli-Admin.apk"
+          echo "App Name:"
+          echo "Kumaoni Potli Admin"
           echo ""
-          echo "BUILD SUCCESSFUL"
+          echo "Package:"
+          echo "com.kumaonipotli.admin"
+          echo ""
+          echo "APK:"
+          echo "Kumaoni-Potli-Admin.apk"
+          echo ""
+          echo "Artifact:"
+          echo "Kumaoni-Potli-Admin-APK"
+          echo ""
+          echo "========================================"
