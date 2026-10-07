@@ -1,3 +1,4 @@
+
 name: Build Kumaoni Potli Admin APK
 
 on:
@@ -6,316 +7,203 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   build:
+    name: Build Admin Android APK
     runs-on: ubuntu-latest
 
     steps:
-
-      # ============================================================
-      # 1. CHECKOUT SOURCE CODE
-      # ============================================================
+      # 1. Download repository
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      # ============================================================
-      # 2. SETUP NODE.JS
-      # ============================================================
+      # 2. Install Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      # ============================================================
-      # 3. SETUP JAVA 21
-      # ============================================================
+      # 3. Install Java
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
 
-      # ============================================================
-      # 4. SETUP ANDROID SDK
-      # ============================================================
+      # 4. Install Android SDK
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      # ============================================================
-      # 5. SHOW REPOSITORY FILES
-      # ============================================================
-      - name: Show repository files
+      # 5. Find the actual Admin HTML
+      - name: Select Admin HTML
         shell: bash
         run: |
-          echo "========================================"
-          echo "KUMAONI POTLI ADMIN BUILD"
-          echo "========================================"
-
-          echo ""
-          echo "Repository root files:"
-          ls -lah
-
-          echo ""
-          echo "HTML files:"
-          find . -maxdepth 2 -type f \
-            \( -name "*.html" -o -name "*.json" -o -name "*.png" \) \
-            -print
-
-      # ============================================================
-      # 6. SELECT CURRENT ADMIN PANEL
-      # ============================================================
-      - name: Select current Admin Panel
-        shell: bash
-        run: |
-          set -e
-
-          echo "========================================"
-          echo "SELECTING CURRENT ADMIN PANEL"
-          echo "========================================"
+          set -euo pipefail
 
           ADMIN_HTML="Kumaoni-Potli-Admin-CONNECTED.html"
 
+          echo "Repository root:"
+          pwd
+
+          echo "Available Admin HTML files:"
+          find . -maxdepth 2 -type f -iname '*admin*.html' -print
+
           if [ ! -f "$ADMIN_HTML" ]; then
-            echo ""
-            echo "ERROR: $ADMIN_HTML was not found."
-            echo ""
-            echo "Available Admin files:"
-            find . -maxdepth 1 -type f \
-              -iname "*Admin*.html" \
-              -print
+            echo "::error::Admin HTML not found: $ADMIN_HTML"
+            echo "Check the filename and repository location."
             exit 1
           fi
 
-          echo ""
-          echo "Admin HTML found:"
-          echo "$ADMIN_HTML"
+          echo "Using Admin HTML: $ADMIN_HTML"
 
-          cp "$ADMIN_HTML" index.html
-
-          echo ""
-          echo "Admin panel copied to:"
-          echo "index.html"
-
-          ls -lh index.html
-
-      # ============================================================
-      # 7. CREATE CAPACITOR PROJECT
-      # ============================================================
-      - name: Create Capacitor Admin project
+      # 6. Prepare clean web directory and assets
+      - name: Prepare Admin web files
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
 
-          echo "========================================"
-          echo "CREATING CAPACITOR ADMIN PROJECT"
-          echo "========================================"
+          mkdir -p www
 
-          cat > package.json <<'EOF'
-          {
-            "name": "kumaoni-potli-admin",
-            "version": "1.0.0",
-            "private": true,
-            "scripts": {
-              "build": "echo Kumaoni Potli Admin build"
-            },
-            "dependencies": {
-              "@capacitor/core": "^7.4.3",
-              "@capacitor/android": "^7.4.3",
-              "@capacitor/cli": "^7.4.3"
-            }
-          }
-          EOF
+          cp "Kumaoni-Potli-Admin-CONNECTED.html" \
+             "www/index.html"
 
-          npm install
+          # Copy root-level images used by the HTML
+          find . -maxdepth 1 -type f \
+            \( -iname '*.png' \
+            -o -iname '*.jpg' \
+            -o -iname '*.jpeg' \
+            -o -iname '*.webp' \
+            -o -iname '*.gif' \
+            -o -iname '*.svg' \
+            -o -iname '*.ico' \) \
+            -exec cp -t www/ {} +
 
-          npx cap init "Kumaoni Potli Admin" "com.kumaonipotli.admin" --web-dir=.
+          # Copy root-level CSS and JavaScript, if present
+          find . -maxdepth 1 -type f \
+            \( -iname '*.css' -o -iname '*.js' \) \
+            -exec cp -t www/ {} +
 
-      # ============================================================
-      # 8. ADD ANDROID PLATFORM
-      # ============================================================
+          echo "Prepared web files:"
+          ls -lah www
+
+          test -s www/index.html
+
+      # 7. Create the Capacitor project
+      - name: Configure Capacitor
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm init -y
+
+          npm install \
+            @capacitor/core@^7 \
+            @capacitor/android@^7
+
+          npm install --save-dev @capacitor/cli@^7
+
+          npx cap init \
+            "Kumaoni Potli Admin" \
+            "com.kumaonipotli.admin" \
+            --web-dir=www
+
+      # 8. Generate Android project
       - name: Add Android platform
         shell: bash
         run: |
-          set -e
-
-          echo "========================================"
-          echo "ADDING ANDROID PLATFORM"
-          echo "========================================"
-
+          set -euo pipefail
           npx cap add android
 
-      # ============================================================
-      # 9. COPY WEB FILES
-      # ============================================================
-      - name: Copy Admin web files
+      # 9. Copy web app and sync
+      - name: Sync Admin app
         shell: bash
         run: |
-          set -e
-
-          echo "========================================"
-          echo "COPYING ADMIN WEB FILES"
-          echo "========================================"
-
-          npx cap copy android
-
-      # ============================================================
-      # 10. UPDATE CAPACITOR
-      # ============================================================
-      - name: Sync Capacitor
-        shell: bash
-        run: |
-          set -e
-
-          echo "========================================"
-          echo "SYNC CAPACITOR"
-          echo "========================================"
+          set -euo pipefail
 
           npx cap sync android
 
-      # ============================================================
-      # 11. VERIFY ADMIN HTML
-      # ============================================================
-      - name: Verify final Admin web file
-        shell: bash
-        run: |
-          set -e
+          test -s \
+            android/app/src/main/assets/public/index.html
 
-          echo "========================================"
-          echo "VERIFYING FINAL ADMIN HTML"
-          echo "========================================"
+          echo "Admin HTML successfully copied into Android."
 
-          if [ ! -f "android/app/src/main/assets/public/index.html" ]; then
-            echo "ERROR: Final Admin index.html not found."
-            exit 1
-          fi
-
-          echo "Final Admin HTML exists."
-
-          ls -lh android/app/src/main/assets/public/index.html
-
-      # ============================================================
-      # 12. SET ADMIN APP NAME
-      # ============================================================
+      # 10. Set application display name
       - name: Set Admin App Name
         shell: bash
         run: |
-          set -e
-
-          echo "========================================"
-          echo "SETTING ADMIN APP NAME"
-          echo "========================================"
+          set -euo pipefail
 
           STRINGS_FILE="android/app/src/main/res/values/strings.xml"
 
           if [ -f "$STRINGS_FILE" ]; then
-            sed -i 's#<string name="app_name">.*</string>#<string name="app_name">Kumaoni Potli Admin</string>#' "$STRINGS_FILE"
+            if grep -q 'name="app_name"' "$STRINGS_FILE"; then
+              sed -i \
+                's#<string name="app_name">[^<]*</string>#<string name="app_name">Kumaoni Potli Admin</string>#' \
+                "$STRINGS_FILE"
+            else
+              sed -i \
+                's#</resources>#    <string name="app_name">Kumaoni Potli Admin</string>\n</resources>#' \
+                "$STRINGS_FILE"
+            fi
+          else
+            echo "::error::Android strings.xml not found."
+            exit 1
           fi
 
-          echo "Admin app name set to Kumaoni Potli Admin."
-
-      # ============================================================
-      # 13. VERIFY ANDROID PROJECT
-      # ============================================================
+      # 11. Verify Android project
       - name: Verify Android project
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
 
-          echo "========================================"
-          echo "VERIFYING ANDROID PROJECT"
-          echo "========================================"
-
-          test -d android
-          test -f android/settings.gradle
+          test -f android/gradlew
           test -f android/app/build.gradle
+          test -s android/app/src/main/assets/public/index.html
 
-          echo "Android project verification successful."
+          echo "Android project verification passed."
 
-      # ============================================================
-      # 14. BUILD ADMIN APK
-      # ============================================================
+      # 12. Build debug APK
       - name: Build Admin APK
         shell: bash
         working-directory: android
         run: |
-          set -e
-
-          echo "========================================"
-          echo "BUILDING KUMAONI POTLI ADMIN APK"
-          echo "========================================"
+          set -euo pipefail
 
           chmod +x gradlew
 
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew \
+            --no-daemon \
+            assembleDebug \
+            --stacktrace
 
-      # ============================================================
-      # 15. FIND APK
-      # ============================================================
-      - name: Find Admin APK
+      # 13. Verify and rename APK
+      - name: Prepare Admin APK
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
 
-          echo "========================================"
-          echo "SEARCHING FOR ADMIN APK"
-          echo "========================================"
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
 
-          find android/app/build/outputs/apk \
-            -type f \
-            -name "*.apk" \
-            -print
-
-      # ============================================================
-      # 16. RENAME ADMIN APK
-      # ============================================================
-      - name: Rename Admin APK
-        shell: bash
-        run: |
-          set -e
-
-          echo "========================================"
-          echo "RENAMING ADMIN APK"
-          echo "========================================"
-
-          mkdir -p release
-
-          APK=$(find android/app/build/outputs/apk \
-            -type f \
-            -name "*.apk" \
-            | head -n 1)
-
-          if [ -z "$APK" ]; then
-            echo "ERROR: Admin APK was not generated."
+          if [ ! -s "$APK" ]; then
+            echo "::error::APK was not generated."
+            find android/app/build/outputs -type f -name '*.apk' -print
             exit 1
           fi
 
-          cp "$APK" \
-            "release/Kumaoni-Potli-Admin.apk"
+          mkdir -p release
 
-          echo "Final APK:"
+          cp "$APK" "release/Kumaoni-Potli-Admin.apk"
+
           ls -lh release/Kumaoni-Potli-Admin.apk
 
-      # ============================================================
-      # 17. UPLOAD ADMIN APK
-      # ============================================================
+      # 14. Upload downloadable APK
       - name: Upload Admin APK
         uses: actions/upload-artifact@v4
         with:
           name: Kumaoni-Potli-Admin-APK
           path: release/Kumaoni-Potli-Admin.apk
           if-no-files-found: error
-
-      # ============================================================
-      # 18. BUILD COMPLETE
-      # ============================================================
-      - name: Build Complete
-        shell: bash
-        run: |
-          echo "========================================"
-          echo "KUMAONI POTLI ADMIN BUILD COMPLETE"
-          echo "========================================"
-          echo ""
-          echo "APK: Kumaoni-Potli-Admin.apk"
-          echo ""
-          echo "Build finished successfully."
+          retention-days: 7
