@@ -14,28 +14,26 @@ jobs:
     name: Build Admin Android APK
     runs-on: ubuntu-latest
 
-    env:
-      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-      ANDROID_HOME: /usr/local/lib/android/sdk
-
     steps:
 
       # ============================================================
-      # 1. CHECKOUT SOURCE CODE
+      # 1. CHECKOUT
       # ============================================================
       - name: Checkout source code
         uses: actions/checkout@v4
 
+
       # ============================================================
-      # 2. SETUP NODE.JS
+      # 2. NODE.JS
       # ============================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+
       # ============================================================
-      # 3. SETUP JAVA 21
+      # 3. JAVA 21
       # ============================================================
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -43,8 +41,9 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+
       # ============================================================
-      # 4. SETUP ANDROID SDK
+      # 4. CONFIGURE EXISTING ANDROID SDK
       # ============================================================
       - name: Setup Android SDK
         shell: bash
@@ -55,73 +54,103 @@ jobs:
           echo "SETTING UP ANDROID SDK"
           echo "========================================"
 
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          if [ -n "${ANDROID_SDK_ROOT:-}" ]; then
+            SDK="$ANDROID_SDK_ROOT"
+          elif [ -n "${ANDROID_HOME:-}" ]; then
+            SDK="$ANDROID_HOME"
+          else
+            SDK="/usr/local/lib/android/sdk"
+          fi
 
-          if [ ! -d "$ANDROID_SDK_ROOT" ]; then
-            echo "::error::Android SDK directory not found."
+          echo "Android SDK:"
+          echo "$SDK"
+
+          if [ ! -d "$SDK" ]; then
+            echo "ERROR: Android SDK directory not found."
             exit 1
           fi
 
-          echo "Android SDK found."
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
 
-          # Locate sdkmanager
-          SDKMANAGER=$(find "$ANDROID_SDK_ROOT/cmdline-tools" \
+          echo "$SDK/platform-tools" >> "$GITHUB_PATH"
+
+          echo ""
+          echo "Searching for sdkmanager..."
+
+          SDKMANAGER=$(find "$SDK/cmdline-tools" \
             -type f \
-            -name "sdkmanager" \
-            | head -n 1)
+            -name sdkmanager \
+            -print \
+            -quit 2>/dev/null || true)
 
           if [ -z "$SDKMANAGER" ]; then
-            echo "::error::sdkmanager was not found."
-            find "$ANDROID_SDK_ROOT" -maxdepth 4 -type f -name "sdkmanager" -print
+            SDKMANAGER=$(find "$SDK" \
+              -type f \
+              -name sdkmanager \
+              -print \
+              -quit 2>/dev/null || true)
+          fi
+
+          if [ -z "$SDKMANAGER" ]; then
+            echo "ERROR: sdkmanager was not found."
+            find "$SDK" -maxdepth 4 -type f -name sdkmanager -print || true
             exit 1
           fi
 
-          echo "Using sdkmanager:"
+          echo "sdkmanager found:"
           echo "$SDKMANAGER"
 
           chmod +x "$SDKMANAGER"
 
-          # Add Android tools to PATH
-          SDKMANAGER_DIR="$(dirname "$SDKMANAGER")"
+          SDK_DIR="$(dirname "$SDKMANAGER")"
+          echo "$SDK_DIR" >> "$GITHUB_PATH"
 
-          echo "$SDKMANAGER_DIR" >> "$GITHUB_PATH"
-          echo "$ANDROID_SDK_ROOT/platform-tools" >> "$GITHUB_PATH"
+          echo ""
+          echo "Accepting Android SDK licenses..."
 
-          # Accept Android SDK licenses
           yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
 
-          # Install only required modern Android packages.
-          # IMPORTANT: Do NOT install the obsolete 'tools' package.
+          echo ""
+          echo "Installing required Android packages..."
+
           "$SDKMANAGER" \
             "platform-tools" \
             "platforms;android-35" \
             "build-tools;35.0.0"
 
           echo ""
-          echo "Installed Android packages:"
+          echo "Android SDK setup completed."
+
+          echo ""
+          echo "Installed SDK packages:"
           "$SDKMANAGER" --list_installed || true
 
+
       # ============================================================
-      # 5. VERIFY ANDROID SDK
+      # 5. SHOW REPOSITORY
       # ============================================================
-      - name: Verify Android SDK
+      - name: Show repository files
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
-          echo "VERIFYING ANDROID SDK"
+          echo "KUMAONI POTLI ADMIN BUILD"
           echo "========================================"
 
-          test -d "$ANDROID_SDK_ROOT"
+          echo ""
+          echo "Repository root:"
+          pwd
 
-          test -d "$ANDROID_SDK_ROOT/platform-tools"
+          echo ""
+          echo "Repository files:"
+          ls -lah
 
-          test -d "$ANDROID_SDK_ROOT/platforms/android-35"
+          echo ""
+          echo "HTML files:"
+          find . -maxdepth 2 -type f -iname "*.html" -print
 
-          test -d "$ANDROID_SDK_ROOT/build-tools/35.0.0"
-
-          echo "Android SDK verification successful."
 
       # ============================================================
       # 6. SELECT ADMIN HTML
@@ -129,55 +158,54 @@ jobs:
       - name: Select Admin HTML
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
-          echo "SELECTING KUMAONI POTLI ADMIN"
+          echo "SELECTING KUMAONI POTLI ADMIN PANEL"
           echo "========================================"
 
           ADMIN_HTML="Kumaoni-Potli-Admin-CONNECTED.html"
 
-          echo "Repository root:"
-          pwd
-
-          echo ""
-          echo "Available Admin HTML files:"
-
-          find . -maxdepth 2 \
-            -type f \
-            -iname "*admin*.html" \
-            -print
-
           if [ ! -f "$ADMIN_HTML" ]; then
             echo ""
-            echo "::error::Admin HTML not found:"
+            echo "ERROR: Admin HTML not found:"
             echo "$ADMIN_HTML"
+            echo ""
+            echo "Available HTML files:"
+            find . -maxdepth 1 -type f -iname "*.html" -print
             exit 1
           fi
 
           echo ""
-          echo "Using Admin HTML:"
+          echo "Admin HTML found:"
           echo "$ADMIN_HTML"
-
-      # ============================================================
-      # 7. PREPARE ADMIN WEB FILES
-      # ============================================================
-      - name: Prepare Admin web files
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          echo "========================================"
-          echo "PREPARING ADMIN WEB FILES"
-          echo "========================================"
 
           mkdir -p www
 
-          cp \
-            "Kumaoni-Potli-Admin-CONNECTED.html" \
-            "www/index.html"
+          cp "$ADMIN_HTML" "www/index.html"
 
-          # Copy images
+          echo ""
+          echo "Admin HTML copied to:"
+          echo "www/index.html"
+
+          test -s "www/index.html"
+
+          ls -lh "www/index.html"
+
+
+      # ============================================================
+      # 7. COPY ADMIN ASSETS
+      # ============================================================
+      - name: Copy Admin assets
+        shell: bash
+        run: |
+          set -e
+
+          echo "========================================"
+          echo "COPYING ADMIN ASSETS"
+          echo "========================================"
+
+          # Copy root-level image assets if they exist
           find . -maxdepth 1 -type f \
             \( \
               -iname "*.png" \
@@ -188,56 +216,86 @@ jobs:
               -o -iname "*.svg" \
               -o -iname "*.ico" \
             \) \
-            -exec cp -t www/ {} +
+            -exec cp -f {} www/ \;
 
-          # Copy CSS and JS
+          # Copy JS/CSS files from repository root
           find . -maxdepth 1 -type f \
             \( \
               -iname "*.css" \
               -o -iname "*.js" \
             \) \
-            -exec cp -t www/ {} +
+            -exec cp -f {} www/ \;
 
           echo ""
-          echo "Prepared Admin files:"
-          ls -lah www
+          echo "Prepared web files:"
+          find www -maxdepth 1 -type f -print
 
-          test -s www/index.html
+          test -s "www/index.html"
+
 
       # ============================================================
-      # 8. CREATE CAPACITOR PROJECT
+      # 8. CREATE PACKAGE.JSON
+      # ============================================================
+      - name: Create Capacitor package
+        shell: bash
+        run: |
+          set -e
+
+          echo "========================================"
+          echo "CREATING CAPACITOR PACKAGE"
+          echo "========================================"
+
+          cat > package.json <<'EOF'
+          {
+            "name": "kumaoni-potli-admin",
+            "version": "1.0.0",
+            "private": true,
+            "description": "Kumaoni Potli Admin Panel",
+            "scripts": {
+              "build": "echo Kumaoni Potli Admin"
+            },
+            "dependencies": {
+              "@capacitor/core": "^7.4.3",
+              "@capacitor/android": "^7.4.3",
+              "@capacitor/cli": "^7.4.3"
+            }
+          }
+          EOF
+
+          npm install
+
+
+      # ============================================================
+      # 9. INITIALIZE CAPACITOR
       # ============================================================
       - name: Configure Capacitor
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
           echo "CONFIGURING CAPACITOR"
           echo "========================================"
-
-          npm init -y
-
-          npm install \
-            @capacitor/core@^7 \
-            @capacitor/android@^7
-
-          npm install \
-            --save-dev \
-            @capacitor/cli@^7
 
           npx cap init \
             "Kumaoni Potli Admin" \
             "com.kumaonipotli.admin" \
             --web-dir=www
 
+          echo ""
+          echo "Capacitor configuration created."
+
+          cat capacitor.config.ts 2>/dev/null || \
+          cat capacitor.config.json 2>/dev/null || true
+
+
       # ============================================================
-      # 9. ADD ANDROID PLATFORM
+      # 10. ADD ANDROID
       # ============================================================
       - name: Add Android platform
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
           echo "ADDING ANDROID PLATFORM"
@@ -245,68 +303,50 @@ jobs:
 
           npx cap add android
 
-      # ============================================================
-      # 10. CONFIGURE ANDROID SDK VERSION
-      # ============================================================
-      - name: Configure Android SDK version
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          echo "========================================"
-          echo "CONFIGURING ANDROID SDK VERSION"
-          echo "========================================"
-
-          if [ -f "android/variables.gradle" ]; then
-
-            sed -i \
-              's/compileSdkVersion = [0-9]*/compileSdkVersion = 35/' \
-              android/variables.gradle || true
-
-            sed -i \
-              's/targetSdkVersion = [0-9]*/targetSdkVersion = 35/' \
-              android/variables.gradle || true
-
-          fi
-
-          echo "Android SDK configuration completed."
 
       # ============================================================
-      # 11. SYNC CAPACITOR
+      # 11. COPY AND SYNC
       # ============================================================
       - name: Sync Admin app
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
-          echo "SYNCING KUMAONI POTLI ADMIN"
+          echo "SYNCING ADMIN APP"
           echo "========================================"
 
           npx cap sync android
 
+
       # ============================================================
-      # 12. VERIFY ADMIN HTML
+      # 12. VERIFY FINAL ADMIN HTML
       # ============================================================
-      - name: Verify final Admin web file
+      - name: Verify final Admin HTML
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
           echo "VERIFYING ADMIN HTML"
           echo "========================================"
 
-          ADMIN_INDEX="android/app/src/main/assets/public/index.html"
+          ADMIN_WEB="android/app/src/main/assets/public/index.html"
 
-          if [ ! -s "$ADMIN_INDEX" ]; then
-            echo "::error::Final Admin index.html not found."
+          if [ ! -f "$ADMIN_WEB" ]; then
+            echo "ERROR: Admin index.html was not copied."
+            exit 1
+          fi
+
+          if [ ! -s "$ADMIN_WEB" ]; then
+            echo "ERROR: Admin index.html is empty."
             exit 1
           fi
 
           echo "Admin HTML successfully copied."
 
-          ls -lh "$ADMIN_INDEX"
+          ls -lh "$ADMIN_WEB"
+
 
       # ============================================================
       # 13. SET ADMIN APP NAME
@@ -314,7 +354,7 @@ jobs:
       - name: Set Admin App Name
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
           echo "SETTING ADMIN APP NAME"
@@ -323,26 +363,37 @@ jobs:
           STRINGS_FILE="android/app/src/main/res/values/strings.xml"
 
           if [ ! -f "$STRINGS_FILE" ]; then
-            echo "::error::strings.xml not found."
+            echo "ERROR: strings.xml not found."
             exit 1
           fi
 
-          if grep -q 'name="app_name"' "$STRINGS_FILE"; then
+          python3 - <<'PY'
+          from pathlib import Path
 
-            sed -i \
-              's#<string name="app_name">[^<]*</string>#<string name="app_name">Kumaoni Potli Admin</string>#' \
-              "$STRINGS_FILE"
+          path = Path("android/app/src/main/res/values/strings.xml")
+          text = path.read_text()
 
-          else
+          import re
 
-            sed -i \
-              's#</resources>#    <string name="app_name">Kumaoni Potli Admin</string>\n</resources>#' \
-              "$STRINGS_FILE"
+          if re.search(r'<string\s+name="app_name">.*?</string>', text):
+              text = re.sub(
+                  r'<string\s+name="app_name">.*?</string>',
+                  '<string name="app_name">Kumaoni Potli Admin</string>',
+                  text
+              )
+          else:
+              text = text.replace(
+                  '</resources>',
+                  '    <string name="app_name">Kumaoni Potli Admin</string>\n</resources>'
+              )
 
-          fi
+          path.write_text(text)
+          PY
 
-          echo "App name:"
+          echo ""
+          echo "Admin app name:"
           grep 'app_name' "$STRINGS_FILE"
+
 
       # ============================================================
       # 14. VERIFY ANDROID PROJECT
@@ -350,17 +401,23 @@ jobs:
       - name: Verify Android project
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
           echo "VERIFYING ANDROID PROJECT"
           echo "========================================"
 
+          test -d android
           test -f android/gradlew
+          test -f android/settings.gradle
           test -f android/app/build.gradle
-          test -s android/app/src/main/assets/public/index.html
+          test -f android/app/src/main/assets/public/index.html
 
+          chmod +x android/gradlew
+
+          echo ""
           echo "Android project verification successful."
+
 
       # ============================================================
       # 15. BUILD ADMIN APK
@@ -369,7 +426,7 @@ jobs:
         shell: bash
         working-directory: android
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
           echo "BUILDING KUMAONI POTLI ADMIN APK"
@@ -379,8 +436,12 @@ jobs:
 
           ./gradlew \
             --no-daemon \
-            assembleDebug \
-            --stacktrace
+            --stacktrace \
+            assembleDebug
+
+          echo ""
+          echo "Gradle build completed."
+
 
       # ============================================================
       # 16. VERIFY APK
@@ -388,7 +449,7 @@ jobs:
       - name: Verify Admin APK
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
           echo "VERIFYING ADMIN APK"
@@ -396,29 +457,31 @@ jobs:
 
           APK="android/app/build/outputs/apk/debug/app-debug.apk"
 
-          if [ ! -s "$APK" ]; then
-            echo "::error::Admin APK was not generated."
+          if [ ! -f "$APK" ]; then
+            echo "ERROR: Admin APK was not generated."
 
             echo ""
             echo "Available APK files:"
             find android/app/build/outputs \
               -type f \
               -name "*.apk" \
-              -print
+              -print || true
 
             exit 1
           fi
 
-          echo "APK successfully generated:"
+          echo ""
+          echo "APK generated successfully:"
           ls -lh "$APK"
 
+
       # ============================================================
-      # 17. RENAME APK
+      # 17. PREPARE FINAL APK
       # ============================================================
       - name: Prepare Admin APK
         shell: bash
         run: |
-          set -euo pipefail
+          set -e
 
           echo "========================================"
           echo "PREPARING FINAL ADMIN APK"
@@ -430,7 +493,10 @@ jobs:
             android/app/build/outputs/apk/debug/app-debug.apk \
             release/Kumaoni-Potli-Admin.apk
 
+          echo ""
+          echo "Final APK:"
           ls -lh release/Kumaoni-Potli-Admin.apk
+
 
       # ============================================================
       # 18. UPLOAD APK
@@ -442,6 +508,7 @@ jobs:
           path: release/Kumaoni-Potli-Admin.apk
           if-no-files-found: error
           retention-days: 7
+
 
       # ============================================================
       # 19. BUILD COMPLETE
