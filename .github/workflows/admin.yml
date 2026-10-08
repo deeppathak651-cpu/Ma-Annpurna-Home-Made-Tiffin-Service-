@@ -24,8 +24,6 @@ jobs:
 
       # ============================================================
       # 2. NODE.JS
-      # IMPORTANT:
-      # No npm cache is used because repository may not have lock file.
       # ============================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -49,14 +47,7 @@ jobs:
         run: |
           set -e
 
-          echo "=========================================="
-          echo "SETTING UP ANDROID SDK"
-          echo "=========================================="
-
           export ANDROID_SDK_ROOT="$ANDROID_HOME"
-
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
 
           SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
 
@@ -66,7 +57,7 @@ jobs:
             exit 1
           fi
 
-          echo "sdkmanager found:"
+          echo "Android SDK:"
           "$SDKMANAGER" --version
 
           yes | "$SDKMANAGER" --licenses >/dev/null || true
@@ -90,16 +81,25 @@ jobs:
           echo "REPOSITORY FILES"
           echo "=========================================="
 
-          echo "Root:"
           ls -lah
 
           echo ""
-          echo "HTML files:"
-          find . -maxdepth 2 -type f -iname "*.html" -print
+          echo "Admin HTML files:"
+          find . -maxdepth 2 -type f \
+            -iname "*admin*.html" \
+            -print
 
           echo ""
-          echo "PNG files:"
-          find . -maxdepth 2 -type f -iname "*.png" -print
+          echo "Image files:"
+          find . -maxdepth 2 -type f \
+            \( \
+              -iname "*.png" \
+              -o -iname "*.jpg" \
+              -o -iname "*.jpeg" \
+              -o -iname "*.webp" \
+              -o -iname "*.svg" \
+            \) \
+            -print
 
       # ============================================================
       # 6. SELECT ADMIN HTML
@@ -113,13 +113,23 @@ jobs:
           echo "SELECTING KUMAONI POTLI ADMIN PANEL"
           echo "=========================================="
 
-          ADMIN_HTML="Kumaoni-Potli-Admin-CONNECTED.html"
+          ADMIN_HTML=""
 
-          if [ ! -f "$ADMIN_HTML" ]; then
-            echo "ERROR: $ADMIN_HTML not found."
+          # New fixed file is preferred.
+          if [ -f "Kumaoni-Potli-Admin-FIXED.html" ]; then
+            ADMIN_HTML="Kumaoni-Potli-Admin-FIXED.html"
+
+          elif [ -f "Kumaoni-Potli-Admin-FIXED-FIREBASE-DATA-BLANK-SCREEN-FIX.html" ]; then
+            ADMIN_HTML="Kumaoni-Potli-Admin-FIXED-FIREBASE-DATA-BLANK-SCREEN-FIX.html"
+
+          elif [ -f "Kumaoni-Potli-Admin-CONNECTED.html" ]; then
+            ADMIN_HTML="Kumaoni-Potli-Admin-CONNECTED.html"
+
+          else
+            echo "ERROR: No Admin HTML file found."
 
             echo ""
-            echo "Available Admin HTML files:"
+            echo "Available Admin files:"
             find . -maxdepth 2 -type f \
               -iname "*admin*.html" \
               -print
@@ -127,7 +137,7 @@ jobs:
             exit 1
           fi
 
-          echo "Using:"
+          echo "Using Admin HTML:"
           echo "$ADMIN_HTML"
 
           rm -rf www
@@ -135,13 +145,14 @@ jobs:
 
           cp "$ADMIN_HTML" www/index.html
 
-          echo ""
-          echo "Admin HTML copied successfully."
-
           test -s www/index.html
 
+          echo ""
+          echo "Admin HTML copied successfully:"
+          ls -lh www/index.html
+
       # ============================================================
-      # 7. COPY ADMIN LOGO / IMAGES
+      # 7. COPY ADMIN ASSETS
       # ============================================================
       - name: Copy Admin assets
         shell: bash
@@ -152,7 +163,6 @@ jobs:
           echo "COPYING ADMIN ASSETS"
           echo "=========================================="
 
-          # Copy all root PNG/JPG/JPEG/WebP assets.
           find . -maxdepth 1 -type f \
             \( \
               -iname "*.png" \
@@ -175,16 +185,11 @@ jobs:
         run: |
           set -e
 
-          echo "=========================================="
-          echo "VERIFYING ADMIN LOGO"
-          echo "=========================================="
-
           if [ -f "admin-icon.png" ]; then
             echo "admin-icon.png found."
             ls -lh admin-icon.png
           else
             echo "WARNING: admin-icon.png not found."
-            echo "The APK will still be built."
           fi
 
       # ============================================================
@@ -194,10 +199,6 @@ jobs:
         shell: bash
         run: |
           set -e
-
-          echo "=========================================="
-          echo "CREATING CAPACITOR PACKAGE"
-          echo "=========================================="
 
           cat > package.json <<'EOF'
           {
@@ -220,7 +221,6 @@ jobs:
 
           npm install --no-audit --no-fund
 
-          echo ""
           echo "Node dependencies installed."
 
       # ============================================================
@@ -230,10 +230,6 @@ jobs:
         shell: bash
         run: |
           set -e
-
-          echo "=========================================="
-          echo "INITIALIZING CAPACITOR"
-          echo "=========================================="
 
           npx cap init \
             "Kumaoni Potli" \
@@ -248,23 +244,15 @@ jobs:
         run: |
           set -e
 
-          echo "=========================================="
-          echo "ADDING ANDROID PLATFORM"
-          echo "=========================================="
-
           npx cap add android
 
       # ============================================================
-      # 12. CONFIGURE ANDROID SDK VERSION
+      # 12. CONFIGURE ANDROID SDK
       # ============================================================
       - name: Configure Android SDK
         shell: bash
         run: |
           set -e
-
-          echo "=========================================="
-          echo "CONFIGURING ANDROID"
-          echo "=========================================="
 
           APP_GRADLE="android/app/build.gradle"
 
@@ -280,10 +268,10 @@ jobs:
 
           fi
 
-          echo "Android configuration completed."
+          echo "Android SDK configuration completed."
 
       # ============================================================
-      # 13. FIX KOTLIN DUPLICATE DEPENDENCIES
+      # 13. FIX KOTLIN DUPLICATE CLASSES
       # ============================================================
       - name: Fix Kotlin duplicate dependencies
         shell: bash
@@ -291,37 +279,82 @@ jobs:
           set -e
 
           echo "=========================================="
-          echo "FIXING KOTLIN DEPENDENCIES"
+          echo "FIXING KOTLIN DUPLICATE DEPENDENCIES"
           echo "=========================================="
 
           cat >> android/build.gradle <<'EOF'
 
-          // Kumaoni Potli Kotlin dependency cleanup
-          subprojects {
+          // ==========================================================
+          // Kumaoni Potli Kotlin dependency resolution
+          // ==========================================================
+
+          allprojects {
               configurations.configureEach {
+
+                  // Remove old Kotlin JDK bridge artifacts.
                   exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk7"
                   exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib-jdk8"
 
                   resolutionStrategy {
-                      force "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
+                      // Keep one Kotlin stdlib version.
+                      force "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+                      force "org.jetbrains.kotlin:kotlin-stdlib-common:1.8.22"
+                      force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22"
+                      force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
+
+                      eachDependency { details ->
+                          if (details.requested.group == "org.jetbrains.kotlin" &&
+                              details.requested.name in [
+                                  "kotlin-stdlib",
+                                  "kotlin-stdlib-common",
+                                  "kotlin-stdlib-jdk7",
+                                  "kotlin-stdlib-jdk8"
+                              ]) {
+                              details.useVersion("1.8.22")
+                              details.because("Kumaoni Potli Kotlin dependency alignment")
+                          }
+                      }
                   }
               }
           }
           EOF
 
-          echo "Kotlin duplicate dependency protection added."
+          echo ""
+          echo "Kotlin dependency resolution configured."
 
       # ============================================================
-      # 14. SET APPLICATION NAME
+      # 14. SHOW KOTLIN DEPENDENCIES
+      # ============================================================
+      - name: Check Kotlin dependencies
+        shell: bash
+        working-directory: android
+        run: |
+          set +e
+
+          chmod +x gradlew
+
+          echo "=========================================="
+          echo "CHECKING KOTLIN DEPENDENCIES"
+          echo "=========================================="
+
+          ./gradlew \
+            app:dependencies \
+            --configuration debugRuntimeClasspath \
+            --no-daemon \
+            > kotlin-dependencies.txt 2>&1
+
+          grep -i "kotlin-stdlib" kotlin-dependencies.txt || true
+
+          echo ""
+          echo "Kotlin dependency check completed."
+
+      # ============================================================
+      # 15. SET APPLICATION NAME
       # ============================================================
       - name: Set Kumaoni Potli App Name
         shell: bash
         run: |
           set -e
-
-          echo "=========================================="
-          echo "SETTING APP NAME"
-          echo "=========================================="
 
           STRINGS_FILE="android/app/src/main/res/values/strings.xml"
 
@@ -332,11 +365,10 @@ jobs:
 
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
           p = Path("android/app/src/main/res/values/strings.xml")
           s = p.read_text()
-
-          import re
 
           s = re.sub(
               r'<string name="app_name">.*?</string>',
@@ -347,49 +379,35 @@ jobs:
           p.write_text(s)
           PY
 
-          cat "$STRINGS_FILE"
+          echo "App name set to Kumaoni Potli."
 
       # ============================================================
-      # 15. INSTALL ADMIN APP ICON
+      # 16. INSTALL ADMIN APP ICON
       # ============================================================
       - name: Install Admin App Logo
         shell: bash
         run: |
           set -e
 
-          echo "=========================================="
-          echo "INSTALLING KUMAONI POTLI ADMIN LOGO"
-          echo "=========================================="
-
           if [ ! -f "admin-icon.png" ]; then
             echo "WARNING: admin-icon.png not found."
-            echo "Using default Capacitor icon."
             exit 0
           fi
 
-          ICON="admin-icon.png"
-
           mkdir -p android/app/src/main/res/drawable
 
-          cp "$ICON" \
+          cp "admin-icon.png" \
             android/app/src/main/res/drawable/kumaoni_potli_admin_logo.png
 
-          echo "Admin logo copied."
-
-          ls -lh \
-            android/app/src/main/res/drawable/kumaoni_potli_admin_logo.png
+          echo "Admin logo installed."
 
       # ============================================================
-      # 16. CONFIGURE LAUNCHER ICON
+      # 17. CONFIGURE LAUNCHER ICON
       # ============================================================
       - name: Set Android Launcher Icon
         shell: bash
         run: |
           set -e
-
-          echo "=========================================="
-          echo "SETTING ANDROID LAUNCHER ICON"
-          echo "=========================================="
 
           MANIFEST="android/app/src/main/AndroidManifest.xml"
 
@@ -418,30 +436,22 @@ jobs:
           echo "Launcher icon configured."
 
       # ============================================================
-      # 17. CAPACITOR SYNC
+      # 18. CAPACITOR SYNC
       # ============================================================
       - name: Sync Kumaoni Potli Admin
         shell: bash
         run: |
           set -e
 
-          echo "=========================================="
-          echo "SYNCING CAPACITOR"
-          echo "=========================================="
-
           npx cap sync android
 
       # ============================================================
-      # 18. VERIFY WEB FILE
+      # 19. VERIFY WEB FILE
       # ============================================================
       - name: Verify final Admin web file
         shell: bash
         run: |
           set -e
-
-          echo "=========================================="
-          echo "VERIFYING ADMIN WEB FILE"
-          echo "=========================================="
 
           FILE="android/app/src/main/assets/public/index.html"
 
@@ -450,20 +460,16 @@ jobs:
             exit 1
           fi
 
-          echo "Admin index.html:"
+          echo "Final Admin HTML:"
           ls -lh "$FILE"
 
       # ============================================================
-      # 19. VERIFY ANDROID PROJECT
+      # 20. VERIFY ANDROID PROJECT
       # ============================================================
       - name: Verify Android project
         shell: bash
         run: |
           set -e
-
-          echo "=========================================="
-          echo "VERIFYING ANDROID PROJECT"
-          echo "=========================================="
 
           test -f android/gradlew
           test -f android/settings.gradle
@@ -474,17 +480,27 @@ jobs:
           echo "Android project verification successful."
 
       # ============================================================
-      # 20. SHOW CAPACITOR VERSION
+      # 21. SHOW VERSIONS
       # ============================================================
-      - name: Show Capacitor version
+      - name: Show build versions
         shell: bash
         run: |
+          echo "=========================================="
+          echo "CAPACITOR VERSION"
+          echo "=========================================="
+
           npx cap --version
+
+          echo ""
+          echo "=========================================="
+          echo "GRADLE VERSION"
+          echo "=========================================="
+
           cd android
           ./gradlew --version
 
       # ============================================================
-      # 21. CLEAN ANDROID BUILD
+      # 22. CLEAN ANDROID BUILD
       # ============================================================
       - name: Clean Android build
         shell: bash
@@ -492,16 +508,12 @@ jobs:
         run: |
           set -e
 
-          echo "=========================================="
-          echo "CLEANING ANDROID BUILD"
-          echo "=========================================="
-
           chmod +x gradlew
 
           ./gradlew clean --no-daemon
 
       # ============================================================
-      # 22. BUILD APK
+      # 23. BUILD APK
       # ============================================================
       - name: Build Kumaoni Potli Admin APK
         shell: bash
@@ -521,16 +533,12 @@ jobs:
             --warning-mode all
 
       # ============================================================
-      # 23. VERIFY APK
+      # 24. VERIFY APK
       # ============================================================
       - name: Verify Admin APK
         shell: bash
         run: |
           set -e
-
-          echo "=========================================="
-          echo "VERIFYING APK"
-          echo "=========================================="
 
           APK="android/app/build/outputs/apk/debug/app-debug.apk"
 
@@ -549,16 +557,12 @@ jobs:
           ls -lh "$APK"
 
       # ============================================================
-      # 24. RENAME APK
+      # 25. RENAME APK
       # ============================================================
       - name: Prepare Kumaoni Potli APK
         shell: bash
         run: |
           set -e
-
-          echo "=========================================="
-          echo "PREPARING FINAL APK"
-          echo "=========================================="
 
           mkdir -p release
 
@@ -569,7 +573,7 @@ jobs:
           ls -lh release/Kumaoni-Potli-Admin.apk
 
       # ============================================================
-      # 25. UPLOAD APK
+      # 26. UPLOAD APK
       # ============================================================
       - name: Upload Kumaoni Potli Admin APK
         uses: actions/upload-artifact@v4
@@ -580,7 +584,7 @@ jobs:
           retention-days: 30
 
       # ============================================================
-      # 26. COMPLETE
+      # 27. COMPLETE
       # ============================================================
       - name: Build Complete
         shell: bash
@@ -594,5 +598,4 @@ jobs:
           echo "PACKAGE: com.kumaonipotli.admin"
           echo "APK: Kumaoni-Potli-Admin.apk"
           echo ""
-          echo "Download the APK from GitHub Actions Artifacts."
-          echo ""
+          echo "Build completed successfully."
